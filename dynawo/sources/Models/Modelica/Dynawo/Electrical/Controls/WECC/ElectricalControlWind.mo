@@ -14,11 +14,15 @@ within Dynawo.Electrical.Controls.WECC;
 
 model ElectricalControlWind "WECC Wind Electrical Control REEC"
   import Modelica;
+  import Modelica.Blocks;
   import Dynawo;
   import Dynawo.Types;
   import Dynawo.Electrical.Controls.WECC.Parameters;
 
   extends Dynawo.Electrical.Controls.WECC.ElectricalControlCommon;
+
+  parameter Real[:, :] VDL_Ip_points "Pair of points for voltage dependent active current limitation piecewise linear curve [u1,y1; u2,y2;...]";
+  parameter Real[:, :] VDL_Iq_points "Pair of points for voltage dependent reactive current limitation piecewise linear curve [u1,y1; u2,y2;...]";
 
   Dynawo.Electrical.Controls.WECC.BaseControls.CurrentLimitsCalculation currentLimitsCalculation1(IMaxPu = IMaxPu, PPriority = PPriority) annotation(
     Placement(visible = true, transformation(origin = {410, 29}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
@@ -50,6 +54,10 @@ model ElectricalControlWind "WECC Wind Electrical Control REEC"
     Placement(visible = true, transformation(origin = {50, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant constant2(k = 0.0001) annotation(
     Placement(visible = true, transformation(origin = {-20, -110}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Blocks.Tables.CombiTable1Ds Ipmax_fromUPu(extrapolation = Modelica.Blocks.Types.Extrapolation.HoldLastPoint, smoothness = Modelica.Blocks.Types.Smoothness.LinearSegments, table = VDL_Ip_points, tableOnFile = false, verboseExtrapolation = false, verboseRead = false)  annotation(
+    Placement(visible = true, transformation(origin = {330, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Blocks.Tables.CombiTable1Ds Iqmax_fromUPu(extrapolation = Modelica.Blocks.Types.Extrapolation.HoldLastPoint, smoothness = Modelica.Blocks.Types.Smoothness.LinearSegments, table = VDL_Iq_points, tableOnFile = false, verboseExtrapolation = false, verboseRead = false)  annotation(
+    Placement(visible = true, transformation(origin = {330, 46}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
 protected
   parameter Types.PerUnit PInj0Pu "Start value of active power at injector terminal in p.u (generator convention) (base SNom)";
