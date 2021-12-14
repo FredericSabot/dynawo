@@ -1,9 +1,11 @@
 BaseControls
 Utilities
 Parameters
-ElectricalControl
 GeneratorControl
 PlantControl
 ElectricalControlCommon
 ElectricalControlPV
 ElectricalControlWind
+DriveTrainCommon
+DriveTrainPmConstant
+DriveTrainPeFiltered

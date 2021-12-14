@@ -14,12 +14,13 @@ within Dynawo.Electrical.Controls.WECC.BaseControls;
 
 model CurrentLimitsCalculationWind "This block calculates the current limits of the WECC regulation for the Wind Turbine"
   import Modelica;
+  import Modelica.SIunits;
   import Dynawo.Types;
 
 
   parameter Types.PerUnit IMaxPu "Maximum inverter current amplitude in p.u (base UNom, SNom)";
   parameter Boolean PPriority "Priority: reactive power (false) or active power (true)";
-  parameter SIunits.Time tIpMax "Time delay for which the active current limit (Ipmax) is held after voltage dip vDip returns to zero for tIpMax seconds at its value during the voltage dip";
+  parameter SIunits.Time tIpMax "Time delay for which the active current limit (ipMaxPu) is held after voltage dip vDip returns to zero for tIpMax seconds at its value during the voltage dip";
 
  // Inputs
   Modelica.Blocks.Interfaces.RealInput ipCmdPu "p-axis command current in p.u (base UNom, SNom)" annotation(
@@ -27,11 +28,11 @@ model CurrentLimitsCalculationWind "This block calculates the current limits of 
   Modelica.Blocks.Interfaces.RealInput iqCmdPu "q-axis command current in p.u (base UNom, SNom)" annotation(
     Placement(visible = true, transformation(origin = {-110, 40}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.BooleanInput vDip "Ongoing voltage dip" annotation(
-    Placement(visible = true, transformation(origin = {-112, 2.22045e-16}, extent = {{-12, -12}, {12, 12}}, rotation = 0), iconTransformation(origin = {-105, -1}, extent = {{-11, -11}, {11, 11}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-112, 2.22045e-16}, extent = {{-12, -12}, {12, 12}}, rotation = 0), iconTransformation(origin = {-111, -1}, extent = {{-11, -11}, {11, 11}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput ipVdlPu "Voltage dependent limit for active current command" annotation(
-    Placement(visible = true, transformation(origin = {-111, 33}, extent = {{-11, -11}, {11, 11}}, rotation = 0), iconTransformation(origin = {-105, 41}, extent = {{-11, -11}, {11, 11}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-111, 73}, extent = {{-11, -11}, {11, 11}}, rotation = 0), iconTransformation(origin = {-111, 79}, extent = {{-11, -11}, {11, 11}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput iqVdlPu "Voltage dependent limit for reactive current command" annotation(
-    Placement(visible = true, transformation(origin = {-111, -37}, extent = {{-11, -11}, {11, 11}}, rotation = 0), iconTransformation(origin = {-105, -41}, extent = {{-11, -11}, {11, 11}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-111, -75}, extent = {{-11, -11}, {11, 11}}, rotation = 0), iconTransformation(origin = {-111, -79}, extent = {{-11, -11}, {11, 11}}, rotation = 0)));
 
  //Outputs:
   Modelica.Blocks.Interfaces.RealOutput ipMaxPu "p-axis maximum current in p.u (base UNom, SNom)" annotation(
@@ -45,7 +46,7 @@ model CurrentLimitsCalculationWind "This block calculates the current limits of 
 
 protected
   Boolean vDipStart;
-  SIunits.PerUnit ipmaxFrzPu;
+  SIunits.PerUnit ipMaxFrzPu;
   SIunits.Time vDipFrzEndTime;
   Types.PerUnit ipLimPu = max(min(abs(ipCmdPu), IMaxPu), 0);
   Types.PerUnit iqLimPu = max(min(abs(iqCmdPu), IMaxPu), - IMaxPu);
@@ -68,7 +69,7 @@ protected
 initial algorithm
   vDipStart := false;
   vDipFrzEndTime := -1;
-  ipmaxFrzPu := 0;
+  ipMaxFrzPu := 0;
 
 algorithm
   when vDip == true then
@@ -78,42 +79,42 @@ algorithm
   when vDip == false and vDipStart == true then
     vDipStart := false;
     vDipFrzEndTime := time + abs(tIpMax);
-    ipmaxFrzPu := ipMaxPu;
+    ipMaxFrzPu := ipMaxPu;
   end when;
   when time >= vDipFrzEndTime and vDipFrzEndTime >= 0 then
     vDipFrzEndTime := -1;
-    ipmaxFrzPu := 0;
+    ipMaxFrzPu := 0;
   end when;
 
 equation
 
   if PPriority then
     if time <= vDipFrzEndTime and vDipFrzEndTime >= 0 then
-      ipMaxPu = ipmaxFrzPu;
+      ipMaxPu = ipMaxFrzPu;
     else
       ipMaxPu = min(ipVdlPu, IMaxPu);
     end if;
     ipMinPu = 0;
-    iqMaxPu = min(Iq_vdl, sqrt(Imax ^ 2 - min(Ip_lim,Ip_vdl) ^ 2)); // WECC Implementation, difference in validation against PowerFactory
-    // Iqmax = min(Iq_vdl, sqrt(max(0, min(Imax,Iq_vdl) ^ 2 - Ipcmd ^ 2))); // PowerFactory Implementation, difference in validation against REMVT
-    Iqmin = -Iqmax;
+    iqMaxPu = min(iqVdlPu, sqrt(IMaxPu ^ 2 - min(ipLimPu,ipVdlPu) ^ 2)); // WECC Implementation, difference in validation against PowerFactory
+    // iqMaxPu = min(iqVdlPu, sqrt(max(0, min(IMaxPu,iqVdlPu) ^ 2 - ipCmdPu ^ 2))); // PowerFactory Implementation, difference in validation against REMVT
+    iqMinPu = -iqMaxPu;
   else
   // Q priority
-    if time <= Vdip_frz_endTime and Vdip_frz_endTime >= 0 then
-      Ipmax = Ipmax_frz;
+    if time <= vDipFrzEndTime and vDipFrzEndTime >= 0 then
+      ipMaxPu = ipMaxFrzPu;
     else
-      Ipmax = min(Ip_vdl, sqrt(Imax ^ 2 - min(Iq_lim,Iq_vdl) ^ 2));// WECC Implementation, difference in validation against PowerFactory
-      // Ipmax = min(Ip_vdl, sqrt(max(0, min(Imax,Ip_vdl)^ 2 - Iqcmd ^ 2))); // PowerFactory Implementation, difference in validation against REMVT
+      ipMaxPu = min(ipVdlPu, sqrt(IMaxPu ^ 2 - min(iqLimPu,iqVdlPu) ^ 2));// WECC Implementation, difference in validation against PowerFactory
+      // ipMaxPu = min(ipVdlPu, sqrt(max(0, min(IMaxPu,ipVdlPu)^ 2 - iqCmdPu ^ 2))); // PowerFactory Implementation, difference in validation against REMVT
     end if;
-    Ipmin = 0;
-    Iqmax = min(Iq_vdl, Imax);
-    Iqmin = -Iqmax;
+    ipMinPu = 0;
+    iqMaxPu = min(iqVdlPu, IMaxPu);
+    iqMinPu = -iqMaxPu;
   end if;
 
 
 
   annotation(preferredView = "text",
-    Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {44, -1}, extent = {{-124, 81}, {36, 21}}, textString = "Current"), Text(origin = {-115, -25}, extent = {{-27, 9}, {13, -3}}, textString = "iqCmdPu"), Text(origin = {-115, 53}, extent = {{-27, 9}, {13, -3}}, textString = "ipCmdPu"), Text(origin = {127, -9}, extent = {{-27, 9}, {13, -3}}, textString = "iqMinPu"), Text(origin = {127, -49}, extent = {{-27, 9}, {13, -3}}, textString = "iqMaxPu"), Text(origin = {127, 71}, extent = {{-27, 9}, {13, -3}}, textString = "ipMinPu"), Text(origin = {127, 31}, extent = {{-27, 9}, {13, -3}}, textString = "ipMaxPu"), Text(origin = {44, -61}, extent = {{-124, 41}, {36, -19}}, textString = "limits")}, coordinateSystem(initialScale = 0.1)));
+    Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {44, -1}, extent = {{-124, 81}, {36, 21}}, textString = "Current"), Text(origin = {-141, -31}, extent = {{-27, 9}, {13, -3}}, textString = "iqCmdPu"), Text(origin = {-141, 83}, extent = {{-27, 9}, {13, -3}}, textString = "ipCmdPu"), Text(origin = {127, -9}, extent = {{-27, 9}, {13, -3}}, textString = "iqMinPu"), Text(origin = {127, -49}, extent = {{-27, 9}, {13, -3}}, textString = "iqMaxPu"), Text(origin = {127, 71}, extent = {{-27, 9}, {13, -3}}, textString = "ipMinPu"), Text(origin = {127, 31}, extent = {{-27, 9}, {13, -3}}, textString = "ipMaxPu"), Text(origin = {44, -61}, extent = {{-124, 41}, {36, -19}}, textString = "limits"), Text(origin = {-152, 48}, extent = {{-20, 10}, {20, -10}}, textString = "ipVdlPu"), Text(origin = {-150, 8}, extent = {{-12, 6}, {12, -6}}, textString = "vDip"), Text(origin = {-150, -68}, extent = {{20, 6}, {-20, -6}}, textString = "iqVdlPu")}, coordinateSystem(initialScale = 0.1)));
 
 
 end CurrentLimitsCalculationWind;

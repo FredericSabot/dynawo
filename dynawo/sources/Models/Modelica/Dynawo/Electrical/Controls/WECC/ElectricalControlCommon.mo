@@ -32,9 +32,9 @@ partial model ElectricalControlCommon "WECC Electrical Control REEC common"
     Placement(visible = true, transformation(origin = {-270, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {60, -110}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
 
   Modelica.Blocks.Interfaces.RealOutput idCmdPu(start = Id0Pu) "idCmdPu setpoint for generator control in p.u (base SNom, UNom)" annotation(
-    Placement(visible = true, transformation(origin = {510, 79}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {551, 79}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealOutput iqCmdPu(start = Iq0Pu) "iqCmdPu setpoint for generator control in p.u (base SNom, UNom)" annotation(
-    Placement(visible = true, transformation(origin = {510, -21}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {550, -21}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealOutput UFilteredPu(start = UInj0Pu) "Filtered voltage module at injector terminal in p.u (base UNom)" annotation(
     Placement(visible = true, transformation(origin = {-200, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, 0}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.BooleanOutput frtOn(start = false) "Boolean signal for iq ramp after fault: true if FRT detected, false otherwise " annotation(
@@ -124,7 +124,7 @@ protected
   parameter Types.CurrentModulePu Iq0Pu "Start value of q-component current at injector terminal in p.u (generator convention) (base SNom, UNom)";
 equation
   connect(variableLimiter.y, iqCmdPu) annotation(
-    Line(points = {{421, -21}, {510, -21}}, color = {0, 0, 127}));
+    Line(points = {{421, -21}, {550, -21}}, color = {0, 0, 127}));
   connect(varLimPIDFreeze.y, switch2.u1) annotation(
     Line(points = {{191, -19}, {268, -19}}, color = {0, 0, 127}));
   connect(limiter.y, varLimPIDFreeze.u_s) annotation(
@@ -148,7 +148,7 @@ equation
   connect(division.y, rateLimFirstOrderFreeze1.u) annotation(
     Line(points = {{101, -76}, {118, -76}}, color = {0, 0, 127}));
   connect(variableLimiter1.y, idCmdPu) annotation(
-    Line(points = {{421, 79}, {510, 79}}, color = {0, 0, 127}));
+    Line(points = {{421, 79}, {551, 79}}, color = {0, 0, 127}));
   connect(division1.y, variableLimiter1.u) annotation(
     Line(points = {{101, 79}, {398, 79}}, color = {0, 0, 127}));
   connect(add1.y, variableLimiter.u) annotation(
@@ -216,7 +216,7 @@ equation
 <li> if plant level control not connected: local powerfactor control: PfFlag = true, otherwise PfFlag = false.</li>
 <p> The block calculates the idCmdPu and iqCmdPu setpoint values for the generator control based on the selected control algorithm.
 </ul> </p></html>"),
-    Diagram(coordinateSystem(extent = {{-260, -130}, {500, 250}}, grid = {1, 1})),
-  Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {-23, 22}, extent = {{-57, 58}, {103, -102}}, textString = "Electrical Control"), Text(origin = {137, 79}, extent = {{-23, 13}, {35, -21}}, textString = "idCmdPu"), Text(origin = {139, -41}, extent = {{-23, 13}, {35, -21}}, textString = "iqCmdPu"), Text(origin = {141, 13}, extent = {{-23, 13}, {17, -11}}, textString = "frtOn"), Text(origin = {89, -113}, extent = {{-23, 13}, {9, -3}}, textString = "UPu"), Text(origin = {-19, -117}, extent = {{-33, 21}, {9, -3}}, textString = "QInjPu"), Text(origin = {41, -117}, extent = {{-33, 21}, {9, -3}}, textString = "PInjPu"), Text(origin = {-135, 79}, extent = {{-23, 13}, {35, -21}}, textString = "PInjRefPu"), Text(origin = {-135, -41}, extent = {{-23, 13}, {35, -21}}, textString = "QInjRefPu"), Text(origin = {-135, 21}, extent = {{-23, 13}, {35, -21}}, textString = "UFilteredPu")}, coordinateSystem(initialScale = 0.1)));
+    Diagram(coordinateSystem(extent = {{-260, -130}, {540, 250}}, grid = {1, 1})),
+  Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {-23, 22}, extent = {{-57, 58}, {103, -102}}, textString = "Electrical Control"), Text(origin = {137, 79}, extent = {{-23, 13}, {35, -21}}, textString = "idCmdPu"), Text(origin = {139, -41}, extent = {{-23, 13}, {35, -21}}, textString = "iqCmdPu"), Text(origin = {141, 13}, extent = {{-23, 13}, {17, -11}}, textString = "frtOn"), Text(origin = {89, -113}, extent = {{-23, 13}, {9, -3}}, textString = "UPu"), Text(origin = {-19, -117}, extent = {{-33, 21}, {9, -3}}, textString = "QInjPu"), Text(origin = {41, -117}, extent = {{-33, 21}, {9, -3}}, textString = "PInjPu"), Text(origin = {-135, 79}, extent = {{-23, 13}, {35, -21}}, textString = "PInjRefPu"), Text(origin = {-135, -41}, extent = {{-23, 13}, {35, -21}}, textString = "QInjRefPu"), Text(origin = {-135, 21}, extent = {{-23, 13}, {35, -21}}, textString = "UFilteredPu")}, coordinateSystem(extent = {{-260, -130}, {540, 250}}, grid = {1, 1})));
 
 end ElectricalControlCommon;

@@ -1,0 +1,36 @@
+within Dynawo.Electrical.Controls.WECC;
+
+/*
+* Copyright (c) 2021, RTE (http://www.rte-france.com)
+* See AUTHORS.txt
+* All rights reserved.
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, you can obtain one at http://mozilla.org/MPL/2.0/.
+* SPDX-License-Identifier: MPL-2.0
+*
+* This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
+*/
+
+model DriveTrainPmConstant
+  import Modelica;
+  import Dynawo;
+
+  extends DriveTrainCommon;
+
+  Modelica.Blocks.Sources.Constant PMech0Pu(k = PInj0Pu) "Initial value of the mechanical Power " annotation(
+    Placement(visible = true, transformation(origin = {-184, 44}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+
+  equation
+  connect(PMech0Pu.y, TorqueM.u1) annotation(
+    Line(points = {{-172, 44}, {-152, 44}, {-152, 50}}, color = {0, 0, 127}));
+
+annotation(Documentation(info = "<html>
+<p> This block contains the drive train model for generic WECC WTG type 4 model according to (in case page cannot be found, copy link in browser): <br><a href=\"https://www.wecc.org/Reliability/WECC-Second-Generation-Wind-Turbine-Models-012314.pdf\">https://www.wecc.org/Reliability/WECC-Second-Generation-Wind-Turbine-Models-012314.pdf</a> </p>
+<p> This model is a simplified model for the purpose of emulating the behavior of torsional mode oscillations. The shaft damping coefficient (Dshaft) in the drive-train model is fitted to capture the net damping of the torsional mode seen in the post fault electrical power response. In the actual equipment, the drive train oscillations are damped through filtered signals and active damping controllers, which obviously are significantly different from the simple generic two mass drive train model used here. Therefore, the
+parameters (and variables) of this simple drive-train model cannot necessarily be compared with
+actual physical quantities directly. </p>
+<p>In this version of the drive train, the mechanical power is set to be constant as per the initial electrical power. </p></html>"),
+    Icon(graphics = {Text(origin = {3930, 950}, extent = {{-262, 50}, {16, -18}}, textString = "Pe"), Text(extent = {{-272, 68}, {-272, 68}}, textString = "text"), Text(origin = {-250, 40}, extent = {{-12, 12}, {12, -12}}, textString = "Pe"), Text(origin = {59, -181}, extent = {{-45, 29}, {45, -29}}, textString = "omegaRefPu"), Text(origin = {-177, 144}, extent = {{-47, 22}, {47, -22}}, textString = "omegaTPu"), Text(origin = {114, 152}, extent = {{-54, 28}, {54, -28}}, textString = "omegaGPu")}));
+
+end DriveTrainPmConstant;
