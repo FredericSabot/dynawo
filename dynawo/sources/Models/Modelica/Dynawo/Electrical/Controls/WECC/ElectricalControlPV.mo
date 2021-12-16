@@ -67,11 +67,11 @@ equation
   connect(rateLimFirstOrderFreeze.y, limiter3.u) annotation(
     Line(points = {{21, 190}, {38, 190}}, color = {0, 0, 127}));
   connect(currentLimitsCalculation1.ipMaxPu, variableLimiter1.limit1) annotation(
-    Line(points = {{399, 31}, {360, 31}, {360, 87}, {398, 87}}, color = {0, 0, 127}));
+    Line(points = {{399, 31}, {360, 31}, {360, 87}, {444, 87}}, color = {0, 0, 127}));
   connect(currentLimitsCalculation1.iqMinPu, variableLimiter.limit2) annotation(
-    Line(points = {{399, 27}, {360, 27}, {360, -29}, {398, -29}}, color = {0, 0, 127}));
+    Line(points = {{399, 27}, {360, 27}, {360, -29}, {444, -29}}, color = {0, 0, 127}));
   connect(currentLimitsCalculation1.iqMaxPu, variableLimiter.limit1) annotation(
-    Line(points = {{399, 23}, {380, 23}, {380, -13}, {398, -13}}, color = {0, 0, 127}));
+    Line(points = {{399, 23}, {380, 23}, {380, -13}, {444, -13}}, color = {0, 0, 127}));
   connect(firstOrder3.y, currentLimitsCalculation1.ipCmdPu) annotation(
     Line(points = {{439, 49}, {430, 49}, {430, 33}, {421, 33}}, color = {0, 0, 127}));
   connect(firstOrder2.y, currentLimitsCalculation1.iqCmdPu) annotation(
@@ -79,7 +79,7 @@ equation
   connect(variableLimiter.y, firstOrder2.u) annotation(
     Line(points = {{421, -21}, {480, -21}, {480, 9}, {462, 9}}, color = {0, 0, 127}));
   connect(currentLimitsCalculation1.ipMinPu, variableLimiter1.limit2) annotation(
-    Line(points = {{399, 35}, {380, 35}, {380, 71}, {398, 71}}, color = {0, 0, 127}));
+    Line(points = {{399, 35}, {380, 35}, {380, 71}, {444, 71}}, color = {0, 0, 127}));
   connect(FRTOn2.y, rateLimFirstOrderFreeze.freeze) annotation(
     Line(points = {{4, 171}, {4, 178}}, color = {255, 0, 255}));
   connect(IqMax.y, varLimPIDFreeze.yMax) annotation(
@@ -105,7 +105,7 @@ equation
 <li> if plant level control not connected: local powerfactor control: PfFlag = true, otherwise PfFlag = false.</li>
 <p> The block calculates the idCmdPu and iqCmdPu setpoint values for the generator control based on the selected control algorithm.
 </ul> </p></html>"),
-    Diagram(coordinateSystem(extent = {{-260, -130}, {540, 250}}, grid = {1, 1})),
-  Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {-23, 22}, extent = {{-57, 58}, {103, -102}}, textString = "Electrical Control"), Text(origin = {137, 79}, extent = {{-23, 13}, {35, -21}}, textString = "idCmdPu"), Text(origin = {139, -41}, extent = {{-23, 13}, {35, -21}}, textString = "iqCmdPu"), Text(origin = {141, 13}, extent = {{-23, 13}, {17, -11}}, textString = "frtOn"), Text(origin = {89, -113}, extent = {{-23, 13}, {9, -3}}, textString = "UPu"), Text(origin = {-19, -117}, extent = {{-33, 21}, {9, -3}}, textString = "QInjPu"), Text(origin = {41, -117}, extent = {{-33, 21}, {9, -3}}, textString = "PInjPu"), Text(origin = {-135, 79}, extent = {{-23, 13}, {35, -21}}, textString = "PInjRefPu"), Text(origin = {-135, -41}, extent = {{-23, 13}, {35, -21}}, textString = "QInjRefPu"), Text(origin = {-135, 21}, extent = {{-23, 13}, {35, -21}}, textString = "UFilteredPu")}, coordinateSystem(extent = {{-260, -130}, {540, 250}}, grid = {1, 1})));
+    Diagram(coordinateSystem(initialScale = 0.2)),
+  Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {137, 79}, extent = {{-23, 13}, {35, -21}}, textString = "idCmdPu"), Text(origin = {139, -41}, extent = {{-23, 13}, {35, -21}}, textString = "iqCmdPu"), Text(origin = {141, 13}, extent = {{-23, 13}, {17, -11}}, textString = "frtOn"), Text(origin = {89, -113}, extent = {{-23, 13}, {9, -3}}, textString = "UPu"), Text(origin = {-19, -117}, extent = {{-33, 21}, {9, -3}}, textString = "QInjPu"), Text(origin = {41, -117}, extent = {{-33, 21}, {9, -3}}, textString = "PInjPu"), Text(origin = {-135, 79}, extent = {{-23, 13}, {35, -21}}, textString = "PInjRefPu"), Text(origin = {-135, -41}, extent = {{-23, 13}, {35, -21}}, textString = "QInjRefPu"), Text(origin = {-135, 21}, extent = {{-23, 13}, {35, -21}}, textString = "UFilteredPu")}, coordinateSystem(initialScale = 0.1, preserveAspectRatio = false)));
 
 end ElectricalControlPV;

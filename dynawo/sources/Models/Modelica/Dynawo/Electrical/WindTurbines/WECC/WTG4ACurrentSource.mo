@@ -1,4 +1,4 @@
-within Dynawo.Electrical.Photovoltaics.WECC;
+within Dynawo.Electrical.WindTurbines.WECC;
 
 /*
 * Copyright (c) 2021, RTE (http://www.rte-france.com)
@@ -12,7 +12,7 @@ within Dynawo.Electrical.Photovoltaics.WECC;
 * This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 */
 
-model PVCurrentSource "WECC PV model with a current source as interface with the grid"
+model WTG4ACurrentSource "WECC Wind Turbine model with a simplified drive train model(dual-mass model) and with a current source as interface with the grid"
   import Modelica;
   import Dynawo;
   import Dynawo.Types;
@@ -23,10 +23,19 @@ model PVCurrentSource "WECC PV model with a current source as interface with the
   extends Parameters.Params_ElectricalControl;
   extends Parameters.Params_GeneratorControl;
   extends Parameters.Params_PLL;
+  extends Parameters.Params_DriveTrain;
 
   parameter Types.ApparentPowerModule SNom "Nominal apparent power in MVA";
   parameter Types.PerUnit RPu "Resistance of equivalent branch connection to the grid in p.u (base SnRef, UNom)";
   parameter Types.PerUnit XPu "Reactance of equivalent branch connection to the grid in p.u (base SnRef, UNom)";
+
+  parameter Real[:, :] VDLIpPoints "Pair of points for voltage dependent active current limitation piecewise linear curve [u1,y1; u2,y2;...]";
+  parameter Real[:, :] VDLIqPoints "Pair of points for voltage dependent reactive current limitation piecewise linear curve [u1,y1; u2,y2;...]";
+  parameter Types.PerUnit VRef1Pu "User-defined reference/bias on the inner-loop voltage control (typical: 0 p.u.)";
+  parameter Types.Time HoldIpMax "Time delay for which the active current limit (ipMaxPu) is held after voltage dip vDip returns to zero for HoldIpMax seconds at its value during the voltage dip";
+  parameter Real HoldIq "Absolute value of HoldIq defines seconds to hold current injection after voltage dip ended. HoldIq < 0 for constant, 0 for no injection after voltage dip, HoldIq > 0 for voltage dependent injection (typical: -1 .. 1 s)";
+  parameter Types.PerUnit IqFrzPu "Constant reactive current injection value (typical: -0.1 .. 0.1 p.u.)";
+  parameter Boolean PFlag "Power reference flag: const. Pref (0) or consider generator speed (1)";
 
   Dynawo.Connectors.ACPower terminal(V(re(start = u0Pu.re), im(start = u0Pu.im)), i(re(start = i0Pu.re), im(start = i0Pu.im))) annotation(
     Placement(visible = true, transformation(origin = {180, -10}, extent = {{10, -10}, {-10, 10}}, rotation = 0), iconTransformation(origin = {100, 8.88178e-16}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -37,12 +46,14 @@ model PVCurrentSource "WECC PV model with a current source as interface with the
     Placement(visible = true, transformation(origin = {-110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput omegaRefPu(start = SystemBase.omegaRef0Pu) "Frequency reference in p.u (base omegaNom)" annotation(
     Placement(visible = true, transformation(origin = {-110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.RealExpression OmegaRef1(y = OmegaRef.y)  annotation(
+    Placement(visible = true, transformation(origin = {16.5, -46.5}, extent = {{-6.5, -5.5}, {6.5, 5.5}}, rotation = 0)));
 
   Dynawo.Electrical.Lines.Line line(RPu = RPu, XPu = XPu, BPu = 0, GPu = 0) annotation(
     Placement(visible = true, transformation(origin = {120, -10}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
   Dynawo.Electrical.Controls.WECC.PlantControl wecc_repc(DDn = DDn, DUp = DUp, FreqFlag = FreqFlag, Kc = Kc, Ki = Ki, Kig = Kig, Kp = Kp, Kpg = Kpg, PGen0Pu = - P0Pu * SystemBase.SnRef / SNom, PInj0Pu = PInj0Pu, PMaxPu = PMaxPu, PMinPu = PMinPu, QGen0Pu = - Q0Pu * SystemBase.SnRef / SNom, QInj0Pu = QInj0Pu, QMaxPu = QMaxPu, QMinPu = QMinPu, RcPu = RPu, RefFlag = RefFlag, tFilterPC = tFilterPC, tFt = tFt, tFv = tFv, tLag = tLag, tP = tP, U0Pu = U0Pu, UInj0Pu = UInj0Pu, VCompFlag = VCompFlag, VFrz = VFrz, XcPu = XPu, Dbd = Dbd, EMax = EMax, EMin = EMin, FDbd1 = FDbd1, FDbd2 = FDbd2, FEMax = FEMax, FEMin = FEMin, iInj0Pu = iInj0Pu, u0Pu = u0Pu) annotation(
     Placement(visible = true, transformation(origin = {-40, -18}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.Electrical.Controls.WECC.ElectricalControlPV wecc_reec(Id0Pu = Id0Pu, IMaxPu = IMaxPu, Iq0Pu = Iq0Pu, Iqh1Pu = Iqh1Pu, Iql1Pu = Iql1Pu, Kqi = Kqi, Kqp = Kqp, Kqv = Kqv, Kvi = Kvi, Kvp = Kvp, PF0 = PF0, PInj0Pu = PInj0Pu, PPriority = PPriority, PfFlag = PfFlag, PMaxPu = PMaxPu, PMinPu = PMinPu, QFlag = QFlag, QInj0Pu = QInj0Pu, QMaxPu = QMaxPu, QMinPu = QMinPu, Tiq = Tiq, tP = tP, tPord = tPord, tRv = tRv, UInj0Pu = UInj0Pu, UMaxPu = UMaxPu, UMinPu = UMinPu, VFlag = VFlag, VMaxPu = VMaxPu, VMinPu = VMinPu, VRef0Pu = VRef0Pu, DPMax = DPMax, DPMin = DPMin, Dbd1 = Dbd1, Dbd2 = Dbd2) annotation(
+  Dynawo.Electrical.Controls.WECC.ElectricalControlWind wecc_reec(Id0Pu = Id0Pu, IMaxPu = IMaxPu, Iq0Pu = Iq0Pu, Iqh1Pu = Iqh1Pu, Iql1Pu = Iql1Pu, Kqi = Kqi, Kqp = Kqp, Kqv = Kqv, Kvi = Kvi, Kvp = Kvp, PF0 = PF0, PInj0Pu = PInj0Pu, PPriority = PPriority, PFlag = PFlag, PfFlag = PfFlag, PMaxPu = PMaxPu, PMinPu = PMinPu, QFlag = QFlag, QInj0Pu = QInj0Pu, QMaxPu = QMaxPu, QMinPu = QMinPu, Tiq = Tiq, tP = tP, tPord = tPord, tRv = tRv, HoldIpMax = HoldIpMax, HoldIq = HoldIq, UInj0Pu = UInj0Pu, VDLIpPoints = VDLIpPoints, VDLIqPoints = VDLIqPoints, UMaxPu = UMaxPu, UMinPu = UMinPu, VFlag = VFlag, VMaxPu = VMaxPu, VMinPu = VMinPu, VRef0Pu = VRef0Pu, VRef1Pu = VRef1Pu, DPMax = DPMax, DPMin = DPMin, Dbd1 = Dbd1, Dbd2 = Dbd2) annotation(
     Placement(visible = true, transformation(origin = {-8.13151, -18.1384}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Dynawo.Electrical.Controls.WECC.GeneratorControl wecc_regc(IqrMaxPu = IqrMaxPu, IqrMinPu = IqrMinPu, RateFlag = RateFlag, tFilterGC = tFilterGC, tG = tG, Rrpwr = Rrpwr, UInj0Pu = UInj0Pu, Id0Pu = Id0Pu, Iq0Pu = Iq0Pu) annotation(
     Placement(visible = true, transformation(origin = {40, -18}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -54,6 +65,8 @@ model PVCurrentSource "WECC PV model with a current source as interface with the
     Placement(visible = true, transformation(origin = {-80, 36}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Dynawo.Electrical.Controls.WECC.Utilities.Measurements measurements(SNom = SNom)  annotation(
     Placement(visible = true, transformation(origin = {150, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Dynawo.Electrical.Controls.WECC.DriveTrainPmConstant driveTrainPmConstrant(Dshaft = Dshaft, Hg = Hg, Ht = Ht, Kshaft = Kshaft, PInj0Pu = PInj0Pu, Pe(start = PInj0Pu))  annotation(
+    Placement(visible = true, transformation(origin = {40.1733, -47.936}, extent = {{-7.38218, -5.33158}, {7.38218, 5.33158}}, rotation = 0)));
 
   parameter Types.PerUnit P0Pu "Start value of active power at regulated bus in p.u (receptor convention) (base SnRef)";
   parameter Types.PerUnit Q0Pu "Start value of reactive power at regulated bus in p.u (receptor convention) (base SnRef)";
@@ -96,10 +109,6 @@ equation
     Line(points = {{-69, 41}, {-60, 41}, {-60, -10}, {-51, -10}}, color = {0, 0, 127}));
   connect(omegaRefPu, wecc_repc.omegaRefPu) annotation(
     Line(points = {{-110, 0}, {-70, 0}, {-70, -14}, {-51, -14}, {-51, -14}}, color = {0, 0, 127}));
-  connect(PRefPu, wecc_repc.PRefPu) annotation(
-    Line(points = {{-110, -20}, {-51, -20}, {-51, -20}, {-51, -20}}, color = {0, 0, 127}));
-  connect(QRefPu, wecc_repc.QRefPu) annotation(
-    Line(points = {{-110, -40}, {-60, -40}, {-60, -24}, {-51, -24}, {-51, -24}}, color = {0, 0, 127}));
   connect(injector.UPu, wecc_regc.UPu) annotation(
     Line(points = {{92, -26}, {97, -26}, {97, -34}, {34, -34}, {34, -29}, {34, -29}}, color = {0, 0, 127}));
   connect(injector.UPu, wecc_reec.UPu) annotation(
@@ -107,7 +116,7 @@ equation
   connect(injector.PInjPuSn, wecc_reec.PInjPu) annotation(
     Line(points = {{92, -22}, {99, -22}, {99, -36}, {-8, -36}, {-8, -29}}, color = {0, 0, 127}));
   connect(injector.QInjPuSn, wecc_reec.QInjPu) annotation(
-    Line(points = {{92, -18}, {101, -18}, {101, -38}, {-17, -38}, {-17, -29}}, color = {0, 0, 127}));
+    Line(points = {{92, -18}, {101, -18}, {101, -56}, {-17, -56}, {-17, -29}}, color = {0, 0, 127}));
   connect(line.terminal1, measurements.terminal1) annotation(
     Line(points = {{130, -10}, {140, -10}}, color = {0, 0, 255}));
   connect(measurements.terminal2, terminal) annotation(
@@ -127,11 +136,30 @@ equation
   injector.switchOffSignal1.value = false;
   injector.switchOffSignal2.value = false;
   injector.switchOffSignal3.value = false;
-
+  connect(injector.PInjPuSn, driveTrainPmConstrant.Pe) annotation(
+    Line(points = {{92, -22}, {99, -22}, {99, -47}, {49, -47}}, color = {0, 0, 127}));
+  connect(driveTrainPmConstrant.omegaGPu, wecc_reec.omegaGPu) annotation(
+    Line(points = {{44, -42}, {44, -40}, {-13, -40}, {-13, -28}}, color = {0, 0, 127}));
+  connect(OmegaRef1.y, driveTrainPmConstrant.omegaRefPu) annotation(
+    Line(points = {{24, -47}, {34, -47}}, color = {0, 0, 127}));
+  connect(PRefPu, wecc_repc.PRefPu) annotation(
+    Line(points = {{-110, -20}, {-51, -20}}, color = {0, 0, 127}));
+  connect(QRefPu, wecc_repc.QRefPu) annotation(
+    Line(points = {{-110, -40}, {-58, -40}, {-58, -24}, {-51, -24}}, color = {0, 0, 127}));
   annotation(
     Documentation(preferredView = "diagram",
     info = "<html>
-<p> This block contains the generic WECC PV model according to (in case page cannot be found, copy link in browser): <a href='https://www.wecc.biz/Reliability/WECC%20Solar%20Plant%20Dynamic%20Modeling%20Guidelines.pdf/'>https://www.wecc.biz/Reliability/WECC%20Solar%20Plant%20Dynamic%20Modeling%20Guidelines.pdf </a> </p></html>"),
-    Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {-24, 11}, extent = {{-48, 27}, {98, -53}}, textString = "WECC PV")}, coordinateSystem(initialScale = 0.1)),
-  Diagram(coordinateSystem(grid = {1, 1}, extent = {{-100, -50}, {170, 50}})));
-end PVCurrentSource;
+<p> This block contains the generic WECC WTG model according to (in case page cannot be found, copy link in browser): <br><a href=\"https://www.wecc.org/Reliability/WECC-Second-Generation-Wind-Turbine-Models-012314.pdf\">https://www.wecc.org/Reliability/WECC-Second-Generation-Wind-Turbine-Models-012314.pdf</a> </p>
+<p> The overall model is structured as follows:
+<ul>
+<li> Main model: WECC_Wind with terminal connection and measurement inputs for P/Q/U/I. </li>
+<li> Plant level control. </li>
+<li> Electrical inverter control.</li>
+<li> Simplified drive train model, dual-mass model. </li>
+<li> Generator control. </li>
+<li> Injector (id,iq). </li>
+</ul> </p></html>"),
+    Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {-24, 11}, extent = {{-48, 27}, {98, -53}}, textString = "WECC WT 4A")}, coordinateSystem(initialScale = 0.1)),
+  Diagram(coordinateSystem(grid = {1, 1}, extent = {{-100, -60}, {170, 50}})));
+
+end WTG4ACurrentSource;

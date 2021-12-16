@@ -16,19 +16,19 @@ partial model DriveTrainCommon
   import Modelica;
   import Dynawo.Types;
 
-  extends Parameters.Params_DriveTrainCommon;
+  extends Parameters.Params_DriveTrain;
 
   Modelica.Blocks.Interfaces.RealInput Pe(start = PInj0Pu) annotation(
-    Placement(visible = true, transformation(origin = {-214, -54}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-206, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {-214, -54}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {160, 0}, extent = {{20, -20}, {-20, 20}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput omegaRefPu(start = SystemBase.omegaRef0Pu) annotation(
-    Placement(visible = true, transformation(origin = {-214, -110}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-26, -144}, extent = {{-20, -20}, {20, 20}}, rotation = 90)));
+    Placement(visible = true, transformation(origin = {-214, -110}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-200, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealOutput omegaGPu(start = SystemBase.omegaRef0Pu) annotation(
     Placement(visible = true, transformation(origin = {166, -120}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {37, 131}, extent = {{19, -19}, {-19, 19}}, rotation = -90)));
   Modelica.Blocks.Interfaces.RealOutput omegaTPu annotation(
     Placement(visible = true, transformation(origin = {164, 110}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-99, 133}, extent = {{-19, -19}, {19, 19}}, rotation = 90)));
   Modelica.Blocks.Interfaces.RealOutput dTorqueY annotation(
     Placement(visible = true, transformation(origin = {164, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-99, 123}, extent = {{-0, -0}, {0,0}}, rotation = 90)));
-    Modelica.Blocks.Interfaces.RealOutput dampingY annotation(
+  Modelica.Blocks.Interfaces.RealOutput dampingY annotation(
     Placement(visible = true, transformation(origin = {92, -36}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-99, 123}, extent = {{0, 0}, {0,0}}, rotation = 90)));
 
   Modelica.Blocks.Math.Add OmegaGenerator annotation(

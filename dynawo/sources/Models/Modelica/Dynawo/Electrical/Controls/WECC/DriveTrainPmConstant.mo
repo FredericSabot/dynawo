@@ -12,7 +12,7 @@ within Dynawo.Electrical.Controls.WECC;
 * This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 */
 
-model DriveTrainPmConstant
+model DriveTrainPmConstant "Drive train control with constant mechanical power equal to initial electrical power"
   import Modelica;
   import Dynawo;
 
@@ -30,7 +30,7 @@ annotation(Documentation(info = "<html>
 <p> This model is a simplified model for the purpose of emulating the behavior of torsional mode oscillations. The shaft damping coefficient (Dshaft) in the drive-train model is fitted to capture the net damping of the torsional mode seen in the post fault electrical power response. In the actual equipment, the drive train oscillations are damped through filtered signals and active damping controllers, which obviously are significantly different from the simple generic two mass drive train model used here. Therefore, the
 parameters (and variables) of this simple drive-train model cannot necessarily be compared with
 actual physical quantities directly. </p>
-<p>In this version of the drive train, the mechanical power is set to be constant as per the initial electrical power. </p></html>"),
-    Icon(graphics = {Text(origin = {3930, 950}, extent = {{-262, 50}, {16, -18}}, textString = "Pe"), Text(extent = {{-272, 68}, {-272, 68}}, textString = "text"), Text(origin = {-250, 40}, extent = {{-12, 12}, {12, -12}}, textString = "Pe"), Text(origin = {59, -181}, extent = {{-45, 29}, {45, -29}}, textString = "omegaRefPu"), Text(origin = {-177, 144}, extent = {{-47, 22}, {47, -22}}, textString = "omegaTPu"), Text(origin = {114, 152}, extent = {{-54, 28}, {54, -28}}, textString = "omegaGPu")}));
+<p>In this version A of the drive train, the mechanical power is set to be constant as per the initial electrical power. </p></html>"),
+    Icon(graphics = {Text(origin = {-250, 40}, extent = {{-12, 12}, {12, -12}}, textString = "Pe"), Text(origin = {59, -181}, extent = {{-45, 29}, {45, -29}}, textString = "omegaRefPu"), Text(origin = {-177, 144}, extent = {{-47, 22}, {47, -22}}, textString = "omegaTPu"), Text(origin = {114, 152}, extent = {{-54, 28}, {54, -28}}, textString = "omegaGPu")}));
 
 end DriveTrainPmConstant;

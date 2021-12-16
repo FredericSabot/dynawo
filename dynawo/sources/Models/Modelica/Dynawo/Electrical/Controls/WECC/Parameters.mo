@@ -105,11 +105,11 @@ record Parameters "Parameters of the PV WECC model"
   annotation(preferredView = "text");
   end Params_VSourceRef;
 
-  record Params_DriveTrainCommon
+  record Params_DriveTrain
     parameter Types.Time Ht "Turbine Inertia in seconds (typical: 5s)";
     parameter Types.Time Hg "Generator Inertia in seconds (typical: 1s)";
     parameter Types.PerUnit Dshaft "Damping coefficient in p.u. (typical: 1.5 p.u.)";
     parameter Types.PerUnit Kshaft "Spring constant in p.u. (typical: 200 p.u.)";
-  end Params_DriveTrainCommon;
+  end Params_DriveTrain;
 
 end Parameters;

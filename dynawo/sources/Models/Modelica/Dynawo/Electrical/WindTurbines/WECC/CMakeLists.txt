@@ -11,10 +11,9 @@
 set(MODEL_FILES
   package.mo
   package.order
-  Measurements.mo
-  TransformDQtoRI.mo
-  TransformRItoDQ.mo
-  IqInjectionLogic.mo
+  WTG4ACurrentSource.mo
+  WTG4ACurrentSource.extvar
+  WTG4ACurrentSource_INIT.mo
   )
 
 #

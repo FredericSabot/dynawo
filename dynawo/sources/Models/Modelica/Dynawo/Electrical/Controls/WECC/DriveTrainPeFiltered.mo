@@ -1,11 +1,25 @@
 within Dynawo.Electrical.Controls.WECC;
 
-model DriveTrainPeFiltered
+/*
+* Copyright (c) 2021, RTE (http://www.rte-france.com)
+* See AUTHORS.txt
+* All rights reserved.
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, you can obtain one at http://mozilla.org/MPL/2.0/.
+* SPDX-License-Identifier: MPL-2.0
+*
+* This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
+*/
+
+model DriveTrainPeFiltered "Drive train control with a mechanical power derived from filtered electrical power"
+  import Modelica;
+
   extends DriveTrainCommon;
 
   parameter Types.Time Tp "Filter time constant for mechanical power calculation (typical: - )";
 
-  Modelica.Blocks.Continuous.FirstOrder Pmech(T = Tp, initType =    Modelica.Blocks.Types.Init.InitialOutput, k = 1, y(start = PInj0Pu), y_start = PInj0Pu) annotation(
+  Modelica.Blocks.Continuous.FirstOrder Pmech(T = Tp, initType = Modelica.Blocks.Types.Init.InitialOutput, k = 1, y(start = PInj0Pu), y_start = PInj0Pu) annotation(
     Placement(visible = true, transformation(origin = {-166, 4}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
 
 equation
