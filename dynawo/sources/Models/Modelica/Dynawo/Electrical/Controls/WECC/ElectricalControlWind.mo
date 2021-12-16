@@ -20,10 +20,16 @@ model ElectricalControlWind "WECC Wind Electrical Control REEC"
 
   extends Dynawo.Electrical.Controls.WECC.ElectricalControlCommon;
 
-  parameter Real[:, :] VDLIpPoints "Pair of points for voltage dependent active current limitation piecewise linear curve [u1,y1; u2,y2;...]";
-  parameter Real[:, :] VDLIqPoints "Pair of points for voltage dependent reactive current limitation piecewise linear curve [u1,y1; u2,y2;...]";
-//  parameter Real[1, 1] VDLIpPoints;
-//  parameter Real[1, 1] VDLIqPoints;
+  parameter Real VDLIp11;
+  parameter Real VDLIp12;
+  parameter Real VDLIp21;
+  parameter Real VDLIp22;
+  parameter Real VDLIq11;
+  parameter Real VDLIq12;
+  parameter Real VDLIq21;
+  parameter Real VDLIq22;
+  parameter Real VDLIpPoints[:, :] = [VDLIp11, VDLIp12 ; VDLIp21, VDLIp22] "Pair of points for voltage dependent active current limitation piecewise linear curve [u1,y1; u2,y2;...]";
+  parameter Real VDLIqPoints[:, :] =  [VDLIq11, VDLIq12 ; VDLIq21, VDLIq22]"Pair of points for voltage dependent reactive current limitation piecewise linear curve [u1,y1; u2,y2;...]";
   parameter Types.PerUnit VRef1Pu "User-defined reference/bias on the inner-loop voltage control (typical: 0 p.u.)";
   parameter Types.Time HoldIpMax "Time delay for which the active current limit (ipMaxPu) is held after voltage dip vDip returns to zero for HoldIpMax seconds at its value during the voltage dip";
   parameter Real HoldIq "Absolute value of HoldIq defines seconds to hold current injection after voltage dip ended. HoldIq < 0 for constant, 0 for no injection after voltage dip, HoldIq > 0 for voltage dependent injection (typical: -1 .. 1 s)";
