@@ -45,9 +45,8 @@ model CurrentLimitsCalculationWind "This block calculates the current limits of 
     Placement(visible = true, transformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
 protected
-  Boolean vDipStart;
-  SIunits.PerUnit ipMaxFrzPu;
-  SIunits.Time vDipFrzEndTime;
+  SIunits.PerUnit ipMaxFrzPu(start = 0);
+  SIunits.Time vDipFrzEndTime(start = -1);
   Types.PerUnit ipLimPu = max(min(abs(ipCmdPu), IMaxPu), 0);
   Types.PerUnit iqLimPu = max(min(abs(iqCmdPu), IMaxPu), - IMaxPu);
 
@@ -66,27 +65,19 @@ protected
    *
    */
 
-initial algorithm
-  vDipStart := false;
-  vDipFrzEndTime := -1;
-  ipMaxFrzPu := 0;
-
-algorithm
-  when vDip == true then
-    vDipStart := true;
-    vDipFrzEndTime := -1;
-  end when;
-  when vDip == false and vDipStart == true then
-    vDipStart := false;
-    vDipFrzEndTime := time + abs(HoldIpMax);
-    ipMaxFrzPu := ipMaxPu;
-  end when;
-  when time >= vDipFrzEndTime and vDipFrzEndTime >= 0 then
-    vDipFrzEndTime := -1;
-    ipMaxFrzPu := 0;
-  end when;
-
 equation
+
+  when (vDip == false and pre(vDip) == true) or (time < pre(vDipFrzEndTime) and pre(vDipFrzEndTime) >= 0)  then
+    vDipFrzEndTime = time + abs(HoldIpMax);
+  elsewhen (vDip == true or pre(vDip) == false) and (time >= pre(vDipFrzEndTime) or pre(vDipFrzEndTime) < 0) then
+    vDipFrzEndTime = -1;
+  end when;
+
+  when time < vDipFrzEndTime and vDipFrzEndTime >= 0 then
+    ipMaxFrzPu = ipMaxPu;
+  elsewhen time >= vDipFrzEndTime or vDipFrzEndTime < 0 then
+    ipMaxFrzPu = 0;
+  end when;
 
   if PPriority then
     if time <= vDipFrzEndTime and vDipFrzEndTime >= 0 then
