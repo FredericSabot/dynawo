@@ -50,7 +50,6 @@ protected
   Types.PerUnit ipLimPu = max(min(abs(ipCmdPu), IMaxPu), 0);
   Types.PerUnit iqLimPu = max(min(abs(iqCmdPu), IMaxPu), - IMaxPu);
 
-
     /*  CONTROL VARIABLE EXPLANATION:
    *
    *  The algorithm in this block is similar to the one in the IqInj_logic block,
@@ -74,7 +73,7 @@ equation
   end when;
 
   when time < vDipFrzEndTime and vDipFrzEndTime >= 0 then
-    ipMaxFrzPu = ipMaxPu;
+    ipMaxFrzPu = pre(ipMaxPu);
   elsewhen time >= vDipFrzEndTime or vDipFrzEndTime < 0 then
     ipMaxFrzPu = 0;
   end when;
@@ -102,10 +101,6 @@ equation
     iqMinPu = -iqMaxPu;
   end if;
 
-
-
   annotation(preferredView = "text",
     Icon(graphics = {Rectangle(extent = {{-100, 100}, {100, -100}}), Text(origin = {44, -1}, extent = {{-124, 81}, {36, 21}}, textString = "Current"), Text(origin = {-141, -71}, extent = {{-27, 9}, {13, -3}}, textString = "iqCmdPu"), Text(origin = {-141, 83}, extent = {{-27, 9}, {13, -3}}, textString = "ipCmdPu"), Text(origin = {135, -59}, extent = {{-27, 9}, {13, -3}}, textString = "iqMinPu"), Text(origin = {135, -13}, extent = {{-27, 9}, {13, -3}}, textString = "iqMaxPu"), Text(origin = {135, 43}, extent = {{-27, 9}, {13, -3}}, textString = "ipMinPu"), Text(origin = {133, 87}, extent = {{-27, 9}, {13, -3}}, textString = "ipMaxPu"), Text(origin = {44, -61}, extent = {{-124, 41}, {36, -19}}, textString = "limits"), Text(origin = {-146, 52}, extent = {{-20, 10}, {20, -10}}, textString = "ipVdlPu"), Text(origin = {-150, 8}, extent = {{-12, 6}, {12, -6}}, textString = "vDip"), Text(origin = {-146, -36}, extent = {{20, 6}, {-20, -6}}, textString = "iqVdlPu")}, coordinateSystem(initialScale = 0.1)));
-
-
 end CurrentLimitsCalculationWind;

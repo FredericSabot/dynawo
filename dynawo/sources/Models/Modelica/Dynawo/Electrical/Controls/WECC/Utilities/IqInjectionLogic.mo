@@ -18,14 +18,7 @@ block IqInjectionLogic "Reactive Current Injection Logic"
     Placement(visible = true, transformation(origin = {104, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {104, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
   // Variables to detect if a voltage dip started/ended and to handle the time dependency
-  Boolean vDipStart "boolean value defining the voltage dip start : true if voltage dip started ";
-  Modelica.SIunits.Time vDipInjEndTime "ending time of the voltage dip start : true if voltage dip started ";
-
-initial algorithm
-  vDipStart := false;
-  vDipInjEndTime := -1;
-
-algorithm
+  Modelica.SIunits.Time vDipInjEndTime (start = -1) "ending time of the voltage dip start : true if voltage dip started ";
 
   /*  CONTROL VARIABLE EXPLANATION:
    *
@@ -37,9 +30,8 @@ algorithm
    *
    *  1. If a Voltage dip occurs, vDipStart is set to true (and end timing is reset).
    *     Now the injection is set to the voltage dependent input.
-   *  2. When the Voltage dip ends, vDipStart is set to false and the end timing is
-   *     calculated by adding the absolute value of HoldIq to the current time. During
-   *     this time, Equations are activated, managing the injection depending on the
+   *  2. When the Voltage dip ends, the end timing is calculated by adding the absolute value of HoldIq to the current time.
+   *     During this time, Equations are activated, managing the injection depending on the
    *     value of HoldIq.
    *  3. Finally, if the current time passes the end timing vDipInjEndTime, it is
    *     reset to -1, and thus, the injection returns to 0.
@@ -48,23 +40,17 @@ algorithm
    *  'if' system in the equation section, since only the first or the else branch will
    *  be reached if HoldIq = 0. Therefore, there is no need to check for HoldIq != 0.*/
 
-  when vDip == true then
-    vDipStart := true;
-    vDipInjEndTime := -1; // Reset end timing if new voltage dip starts during freeze phase.
-  end when;
-  when vDip == false and vDipStart == true then // Vdip has ended, set timing and reset Vdip detection variable
-    vDipStart := false;
-    vDipInjEndTime := time + abs(HoldIq);
-  end when;
-  when time >= vDipInjEndTime and vDipInjEndTime >= 0 then // End time reached, reset.
-    vDipInjEndTime := -1;
-  end when;
-
 equation
+
+  when (vDip == false and pre(vDip) == true) or (time < pre(vDipInjEndTime) and pre(vDipInjEndTime) >= 0)  then
+    vDipInjEndTime = time + abs(HoldIq);
+  elsewhen (vDip == true or pre(vDip) == false) and (time >= pre(vDipInjEndTime) or pre(vDipInjEndTime) < 0) then
+    vDipInjEndTime = -1;
+  end when;
 
   if (vDip == true) or (vDip == false and vDipInjEndTime >= 0 and HoldIq > 0 and time <= vDipInjEndTime) then // check for vDipInjEndTime >= 0 to see if there is a freeze state and time <= vDipInjEndTime for additional safety.
     iqInjPu = iqV;
-  elseif vDip == false and vDipInjEndTime >= 0 and HoldIq < 0 and time <= vDipInjEndTime then
+  elseif (vDip == false and vDipInjEndTime >= 0 and HoldIq < 0 and time <= vDipInjEndTime) then
     iqInjPu = IqFrzPu;
   else
     iqInjPu = 0;

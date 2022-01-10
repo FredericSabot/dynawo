@@ -14,7 +14,7 @@
 <parametersSet xmlns="http://www.rte-france.com/dynawo">
   <set id="1">
     <par type="DOUBLE" name="infiniteBus_U0Pu" value="1"/>
-    <par type="DOUBLE" name="infiniteBus_UEvtPu" value="0.5"/>
+    <par type="DOUBLE" name="infiniteBus_UEvtPu" value="0.6"/>
     <par type="DOUBLE" name="infiniteBus_UPhase" value="0"/>
     <par type="DOUBLE" name="infiniteBus_omega0Pu" value="1"/>
     <par type="DOUBLE" name="infiniteBus_omegaEvtPu" value="1.01"/>
@@ -104,7 +104,6 @@
     <par type="DOUBLE" name="WTG4A_VRef1Pu" value="0"/>
     <par type="BOOL" name="WTG4A_PFlag" value="true"/>
     <par type="DOUBLE" name="WTG4A_Dshaft" value="1.5"/>
-    <par type="DOUBLE" name="WTG4A_Hg" value="1"/>
     <par type="DOUBLE" name="WTG4A_Hg" value="1"/>
     <par type="DOUBLE" name="WTG4A_Ht" value="5"/>
     <par type="DOUBLE" name="WTG4A_Kshaft" value="200"/>
