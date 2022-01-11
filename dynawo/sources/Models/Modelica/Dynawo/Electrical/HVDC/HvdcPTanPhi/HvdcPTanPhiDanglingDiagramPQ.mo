@@ -26,7 +26,7 @@ model HvdcPTanPhiDanglingDiagramPQ "Model for P/tan(Phi) HVDC link with a PQ dia
 
 */
 
-  input Types.Angle tanPhi1Ref(start = s10Pu.im/s10Pu.re) "tan(Phi) regulation set point at terminal 1";
+  input Real tanPhi1Ref(start = s10Pu.im/s10Pu.re) "tan(Phi) regulation set point at terminal 1";
 
 protected
 
