@@ -45,23 +45,18 @@ annotation(preferredView = "info",
 <p>Please follow the <a href=\"modelica://Modelica.UsersGuide.Conventions.ModelicaCode.Naming\">Modelica naming conventions</a>.</p>
 
 <ul>
-<li>
-<strong>Package/Class/Model</strong> : start with upper case letter and use camel-case convention, e.g \"ElectricCurrent\" </li>
-<li>
-<strong>Parameters/Constants</strong>: start with an upper case letter</li>
-<li>
-<strong>Variables/Connectors/Component</strong> instance : start with lower case letter and use camel-case convention</li>
-<li>
-<strong>Functions</strong>: start with lower case letter</li>
+<li><strong>Package/Class/Model</strong> : start with upper case letter and use camel-case convention, e.g \"ElectricCurrent\" </li>
+<li><strong>Parameters/Constants</strong>: start with an upper case letter</li>
+<li><strong>Variables/Connectors/Component</strong> instance : start with lower case letter and use camel-case convention</li>
+<li><strong>Functions</strong>: start with lower case letter</li>
 </ul>
 
-<p>In addition to this, please follow the additional naming conventions bellow (in that order):</p>
+<p>In addition to this, please follow the additional naming conventions below (in that order):</p>
 
 <ul dir=\"auto\">
-<li><strong>Min/Max</strong>&nbsp;parameters/variables: end with&nbsp;<code>Min/Max</code></li><li>
-<strong>Start</strong> parameters/variables: end with <code>0</code></li>
-<li>
-<strong>Per-unit</strong> parameters/variables: end with <code>Pu (always indicate \"in p.u\" in the comment along with the p.u base)</code></li>
+<li><strong>Min/Max</strong>&nbsp;parameters/variables: end with&nbsp;<code>Min/Max</code></li>
+<li><strong>Start</strong> parameters/variables: end with <code>0</code></li>
+<li><strong>Per-unit</strong> parameters/variables: end with <code>Pu (always indicate \"in p.u\" in the comment along with the p.u base)</code></li>
 </ul><div><font face=\"monospace\">Example: UMax0Pu.</font></div>
 
 <h3>
@@ -70,23 +65,15 @@ Exceptions for physical variables</h3>
 <p>There are some exceptions for the physical variables. Please refer to the list below:</p>
 
 <ul>
-<li>
-<strong>Frequencies</strong> should be named f. A parameter related to a frequency should start with a lower case letter, e.g fACNetwork.</li>
-<li>
-<strong>Currents</strong> should be named <code>i</code> (for complex variable),&nbsp;<code>I</code> (for absolute value) or id/iq for dq-axis values</li>
-<li>
-<strong>Voltages (phase-to-phase)</strong> should be named <code>u</code> (for complex variable),&nbsp;<code>U</code> (for absolute value) or ud/uq for dq-axis values</li>
-<li>
-<strong>Voltages (phase-to-ground)</strong> should be named <code>v</code> (for complex variable),&nbsp;<code>V</code> (for absolute value) or vd/vq for dq-axis values</li>
-<li>
-<strong>Apparent power</strong> should be named s (for complex variable) or S (for absolute value)</li>
-<li>
-<strong>Active power</strong> should be named P, <strong>reactive power</strong> should be named Q</li>
-<li>
-<strong>Impedance</strong> should be named <code>Z</code>, <strong>resistance</strong> should be named <code>R</code>, <strong>reactance</strong> should be named <code>X</code>, <strong>admittance</strong> should be named <code>Y</code>, <strong>conductance</strong> should be named <code>G</code>, <strong>susceptance</strong> should be named <code>B</code></li><li>
-<strong>Angles</strong> should be named according to their name in textbooks (ex: theta)</li>
-<li>
-<strong>Time</strong> should be named t (T is used for the temperature).
+<li><strong>Frequencies</strong> should be named f. A parameter related to a frequency should start with a lower case letter, e.g fACNetwork.</li>
+<li><strong>Currents</strong> should be named <code>i</code> (for complex variable),&nbsp;<code>I</code> (for absolute value) or id/iq for dq-axis values</li>
+<li><strong>Voltages (phase-to-phase)</strong> should be named <code>u</code> (for complex variable),&nbsp;<code>U</code> (for absolute value) or ud/uq for dq-axis values</li>
+<li><strong>Voltages (phase-to-ground)</strong> should be named <code>v</code> (for complex variable),&nbsp;<code>V</code> (for absolute value) or vd/vq for dq-axis values</li>
+<li><strong>Apparent power</strong> should be named s (for complex variable) or S (for absolute value)</li>
+<li><strong>Active power</strong> should be named P, <strong>reactive power</strong> should be named Q</li>
+<li><strong>Impedance</strong> should be named <code>Z</code>, <strong>resistance</strong> should be named <code>R</code>, <strong>reactance</strong> should be named <code>X</code>, <strong>admittance</strong> should be named <code>Y</code>, <strong>conductance</strong> should be named <code>G</code>, <strong>susceptance</strong> should be named <code>B</code></li>
+<li><strong>Angles</strong> should be named according to their name in textbooks (ex: theta)</li>
+<li><strong>Time</strong> should be named t (T is used for the temperature).
  A parameter related to a time should start with a lower case letter,
 e.g tInteger, t0...</li>
 </ul>
@@ -112,7 +99,13 @@ e.g tInteger, t0...</li>
 <li>Other libraries imports (alphabetical order)</li>
 <li>Internal Dynawo imports (alphabetical order)</li>
 <li>extends statements</li>
-<li>Public parameters (including extends)</li><li>Connectors (group them based on functional aspects), inputs/outputs (in that order)</li><li>Blocks&nbsp;(group them based on functional aspects)</li><li>Initial parameters (if not protected)</li><li>Protected parameters and protected final parameters</li><li>Protected initial parameters and protected initial final parameters</li><li>Protected variables</li>
+<li>Public parameters (including extends)</li>
+<li>Connectors (group them based on functional aspects), inputs/outputs (in that order)</li>
+<li>Blocks&nbsp;(group them based on functional aspects)</li>
+<li>Initial parameters (if not protected)</li>
+<li>Protected parameters followed by protected final parameters</li>
+<li>Protected initial parameters followed by protected initial final parameters</li>
+<li>Protected variables</li>
 <li>Equations: equations first, followed by when equations and if equations, blocks connections at the end</li>
 <li>Annotations: remove minor tool-specific annotations</li>
 </ul>
@@ -144,12 +137,9 @@ e.g tInteger, t0...</li>
 <li>Component state
 
 <ul>
-<li>
-<strong>running</strong> describes a state when something is flowing through the device</li>
-<li>
-<strong>on</strong> describes a state when the device is turned on (but no flow may be flowing through)</li>
-<li>
-<strong>off</strong> describes a state when the device is shut down (no flow is expected)</li>
+<li><strong>running</strong> describes a state when something is flowing through the device</li>
+<li><strong>on</strong> describes a state when the device is turned on (but no flow may be flowing through)</li>
+<li><strong>off</strong> describes a state when the device is shut down (no flow is expected)</li>
 </ul>
 </li>
 </ul>
@@ -160,6 +150,26 @@ e.g tInteger, t0...</li>
 
 <h3>Preferred view</h3>
 
-<p> Always set a preferred view to your model such as it will be opened by default in this view by Modelica-based environments:</p><p></p><ul><li>text view for equation-based models</li><li>diagram view for input/output or block models</li><li>info view for documentation</li></ul><div><h3>Blank lines and indentation</h3></div><div>Follow these rules regarding blank lines and indentation:</div><div><ul><li>One blank line between the \"within\" and the copyright</li><li>One blank line between the copyright and the model name</li><li><b>No</b> blank line between the model name and the first import</li><li>One blank line between the imports and the extends</li><li>One blank line between the extends and the parameters</li><li>One blank line between the parameters and the connectors/inputs/outputs</li><li>One blank line between the connectors/input/outputs and the blocks</li><li>One blank line between the blocks and the initial parameters</li><li>One blank line between the initial parameters and the protected section</li><li><b>No</b> blank line between the \"protected\" word and the first protected element</li><li>One blank line between the protected parameters and the protected init parameters</li><li>One blank line between the protected init parameters and protected variables</li><li>One blank line between the protected variables and the equation section</li><li><b>No</b> blank line between the \"equation\" word and the first equation</li><li>One blank line between equations and a when equation or an if equation</li><li>One blank line before annotations</li><li><b>No</b> blank line between annotations and end of model</li></ul><div>Two spaces must be used for indentation.</div></div><p></p></body></html>"));
+<p> Always set a preferred view to your model such as it will be opened by default in this view by Modelica-based environments:</p><p></p><ul>
+<li>text view for equation-based models</li>
+<li>diagram view for input/output or block models</li>
+<li>info view for documentation</li></ul><div><h3>Blank lines and indentation</h3></div><div>Follow these rules regarding blank lines and indentation:</div><div><ul>
+<li>One blank line between the \"within\" and the copyright</li>
+<li>One blank line between the copyright and the model name</li>
+<li><b>No</b> blank line between the model name and the first import</li>
+<li>One blank line between the imports and the extends</li>
+<li>One blank line between the extends and the parameters</li>
+<li>One blank line between the parameters and the connectors/inputs/outputs</li>
+<li>One blank line between the connectors/input/outputs and the blocks</li>
+<li>One blank line between the blocks and the initial parameters</li>
+<li>One blank line between the initial parameters and the protected section</li>
+<li><b>No</b> blank line between the \"protected\" word and the first protected element</li>
+<li>One blank line between the protected parameters and the protected init parameters</li>
+<li>One blank line between the protected init parameters and protected variables</li>
+<li>One blank line between the protected variables and the equation section</li>
+<li><b>No</b> blank line between the \"equation\" word and the first equation</li>
+<li>One blank line between equations and a when equation or an if equation</li>
+<li>One blank line before annotations</li>
+<li><b>No</b> blank line between annotations and end of model</li></ul><div>Two spaces must be used for indentation.</div></div><p></p></body></html>"));
 
 end NamingConventions;
