@@ -56,7 +56,7 @@ annotation(preferredView = "info",
 <ul dir=\"auto\">
 <li><strong>Min/Max</strong>&nbsp;parameters/variables: end with&nbsp;<code>Min/Max</code></li>
 <li><strong>Start</strong> parameters/variables: end with <code>0</code></li>
-<li><strong>Per-unit</strong> parameters/variables: end with <code>Pu (always indicate \"in p.u\" in the comment along with the p.u base)</code></li>
+<li><strong>Per-unit</strong> parameters/variables: end with <code>Pu (always indicate \"in pu\" in the comment along with the pu base)</code></li>
 </ul><div><font face=\"monospace\">Example: UMax0Pu.</font></div>
 
 <h3>
@@ -122,7 +122,7 @@ e.g tInteger, t0...</li>
 <p>Comments should start with a capital letter.</p>
 
 <ul>
-<li>Always comment <strong>all</strong> models, function, parameters and variables, using the Modelica <code>\"comments\"</code>, explaining concisely but clearly what is their meaning/use. These comments are meant for the library users and automatically show up at various places in the graphical user interface (e.g. in the variables browser to inspect simulation results).</li>
+<li>Always comment <strong>all</strong> models, function, parameters and variables, using the Modelica <code>\"comments\"</code>, explaining concisely but clearly what is their meaning/use. Always give the unit and the pu base. These comments are meant for the library users and automatically show up at various places in the graphical user interface (e.g. in the variables browser to inspect simulation results).</li>
 <li>Use <code>//</code> comments for equations and implementation description (base transformation, model conventions). These comments are meant for library developers.</li>
 </ul><div>In addition to comments, always fill the documentation part of your model (available in the documentation browser) by explaining what are the hypothesis done in the model and for which simulation the model could be used. If it is relevant, also include graphical views helping to understand the model's behavior. &nbsp;</div>
 
