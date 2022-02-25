@@ -107,6 +107,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   InfiniteBus.xml
   InfiniteBusFromTable.xml
   InfiniteBusWithImpedance.xml
+  InfiniteBusWithProgressiveVariations.xml
   InfiniteBusWithVariations.xml
   InjectorBG.xml
   IntegerDoubleStep.xml
