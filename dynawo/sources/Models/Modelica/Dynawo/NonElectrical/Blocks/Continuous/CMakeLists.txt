@@ -19,6 +19,7 @@ set(MODEL_FILES
   RateLimFirstOrderFreeze.mo
   VarLimPIDFreeze.mo
   LeadLag.mo
+  ComplexAbs.mo
   )
 
 #
