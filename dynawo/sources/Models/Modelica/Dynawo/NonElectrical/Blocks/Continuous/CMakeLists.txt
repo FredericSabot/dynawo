@@ -16,6 +16,7 @@ set(MODEL_FILES
   AbsLimRateLimFirstOrderFreeze.mo
   AbsLimRateLimFirstOrderFreezeLimDetection.mo
   AntiWindupIntegrator.mo
+  ComplexAbs.mo
   DecreaseDetection.mo
   DiscretePI.mo
   DiscretePI.extvar
