@@ -18,6 +18,8 @@ set(MODEL_FILES
   InfiniteBus.extvar
   InfiniteBusWithVariations.mo
   InfiniteBusWithVariations.extvar
+  InfiniteBusWithProgressiveVariations.mo
+  InfiniteBusWithProgressiveVariations.extvar
   )
 
 #
