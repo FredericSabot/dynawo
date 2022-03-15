@@ -13,6 +13,8 @@ set(MODEL_FILES
   package.mo
   package.order
   Automaton.mo
+  GNS3Automaton.mo
+  GetWallTime.mo
   )
 
 #

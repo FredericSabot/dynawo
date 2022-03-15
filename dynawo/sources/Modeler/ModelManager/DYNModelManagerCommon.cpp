@@ -26,6 +26,10 @@
 #include <cstdlib>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <time.h>
+#include <iostream>
+#include <iomanip>
+#include <tins/tins.h>
 
 #include "DYNMacrosMessage.h"
 #include "DYNSubModel.h"
@@ -295,6 +299,106 @@ callExternalAutomatonModel(const std::string& modelName, const char* command, co
       throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, outputsName[i]);
     outputs[i] = iter->second;
   }
+}
+
+timespec timeDiff(timespec end, timespec start) {
+  timespec temp;
+  if ((end.tv_nsec-start.tv_nsec) < 0) {
+    temp.tv_sec = end.tv_sec - start.tv_sec-1;
+    temp.tv_nsec = 1000000000 + end.tv_nsec - start.tv_nsec;
+  } else {
+    temp.tv_sec = end.tv_sec - start.tv_sec;
+    temp.tv_nsec = end.tv_nsec - start.tv_nsec;
+  }
+  return temp;
+}
+
+void
+callGNS3AutomatonModel(const std::string& modelName, const double* initWallTime, const double time,
+    const double* inputs, const char** inputsName, const int nbInputs, const int nbMaxInputs,
+    double* outputs, const char** outputsName, const int nbOutputs, const int nbMaxOutputs, const std::string& workingDirectory) {
+  if (nbInputs >= nbMaxInputs)
+    throw DYNError(Error::GENERAL, AutomatonMaximumInputSizeReached, modelName,
+        boost::lexical_cast<std::string>(nbInputs), boost::lexical_cast<std::string>(nbMaxInputs));
+  if (nbOutputs >= nbMaxOutputs)
+    throw DYNError(Error::GENERAL, AutomatonMaximumOutputSizeReached, modelName,
+        boost::lexical_cast<std::string>(nbOutputs), boost::lexical_cast<std::string>(nbMaxOutputs));
+  std::string workingDir = workingDirectory + "/execution/" + modelName + "/";
+
+  std::string separator = ";";
+  // write input file
+  std::stringstream unused;
+  unused << "time" << separator << time << std::endl;
+  for (int i=0; i< nbInputs; ++i)
+    unused << inputsName[i] << separator << inputs[i] << std::endl;
+
+  // assign outputs thanks to name
+  for (int i=0; i< nbOutputs; ++i) {
+    outputs[i] = 0;
+    outputsName[i] += ' ';  // Unused parameter for now
+  }
+
+  timespec wall_time;
+  clock_gettime(CLOCK_MONOTONIC, &wall_time);
+
+  timespec init_time;
+  init_time.tv_sec = static_cast<int>(initWallTime[0]);
+  init_time.tv_nsec = static_cast<int>(initWallTime[1]);
+
+  timespec elapsed_time = timeDiff(wall_time, init_time);
+
+  const double time_with_margin = time + 0.1;  // At first iteration, time = 0 which would lead to a negative wait_time. Thus add a small margin
+  timespec dynawo_time;
+  dynawo_time.tv_sec = static_cast<int>(time_with_margin);
+  dynawo_time.tv_nsec = 1000000000 * (time_with_margin - static_cast<int>(time_with_margin));
+
+  timespec wait_time = timeDiff(dynawo_time, elapsed_time);
+  // std::cout << "elapsed " << elapsed_time.tv_sec << "s, " << std::setw(9) << std::setfill('0') << elapsed_time.tv_nsec << "ns" << std::endl;
+  // std::cout << "dynawo  " << dynawo_time.tv_sec << "s, " << std::setw(9) << std::setfill('0') << dynawo_time.tv_nsec << "ns" << std::endl;
+  if (wait_time.tv_sec < 0 && time > 0.1) {  // At t = 0, allow delay because of bug that make it occur twice
+    timespec time_zero, time_delay;
+    time_zero.tv_nsec = 0;
+    time_zero.tv_sec = 0;
+    time_delay = timeDiff(time_zero, wait_time);
+    std::cout << "At time " << time << ", too late by " << time_delay.tv_sec
+        << "s, " << std::setw(9) << std::setfill('0') << time_delay.tv_nsec << "ns" << std::endl;
+    // throw DYNError(Error::SIMULATION, CriteriaNotChecked);  // TODO(fsabot): more appropriate error message (dynawo cannot catch up to real time)
+  } else {
+    int it = 0;
+    while (wait_time.tv_sec >= 0) {  // Busy wait loop
+      clock_gettime(CLOCK_MONOTONIC, &wall_time);
+      elapsed_time = timeDiff(wall_time, init_time);
+      wait_time = timeDiff(dynawo_time, elapsed_time);
+      it++;
+    }
+    // std::cout << it << std::endl;
+  }
+  if (wait_time.tv_nsec < 999000000) {
+    std::cout << "More than 1ms delay at time: " << time << std::endl;
+    std::cout << wait_time.tv_sec << "s, " << std::setw(9) << std::setfill('0') << wait_time.tv_nsec << "ns" << std::endl;
+  }
+
+  Tins::PacketSender sender;
+  Tins::IP pkt = Tins::IP("127.0.0.1") / Tins::UDP(22) / Tins::RawPDU("Hello World!");
+  sender.send(pkt);
+
+  Tins::SnifferConfiguration config;
+  config.set_immediate_mode(true);
+  config.set_timeout(1);
+  // config.set_filter("ip src 192.168.0.100");
+  /*Tins::Sniffer sniffer("lo", config);
+  Tins::PDU *some_pdu = sniffer.next_packet();  // TODO(fsabot): this is blocking, so I will need a queue
+  std::cout << some_pdu->rfind_pdu<Tins::IP>().RAW << std::endl;
+  delete some_pdu;*/
+}
+
+void
+callGetWallTime(const double test, double* wallTime) {
+  timespec time;
+  clock_gettime(CLOCK_MONOTONIC, &time);
+  wallTime[0] = test;  // Avoid unused
+  wallTime[0] = static_cast<int>(time.tv_sec);
+  wallTime[1] = static_cast<int>(time.tv_nsec);
 }
 
 modelica_real

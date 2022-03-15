@@ -51,6 +51,8 @@ target_link_libraries(dynawo_ModelManager
     dynawo_SolverKINSubModel
     Boost::serialization
     Boost::system
+  PUBLIC
+    tins
   )
 
 set_target_properties(dynawo_ModelManager PROPERTIES VERSION ${MODEL_MANAGER_VERSION_STRING}

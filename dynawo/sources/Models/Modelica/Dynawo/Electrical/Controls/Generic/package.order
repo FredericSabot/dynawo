@@ -1,3 +1,5 @@
 Functions
 GenericAutomaton
 GenericAutomatonConstants
+GNS3Connection
+GNS3ConnectionConstants

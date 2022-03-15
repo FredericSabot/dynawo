@@ -294,6 +294,11 @@ inline modelica_boolean GreaterEq<double>(double a, double b) {
     callExternalAutomatonModel((this)->getModelManager()->name(), command, time, inputs, inputs_name, nbInputs, nbMaxInputs, outputs, outputs_name, nbOutputs, \
 nbMaxOutputs, this->getModelManager()->getWorkingDirectory());
 
+#define callGNS3Automaton(wallTime, time, inputs, inputs_name, nbInputs, nbMaxInputs, outputs, outputs_name, nbOutputs, nbMaxOutputs) \
+    callGNS3AutomatonModel((this)->getModelManager()->name(), wallTime, time, inputs, inputs_name, nbInputs, nbMaxInputs, outputs, \
+outputs_name, nbOutputs, \
+nbMaxOutputs, this->getModelManager()->getWorkingDirectory());
+
 #define delayImpl(data, exprNumber, exprValue, time, delayTime, delayMax) \
   computeDelay((this)->getModelManager(), data, exprNumber, exprValue, time, delayTime, delayMax)
 
@@ -677,6 +682,43 @@ void callExternalAutomatonModel(const std::string& modelName, const char* comman
     const double* inputs, const char** inputs_name, const int nbInputs, const int nbMaxInputs,
     double* outputs, const char** outputs_name, const int nbOutputs, const int nbMaxOutputs,
     const std::string& workingDirectory);
+
+/**
+ * @brief Compute diff between two timespec
+ *
+ * @param start start timespec
+ * @param end end timespec
+ */
+timespec timeDiff(timespec start, timespec end);
+
+/**
+ * @brief send packets in real-time
+ *
+ * @param modelName name of the model where the call is made
+ * @param initWallTime wall time when the automaton is called for the first time ([0] is the part in seconds, [1] is the part in nanoseconds)
+ * @param time current time
+ * @param inputs current values needed by the automaton
+ * @param inputs_name name associated to each input value
+ * @param nbInputs number of inputs needed by the automaton
+ * @param nbMaxInputs maximum number of inputs
+ * @param outputs values calculated by the automaton
+ * @param outputs_name name associated to each ouput value
+ * @param nbOutputs number of outputs calculated by the automaton
+ * @param nbMaxOutputs maximum number of outputs
+ * @param workingDirectory Working directory of the simulation.
+ */
+void callGNS3AutomatonModel(const std::string& modelName, const double* initWallTime, const double time, const double* inputs,
+    const char** inputs_name, const int nbInputs, const int nbMaxInputs,
+    double* outputs, const char** outputs_name, const int nbOutputs, const int nbMaxOutputs,
+    const std::string& workingDirectory);
+
+/**
+ * @brief get wall time
+ *
+ * @param test not used value, in the current implementation external C++ Modelica calls need an input
+ * @param wallTime wall time ([0] is part in seconds, [1] is part in nanoseconds), is actually an int, but for now, Modelica calls can only be double
+ */
+void callGetWallTime(const double test, double* wallTime);
 
 }  // namespace DYN
 #endif  // MODELER_MODELMANAGER_DYNMODELMANAGERCOMMON_H_

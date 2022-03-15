@@ -17,6 +17,9 @@ set(MODEL_FILES
   GenericAutomaton.mo
   GenericAutomatonConstants.mo
   GenericAutomaton.extvar
+  GNS3Connection.mo
+  GNS3ConnectionConstants.mo
+  GNS3Connection.extvar
   )
 
 #

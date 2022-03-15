@@ -371,7 +371,7 @@
     <par type="BOOL" name="event_disconnectExtremity" value="true"/>
   </set>
   <set id="GenDisc">
-    <par type="DOUBLE" name="event_tEvent" value="5000000.1"/>
+    <par type="DOUBLE" name="event_tEvent" value="50.1"/>
     <par type="BOOL" name="event_stateEvent1" value="true"/>
   </set>
   <set id="LoadFlexibility">
@@ -382,21 +382,29 @@
     <par type="DOUBLE" name="deltaQ_load_0" value="0"/>
   </set>
   <set id="Load_4_Change">
-    <par type="DOUBLE" name="event_tEvent" value="5.1"/>
+    <par type="DOUBLE" name="event_tEvent" value="50.1"/>
     <par type="DOUBLE" name="event_stateEvent1" value="0.2"/> <!--Init = 0.2162*185 = 40MW-->
     <par type="DOUBLE" name="event_stateEvent2" value="-0.12"/>
   </set>
   <set id="Load_4_Restore">
-    <par type="DOUBLE" name="event_tEvent" value="6.1"/>
+    <par type="DOUBLE" name="event_tEvent" value="60.1"/>
     <par type="DOUBLE" name="event_stateEvent1" value="0.4"/> <!--Init = 0.2162*185 = 40MW-->
     <par type="DOUBLE" name="event_stateEvent2" value="-0.12"/>
   </set>
+  <set id="GNS3">
+    <par type="DOUBLE" name="automaton_SamplingTime" value="0.04"/>
+    <par type="INT" name="automaton_NbInputs" value="2"/>
+    <par type="INT" name="automaton_NbOutputs" value="0"/>
+    <par type="STRING" name="automaton_InputsName_1_" value="PMU_V_1"/>
+    <par type="STRING" name="automaton_InputsName_2_" value="PMU_V_2"/>
+  </set>
   <set id="IDAOrder2">
     <par type="INT" name="order" value="2"/>
-    <par type="DOUBLE" name="initStep" value="0.000001"/>
-    <par type="DOUBLE" name="minStep" value="0.000001"/>
-    <par type="DOUBLE" name="maxStep" value="10"/>
-    <par type="DOUBLE" name="absAccuracy" value="1e-4"/>
-    <par type="DOUBLE" name="relAccuracy" value="1e-4"/>
+    <par type="DOUBLE" name="initStep" value="0.0001"/> <!--Need lower precision to be able to simulate in real-time-->
+    <par type="DOUBLE" name="minStep" value="0.000001"/> <!--Allow smaller steps to be able to have really periodic external calls-->
+    <par type="DOUBLE" name="maxStep" value="0.005"/> <!--Small to avoid skipping periods + avoid too much accuracy loss-->
+    <par type="DOUBLE" name="absAccuracy" value="5e-2"/> <!--Need lower precision to be able to simulate in real-time-->
+    <par type="DOUBLE" name="relAccuracy" value="5e-2"/>
+    <par type="INT" name="maximumNumberSlowStepIncrease" value="1000"/>
   </set>
 </parametersSet>

@@ -15,7 +15,7 @@
   <dyn:job name="RBTS - Fault">
     <dyn:solver lib="dynawo_SolverIDA" parFile="RBTS.par" parId="IDAOrder2"/>
     <dyn:modeler compileDir="outputs/compilation">
-      <dyn:network iidmFile="RBTS_ACOPF_peak_L3_shunt_typical.iidm" parFile="RBTS.par" parId="Network"/>
+      <dyn:network iidmFile="RBTS_ACOPF_peak_L2_shunt_typical.iidm" parFile="RBTS.par" parId="Network"/>
       <dyn:dynModels dydFile="RBTS.dyd"/>
       <dyn:precompiledModels useStandardModels="true"/>
       <dyn:modelicaModels useStandardModels="true"/>
@@ -23,7 +23,6 @@
     <dyn:simulation startTime="0" stopTime="20"/>
     <dyn:outputs directory="outputs">
       <dyn:curves inputFile="RBTS.crv" exportMode="CSV"/>
-      <dyn:dumpInitValues local="true" global="true"/>
       <dyn:logs>
         <dyn:appender tag="" file="dynawo.log" lvlFilter="INFO"/>
       </dyn:logs>
