@@ -77,6 +77,10 @@ IdealSwitchSwitchOn       =             Ideal switch closed
 // --> HVDC Line
 DCLineOpen                =             DC line open
 DCLineClosed              =             DC line closed
+// --> Low voltage ride-through automaton
+LVRTTripped                =              LVRT generator trip
+LVRTArming                 =              LVRT automaton for generator arming
+LVRTDisarming              =              LVRT automaton for generator disarming
 //-------------  C++ models ----------------------------------------------
 // --> BUS
 NodeOff                   =             BUS : switch off

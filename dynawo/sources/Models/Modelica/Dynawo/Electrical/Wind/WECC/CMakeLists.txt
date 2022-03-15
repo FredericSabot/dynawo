@@ -16,6 +16,8 @@ set(MODEL_FILES
   WTG4BCurrentSource.mo
   WTG4BCurrentSource.extvar
   WTG4CurrentSource_INIT.mo
+  WTG4ACurrentSourceAggregateLVRT.mo
+  WTG4ACurrentSourceAggregateLVRT.extvar
   )
 
 #

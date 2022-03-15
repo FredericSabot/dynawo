@@ -162,6 +162,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   WeightedDifference.xml
   WindTurbine4AWeccCurrentSource.xml
   WindTurbine4BWeccCurrentSource.xml
+  WindTurbine4AWeccCurrentSourceAggregateLVRT.xml
   )
 
 # PYTHON scripts preassembled models
