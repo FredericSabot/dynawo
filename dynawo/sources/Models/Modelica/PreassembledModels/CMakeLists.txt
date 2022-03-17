@@ -123,6 +123,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   LoadTwoTransformers.xml
   LoadTwoTransformersTapChangers.xml
   LoadZIP.xml
+  LVRT.xml
   Measurements.xml
   NodeFault.xml
   PhaseShifterBlockingI.xml
