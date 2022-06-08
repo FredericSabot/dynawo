@@ -55,7 +55,7 @@ If you use this version of the RBTS in your work, please quote the following pap
 ``` bash
 @inproceedings{DynamicRBTS,
 author = {Sabot, Frédéric and Henneaux, Pierre and Labeau, Pierre-Etienne and Dricot, Jean-Michel},
-booktitle={\(\lambda\mu23\) congress},
+booktitle={23e congrès de Maîtrise des risques et de Sûreté de Fonctionnement (Lambda Mu 23)},
 year = {2022},
 title = {Impact of the reliability of {ICT} systems on power systems with system integrity protection schemes},
 doi = {To be added after publication}
