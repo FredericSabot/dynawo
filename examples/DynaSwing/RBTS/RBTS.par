@@ -46,7 +46,7 @@
     <par type="DOUBLE" name="load_beta" value="2"/>
     <par type="DOUBLE" name="load_betaLong" value="0"/>
     <par type="BOOL" name="load_isControllable" value="false"/>
-    <par type="BOOL" name="LOAD-4_isControllable" value="true"/>
+    <par type="BOOL" name="LOAD-4_isControllable" value="false"/>
     <par type="BOOL" name="load_isRestorative" value="false"/>
     <par type="DOUBLE" name="load_zPMax" value="100"/>
     <par type="DOUBLE" name="load_zQMax" value="100"/>
@@ -349,15 +349,17 @@
   </set>
   <set id="OmegaRef">
     <par type="INT" name="nbGen" value="9"/>
-    <par type="DOUBLE" name="weight_gen_0" value="30.449"/>
-    <par type="DOUBLE" name="weight_gen_1" value="30.449"/>
-    <par type="DOUBLE" name="weight_gen_2" value="5"/>
-    <par type="DOUBLE" name="weight_gen_3" value="5"/>
-    <par type="DOUBLE" name="weight_gen_4" value="40"/>
-    <par type="DOUBLE" name="weight_gen_5" value="20"/>
-    <par type="DOUBLE" name="weight_gen_6" value="20"/>
-    <par type="DOUBLE" name="weight_gen_7" value="20"/>
-    <par type="DOUBLE" name="weight_gen_8" value="20"/>
+    <par type="DOUBLE" name="omegaRefMin" value="0.98"/> <!--Avoid UFLS-->
+    <par type="DOUBLE" name="omegaRefMax" value="1.02"/>
+    <par type="DOUBLE" name="weight_gen_0" value="230.125"/> <!--260/51.2MW*40MW-->
+    <par type="DOUBLE" name="weight_gen_1" value="230.125"/>
+    <par type="DOUBLE" name="weight_gen_2" value="13.0555"/>
+    <par type="DOUBLE" name="weight_gen_3" value="13.0555"/>
+    <par type="DOUBLE" name="weight_gen_4" value="290.2857"/>
+    <par type="DOUBLE" name="weight_gen_5" value="133.7142"/>
+    <par type="DOUBLE" name="weight_gen_6" value="133.7142"/>
+    <par type="DOUBLE" name="weight_gen_7" value="133.7142"/>
+    <par type="DOUBLE" name="weight_gen_8" value="133.7142"/>
   </set>
   <set id="Fault">
     <par type="DOUBLE" name="fault_RPu" value="0"/>
@@ -371,23 +373,23 @@
     <par type="BOOL" name="event_disconnectExtremity" value="true"/>
   </set>
   <set id="GenDisc">
-    <par type="DOUBLE" name="event_tEvent" value="5000000.1"/>
+    <par type="DOUBLE" name="event_tEvent" value="50.1"/>
     <par type="BOOL" name="event_stateEvent1" value="true"/>
   </set>
   <set id="LoadFlexibility">
     <par type="INT" name="nbLoads" value="1"/>
-    <par type="DOUBLE" name="startTime" value="5.05"/>
-    <par type="DOUBLE" name="stopTime" value="5.1"/>
+    <par type="DOUBLE" name="startTime" value="50.05"/>
+    <par type="DOUBLE" name="stopTime" value="50.1"/>
     <par type="DOUBLE" name="deltaP_load_0" value="-0.5"/> <!--Change in %-->
     <par type="DOUBLE" name="deltaQ_load_0" value="0"/>
   </set>
   <set id="Load_4_Change">
-    <par type="DOUBLE" name="event_tEvent" value="5.1"/>
+    <par type="DOUBLE" name="event_tEvent" value="50.1"/>
     <par type="DOUBLE" name="event_stateEvent1" value="0.2"/> <!--Init = 0.2162*185 = 40MW-->
     <par type="DOUBLE" name="event_stateEvent2" value="-0.12"/>
   </set>
   <set id="Load_4_Restore">
-    <par type="DOUBLE" name="event_tEvent" value="6.1"/>
+    <par type="DOUBLE" name="event_tEvent" value="60.1"/>
     <par type="DOUBLE" name="event_stateEvent1" value="0.4"/> <!--Init = 0.2162*185 = 40MW-->
     <par type="DOUBLE" name="event_stateEvent2" value="-0.12"/>
   </set>
@@ -396,7 +398,8 @@
     <par type="DOUBLE" name="initStep" value="0.000001"/>
     <par type="DOUBLE" name="minStep" value="0.000001"/>
     <par type="DOUBLE" name="maxStep" value="10"/>
-    <par type="DOUBLE" name="absAccuracy" value="1e-4"/>
-    <par type="DOUBLE" name="relAccuracy" value="1e-4"/>
+    <par type="DOUBLE" name="absAccuracy" value="1e-3"/>
+    <par type="DOUBLE" name="relAccuracy" value="1e-3"/>
+    <par type="INT" name="maximumNumberSlowStepIncrease" value="1000"/>
   </set>
 </parametersSet>

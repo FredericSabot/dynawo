@@ -20,16 +20,19 @@
   <curve model="NETWORK" variable="BUS-6_Upu_value"/>
   <curve model="GEN-1" variable="generator_omegaPu"/>
   <curve model="GEN-1" variable="generator_PGen"/>
+  <curve model="GEN-1" variable="generator_PmPu_value"/>
   <curve model="GEN-1" variable="generator_QGen"/>
   <curve model="GEN-1" variable="generator_UStatorPu"/>
   <curve model="GEN-1" variable="voltageRegulator_EfdPu"/>
   <curve model="GEN-1_0" variable="generator_omegaPu"/>
   <curve model="GEN-1_0" variable="generator_PGen"/>
+  <curve model="GEN-1_0" variable="generator_PmPu_value"/>
   <curve model="GEN-1_0" variable="generator_QGen"/>
   <curve model="GEN-1_0" variable="generator_UStatorPu"/>
   <curve model="GEN-1_0" variable="voltageRegulator_EfdPu"/>
   <curve model="GEN-2" variable="generator_omegaPu"/>
   <curve model="GEN-2" variable="generator_PGen"/>
+  <curve model="GEN-2" variable="generator_PmPu_value"/>
   <curve model="GEN-2" variable="generator_QGen"/>
   <curve model="GEN-2" variable="generator_UStatorPu"/>
   <curve model="GEN-2" variable="voltageRegulator_EfdPu"/>
@@ -65,6 +68,9 @@
   <curve model="GEN-2_5" variable="voltageRegulator_EfdPu"/>
   <curve model="LOAD-2" variable="load_PPu"/>
   <curve model="LOAD-3" variable="load_PPu"/>
+  <curve model="NETWORK" variable="LOAD-3_P_value"/>
+  <curve model="NETWORK" variable="LOAD-3_Pc_value"/>
+  <curve model="LOAD-3" variable="load_PRefPu"/>
   <curve model="LOAD-4" variable="load_PPu"/>
   <curve model="NETWORK" variable="LOAD-4_P_value"/>
   <curve model="NETWORK" variable="LOAD-4_Pc_value"/>
@@ -84,8 +90,9 @@
   <curve model="NETWORK" variable="LINE-4-5_i1_value"/>
   <curve model="NETWORK" variable="LINE-5-6_i1_value"/>
   <curve model="OMEGA_REF" variable="omegaRef_grp_0"/> <!--Average of 0-9 if no islands-->
+  <curve model="OMEGA_REF" variable="omegaRef_grp_1"/>
   <curve model="OMEGA_REF" variable="omega_grp_0"/> <!--Bus 1-->
   <curve model="OMEGA_REF" variable="omega_grp_2"/> <!--Bus 2 - 5MW gen-->
-  <curve model="OMEGA_REF" variable="omega_grp_4"/>
-  <curve model="OMEGA_REF" variable="omega_grp_5"/>
+  <curve model="OMEGA_REF" variable="omega_grp_4"/> <!--Bus 2 - 40MW gen-->
+  <curve model="OMEGA_REF" variable="omega_grp_5"/> <!--Bus 2 - 20MW gen-->
 </curvesInput>
