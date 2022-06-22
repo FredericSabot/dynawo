@@ -36,6 +36,7 @@
 -->
 <parametersSet xmlns="http://www.rte-france.com/dynawo">
   <set id="Network">
+    <par type="INT" name="subnetwork_id" value="1"/>
     <par type="DOUBLE" name="capacitor_no_reclosing_delay" value="300"/>
     <par type="DOUBLE" name="dangling_line_currentLimit_maxTimeOperation" value="90"/>
     <par type="DOUBLE" name="line_currentLimit_maxTimeOperation" value="90"/>

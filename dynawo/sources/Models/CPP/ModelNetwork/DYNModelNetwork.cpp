@@ -793,12 +793,14 @@ ModelNetwork::initializeStaticData() {
   for (itComponent = getComponents().begin(); itComponent != getComponents().end(); ++itComponent) {
     (*itComponent)->init(yNum);
   }
+
+  timeOfLastSplitting_ = getCurrentTime();
 }
 
 void
 ModelNetwork::analyseComponents() {
-  // keep the biggest component
   vector< shared_ptr<SubNetwork> > subNetworks = busContainer_->getSubNetworks();
+  /* Old behaviour: keep the biggest component
   unsigned int nbMaxNode = 0;
   unsigned int maxIndex = 0;
   for (unsigned int i = 0; i < subNetworks.size(); ++i) {
@@ -807,12 +809,20 @@ ModelNetwork::analyseComponents() {
       maxIndex = i;
     }
   }
-  Trace::debug() << DYNLog(KeepSubNetwork, maxIndex) << Trace::endline;
-  for (unsigned int i = 0; i < subNetworks.size(); ++i) {
-    if (i == maxIndex)
-      subNetworks[i]->turnOnNodes();
-    else
-      subNetworks[i]->shutDownNodes();
+  */
+  if (subNetworks.size() > 1) {
+    if (timeOfLastSplitting_ == getCurrentTime()) {
+      Trace::debug() << DYNLog(KeepSubNetwork, subNetworkId_) << Trace::endline;
+      for (unsigned int i = 0; i < subNetworks.size(); ++i) {
+        if (i == subNetworkId_)
+          subNetworks[i]->turnOnNodes();
+        else
+          subNetworks[i]->shutDownNodes();
+      }
+      timeOfLastSplitting_ = getCurrentTime();
+    } else {
+      throw DYNError(Error::SIMULATION, DumpStateError);
+    }
   }
 }
 
@@ -1252,6 +1262,8 @@ ModelNetwork::defineParameters(vector<ParameterModeler>& parameters) {
   ModelTwoWindingsTransformer::defineParameters(parameters);
   ModelHvdcLink::defineParameters(parameters);
 
+  parameters.push_back(ParameterModeler("subnetwork_id", VAR_TYPE_INT, EXTERNAL_PARAMETER));
+
   vector<shared_ptr<NetworkComponent> >::const_iterator itComponent;
   for (itComponent = getComponents().begin(); itComponent != getComponents().end(); ++itComponent) {
     (*itComponent)->defineNonGenericParameters(parameters);
@@ -1326,6 +1338,13 @@ ModelNetwork::setSubModelParameters() {
   vector<shared_ptr<NetworkComponent> >::const_iterator itComponent;
   for (itComponent = getComponents().begin(); itComponent != getComponents().end(); ++itComponent) {
     (*itComponent)->setSubModelParameters(parametersDynamic_);
+  }
+
+  if (hasParameter("subnetwork_id", false)) {
+    ParameterModeler pm = findParameter("subnetwork_id", false);
+    if (pm.hasOrigin(PAR)) {
+      subNetworkId_ = pm.getValue<int>();
+    }
   }
 }
 

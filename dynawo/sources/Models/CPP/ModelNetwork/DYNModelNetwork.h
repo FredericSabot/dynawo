@@ -365,6 +365,11 @@ class ModelNetwork : public ModelCPP, private boost::noncopyable {
   bool isInitModel_;  ///< whether the current model used is the init one
   bool withNodeBreakerTopology_;  ///< whether at least one voltageLevel has node breaker topology view
 
+  double timeOfLastSplitting_;  ///< Time of the last system split, default to starting time of the simulation
+
+  // Parameters
+  int subNetworkId_;  ///< Id of the subnetwork that will be simulated after a system splitting
+
   boost::shared_ptr<ModelBusContainer> busContainer_;  ///< all network buses
   std::vector<boost::shared_ptr<ModelVoltageLevel> > vLevelComponents_;  ///< all voltage level components
   std::vector<boost::shared_ptr<ModelVoltageLevel> > vLevelInitComponents_;  ///< all voltage level components  (used for init model)

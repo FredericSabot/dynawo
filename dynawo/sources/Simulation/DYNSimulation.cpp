@@ -934,7 +934,16 @@ Simulation::simulate() {
 
       bool isCheckCriteriaIter = data_ && activateCriteria_ && currentIterNb % criteriaStep_ == 0;
 
-      solver_->solve(tStop_, tCurrent_);
+      bool stopForSplitting = false;
+      try {
+        solver_->solve(tStop_, tCurrent_);
+      } catch (const Error& e) {
+        if (e.key() == DYN::KeyError_t::DumpStateError) {  // TODO(fsabot): Create a SystemSplitting KeyError to replace this one
+          stopForSplitting = true;
+        } else {
+          throw e;
+        }
+      }
       solver_->printSolve();
       if (currentIterNb == 0)
         printHighestDerivativesValues();
@@ -988,6 +997,9 @@ Simulation::simulate() {
         }
         intermediateStates_.pop();
       }
+
+      if (stopForSplitting)
+        break;
     }
 
     // If we haven't evaluated the calculated variables for the last iteration before, we must do it here if it might be used in the post process

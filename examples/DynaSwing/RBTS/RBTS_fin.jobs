@@ -19,10 +19,10 @@
       <dyn:dynModels dydFile="RBTS.dyd"/>
       <dyn:precompiledModels useStandardModels="true"/>
       <dyn:modelicaModels useStandardModels="true"/>
+      <dyn:initialState file="outputs/finalState/outputState.dmp"/>
     </dyn:modeler>
-    <dyn:simulation startTime="0" stopTime="20"/>
-    <dyn:outputs directory="outputs">
-      <dyn:finalState exportIIDMFile="true" exportDumpFile="true"/>
+    <dyn:simulation startTime="5.1" stopTime="20"/>
+    <dyn:outputs directory="outputs_fin">
       <dyn:curves inputFile="RBTS.crv" exportMode="CSV"/>
       <dyn:logs>
         <dyn:appender tag="" file="dynawo.log" lvlFilter="DEBUG"/>
