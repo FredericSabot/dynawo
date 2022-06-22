@@ -811,6 +811,11 @@ ModelNetwork::analyseComponents() {
   }
   */
   if (subNetworks.size() > 1) {
+    /*
+    This function can be called multiple times for a given splitting event due to solver reinits.
+    We thus only throw an error (used to terminate gracefully the simulator such that it can then
+    be relaunched once for each subnetwork to simulate) the first time a splitting event is encountered.
+    */
     if (timeOfLastSplitting_ == getCurrentTime()) {
       Trace::debug() << DYNLog(KeepSubNetwork, subNetworkId_) << Trace::endline;
       for (unsigned int i = 0; i < subNetworks.size(); ++i) {
