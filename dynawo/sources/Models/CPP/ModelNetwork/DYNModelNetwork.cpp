@@ -826,7 +826,7 @@ ModelNetwork::analyseComponents() {
       }
       timeOfLastSplitting_ = getCurrentTime();
     } else {
-      throw DYNError(Error::SIMULATION, DumpStateError);
+      throw DYNError(Error::SIMULATION, SystemSplitting);
     }
   }
 }

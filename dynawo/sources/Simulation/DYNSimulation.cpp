@@ -938,7 +938,7 @@ Simulation::simulate() {
       try {
         solver_->solve(tStop_, tCurrent_);
       } catch (const Error& e) {
-        if (e.key() == DYN::KeyError_t::DumpStateError) {  // TODO(fsabot): Create a SystemSplitting KeyError to replace this one
+        if (e.key() == DYN::KeyError_t::SystemSplitting) {  // TODO(fsabot): Create a SystemSplitting KeyError to replace this one
           stopForSplitting = true;
         } else {
           throw e;
