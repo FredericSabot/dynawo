@@ -1345,6 +1345,7 @@ ModelNetwork::setSubModelParameters() {
     (*itComponent)->setSubModelParameters(parametersDynamic_);
   }
 
+  // TODO(fsabot): use a function that actually checks if the parameter is given in the PAR file, or make the parameter mandatory
   if (hasParameter("subnetwork_id", false)) {
     ParameterModeler pm = findParameter("subnetwork_id", false);
     if (pm.hasOrigin(PAR)) {
