@@ -17,9 +17,9 @@
     <dyn:modeler compileDir="outputs/compilation">
       <dyn:network iidmFile="RBTS_ACOPF_peak_L3_shunt_typical.iidm" parFile="RBTS.par" parId="Network"/>
       <dyn:dynModels dydFile="RBTS.dyd"/>
+      <dyn:initialState file="outputs/finalState/outputState.dmp"/>
       <dyn:precompiledModels useStandardModels="true"/>
       <dyn:modelicaModels useStandardModels="true"/>
-      <dyn:initialState file="outputs/finalState/outputState.dmp"/>
     </dyn:modeler>
     <dyn:simulation startTime="5.1" stopTime="20"/>
     <dyn:outputs directory="outputs_fin">
