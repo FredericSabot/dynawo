@@ -25,6 +25,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/vector.hpp>
+#include "helics/cpp98/helics.hpp"
 
 #include "PARParameter.h"
 
@@ -62,11 +63,19 @@ modelInit_(NULL),
 modelDyn_(NULL),
 dataInit_(new DYNDATA),
 dataDyn_(new DYNDATA),
-modelInitUsed_(false) { }
+modelInitUsed_(false),
+helicsTime_(-1),
+fed_(NULL) { }
 
 ModelManager::~ModelManager() {
   delete dataInit_;
   delete dataDyn_;
+
+  // Cleaning Helics stuff
+  /*fed_->requestTime(HELICS_BIG_NUMBER);  // Clear out any pending messages
+  fed_->finalize();
+  helicscpp::cleanupHelicsLibrary();
+  Trace::debug() << "Federate finalized" << Trace::endline;*/
 }
 
 DYNDATA*

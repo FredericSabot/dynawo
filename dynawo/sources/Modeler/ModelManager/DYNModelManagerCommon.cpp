@@ -26,6 +26,10 @@
 #include <cstdlib>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include "helics/cpp98/helics.hpp"
+#include "helics/cpp98/ValueFederate.hpp"
+#include "helics/cpp98/Publication.hpp"
+#include "helics/cpp98/Input.hpp"
 
 #include "DYNMacrosMessage.h"
 #include "DYNSubModel.h"
@@ -296,7 +300,82 @@ callExternalAutomatonModel(const std::string& modelName, const char* command, co
     outputs[i] = iter->second;
   }
 }
+/*
+void
+initHelicsCosimulationInterface(ModelManager* manager, const std::string& workingDirectory) {
+  helicscpp::ValueFederate fed(workingDirectory + "/Dynawo.json");
 
+  if (!fed.getIntegerProperty(HELICS_FLAG_UNINTERRUPTIBLE)) {
+    std::cout << "Dynawo should be flagged uninterruptible" << std::endl;
+    throw;
+  }
+  manager->fed_ = &fed;
+
+  fed.enterExecutingMode();
+}
+
+void
+callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& modelName, const double time,
+    const double* inputs, const char** inputsName, const int nbInputs, const int nbMaxInputs,
+    double* outputs, const char** outputsName, const int nbOutputs, const int nbMaxOutputs,
+    const std::string& workingDirectory) {
+  if (nbInputs >= nbMaxInputs)
+    throw DYNError(Error::GENERAL, AutomatonMaximumInputSizeReached, modelName,
+        boost::lexical_cast<std::string>(nbInputs), boost::lexical_cast<std::string>(nbMaxInputs));
+  if (nbOutputs >= nbMaxOutputs)
+    throw DYNError(Error::GENERAL, AutomatonMaximumOutputSizeReached, modelName,
+        boost::lexical_cast<std::string>(nbOutputs), boost::lexical_cast<std::string>(nbMaxOutputs));
+
+  if (manager->helicsTime_ < 0) {
+    manager->helicsTime_ = 0;
+    initHelicsCosimulationInterface(manager, workingDirectory);
+  }
+
+  // Only communicate with helics the first time the automaton is activated for at a given time (not after solver reinits)
+  if (time > manager->helicsTime_) {
+    manager->helicsTime_ = time;
+
+    int pubCount = manager->fed_->getPublicationCount();
+    int subCount = manager->fed_->getInputCount();
+
+    for (int i = 0; i < pubCount; i++) {
+      helicscpp::Publication pub = manager->fed_->getPublication(i);
+      std::cout << pub.getName();
+
+      // assign publication thanks to name
+      int found = 0;
+      while (found < nbInputs) {
+        if (inputsName[found] == pub.getName())
+          break;
+        found++;
+      }
+      if (found == nbInputs) {
+        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, pub.getName());
+        // throw;  // Lead to compilation errors in all Modelica models
+        // throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pub.getName());  // Same
+      }
+      pub.publish(inputs[found]);
+    }
+
+    for (int i = 0; i < subCount; i++) {
+      helicscpp::Input sub = manager->fed_->getSubscription(i);
+      std::cout << sub.getName();
+
+      // assign subscription thanks to name
+      int found = 0;
+      while (found < nbOutputs) {
+        if (outputsName[found] == sub.getName())
+          break;
+        found++;
+      }
+      if (found == nbOutputs)
+        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, sub.getName());
+      outputs[found] = sub.getDouble();
+    }
+    manager->fed_->requestTime(time);
+  }
+}
+*/
 modelica_real
 computeDelay(ModelManager* manager, DYNDATA* data, int exprNumber, double exprValue, double time, double delayTime, double delayMax) {
   return manager->computeDelay(data, exprNumber, exprValue, time, delayTime, delayMax);

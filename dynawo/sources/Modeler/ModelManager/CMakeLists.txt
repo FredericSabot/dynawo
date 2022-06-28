@@ -28,6 +28,10 @@ set(MODEL_MANAGER_INCLUDE_HEADERS
     DYNModelManagerOwnFunctions.h
     )
 
+add_library(HelicsLib SHARED IMPORTED)
+set(HelicsLib_FILE_PATH "/usr/local/lib/libhelicsSharedLib.so")
+set_target_properties(HelicsLib PROPERTIES IMPORTED_LOCATION ${HelicsLib_FILE_PATH})
+
 add_library(dynawo_ModelManager SHARED ${MODEL_MANAGER_SOURCES})
 
 target_include_directories(dynawo_ModelManager

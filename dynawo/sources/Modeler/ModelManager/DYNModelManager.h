@@ -29,6 +29,7 @@
 #include "DYNSubModel.h"
 #include "DYNModelManagerCommon.h"
 #include "DYNVariableAlias.h"
+#include "helics/cpp98/ValueFederate.hpp"
 
 #ifdef _ADEPT_
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -617,6 +618,10 @@ class ModelManager : public SubModel, private boost::noncopyable {
    */
   typedef boost::unordered_map<std::string, ParameterModeler>::const_iterator ParamIterator;
   bool modelInitUsed_;  ///< whether init model is used
+
+ public:
+  double helicsTime_;
+  helicscpp::ValueFederate* fed_;
 };
 
 }  // namespace DYN

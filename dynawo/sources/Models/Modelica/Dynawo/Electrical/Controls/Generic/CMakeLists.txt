@@ -14,6 +14,8 @@ set(MODEL_FILES
   # Generic automaton
   package.mo
   package.order
+  CosimulationAutomaton.mo
+  CosimulationAutomaton.extvar
   GenericAutomaton.mo
   GenericAutomatonConstants.mo
   GenericAutomaton.extvar

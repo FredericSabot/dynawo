@@ -294,6 +294,10 @@ inline modelica_boolean GreaterEq<double>(double a, double b) {
     callExternalAutomatonModel((this)->getModelManager()->name(), command, time, inputs, inputs_name, nbInputs, nbMaxInputs, outputs, outputs_name, nbOutputs, \
 nbMaxOutputs, this->getModelManager()->getWorkingDirectory());
 
+/*#define callCosimulationInterface(time, inputs, inputs_name, nbInputs, nbMaxInputs, outputs, outputs_name, nbOutputs, nbMaxOutputs) \
+    callHelicsCosimulationInterfaceModel((this)->getModelManager(), (this)->getModelManager()->name(), time, inputs, inputs_name, nbInputs, nbMaxInputs, \
+outputs, outputs_name, nbOutputs, nbMaxOutputs);*/
+
 #define delayImpl(data, exprNumber, exprValue, time, delayTime, delayMax) \
   computeDelay((this)->getModelManager(), data, exprNumber, exprValue, time, delayTime, delayMax)
 
@@ -677,6 +681,36 @@ void callExternalAutomatonModel(const std::string& modelName, const char* comman
     const double* inputs, const char** inputs_name, const int nbInputs, const int nbMaxInputs,
     double* outputs, const char** outputs_name, const int nbOutputs, const int nbMaxOutputs,
     const std::string& workingDirectory);
+
+/**
+ * @brief call an external code of automaton
+ *
+ * @param manager Model manager
+ * @param workingDirectory Working directory of the simulation.
+ */
+// void initHelicsCosimulationInterface(ModelManager* manager, const std::string& workingDirectory);
+
+/**
+ * @brief call an external code of automaton
+ *
+ * @param manager Model manager
+ * @param modelName name of the model where the call is made
+ * @param command command used to launch the automaton
+ * @param time current time
+ * @param inputs current values needed by the automaton
+ * @param inputs_name name associated to each input value
+ * @param nbInputs number of inputs needed by the automaton
+ * @param nbMaxInputs maximum number of inputs
+ * @param outputs values calculated by the automaton
+ * @param outputs_name name associated to each ouput value
+ * @param nbOutputs number of outputs calculated by the automaton
+ * @param nbMaxOutputs maximum number of outputs
+ * @param workingDirectory Working directory of the simulation.
+ */
+/*void callHelicsCosimulationInterfaceModel(const std::string& modelName, const double time,
+    const double* inputs, const char** inputs_name, const int nbInputs, const int nbMaxInputs,
+    double* outputs, const char** outputs_name, const int nbOutputs, const int nbMaxOutputs,
+    const std::string& workingDirectory);*/
 
 }  // namespace DYN
 #endif  // MODELER_MODELMANAGER_DYNMODELMANAGERCOMMON_H_
