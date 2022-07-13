@@ -12,6 +12,7 @@
 
 set(MODELICA_PREASSEMBLED_MODELS
   Bus.xml
+  CosimulationAutomaton.xml
   CurrentLimitAutomaton.xml
   EventConnectedStatus.xml
   EventQuadripoleConnection.xml

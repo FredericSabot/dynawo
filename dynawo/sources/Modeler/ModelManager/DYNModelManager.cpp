@@ -72,10 +72,12 @@ ModelManager::~ModelManager() {
   delete dataDyn_;
 
   // Cleaning Helics stuff
-  /*fed_->requestTime(HELICS_BIG_NUMBER);  // Clear out any pending messages
-  fed_->finalize();
-  helicscpp::cleanupHelicsLibrary();
-  Trace::debug() << "Federate finalized" << Trace::endline;*/
+  if (name() == "CosimulationAutomaton") {
+    fed_->requestTime(HELICS_BIG_NUMBER);  // Clear out any pending messages
+    fed_->finalize();
+    helicscpp::cleanupHelicsLibrary();
+    Trace::debug() << "Federate finalized" << Trace::endline;
+  }
 }
 
 DYNDATA*

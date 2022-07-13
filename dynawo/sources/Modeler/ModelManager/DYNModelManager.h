@@ -621,7 +621,7 @@ class ModelManager : public SubModel, private boost::noncopyable {
 
  public:
   double helicsTime_;
-  helicscpp::ValueFederate* fed_;
+  std::shared_ptr<helicscpp::ValueFederate> fed_;
 };
 
 }  // namespace DYN

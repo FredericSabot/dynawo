@@ -300,18 +300,28 @@ callExternalAutomatonModel(const std::string& modelName, const char* command, co
     outputs[i] = iter->second;
   }
 }
-/*
+
 void
 initHelicsCosimulationInterface(ModelManager* manager, const std::string& workingDirectory) {
-  helicscpp::ValueFederate fed(workingDirectory + "/Dynawo.json");
+  std::shared_ptr<helicscpp::ValueFederate> fed = std::make_shared<helicscpp::ValueFederate>(workingDirectory + "/Dynawo.json");
 
-  if (!fed.getIntegerProperty(HELICS_FLAG_UNINTERRUPTIBLE)) {
+  if (!fed->getIntegerProperty(HELICS_FLAG_UNINTERRUPTIBLE)) {
     std::cout << "Dynawo should be flagged uninterruptible" << std::endl;
     throw;
   }
-  manager->fed_ = &fed;
+  manager->fed_ = fed;
 
-  fed.enterExecutingMode();
+  fed->enterExecutingMode();
+}
+
+std::string
+getLocalHelicsPubName(std::string pubName) {
+  std::string localName;
+  auto npos = pubName.find("/");
+
+  if (npos != std::string::npos)
+    return pubName.substr(npos + 1);
+  return pubName;
 }
 
 void
@@ -340,42 +350,40 @@ callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& m
 
     for (int i = 0; i < pubCount; i++) {
       helicscpp::Publication pub = manager->fed_->getPublication(i);
-      std::cout << pub.getName();
+      std::string pubName = getLocalHelicsPubName(pub.getName());
 
       // assign publication thanks to name
       int found = 0;
       while (found < nbInputs) {
-        if (inputsName[found] == pub.getName())
+        if (inputsName[found] == pubName)
           break;
         found++;
       }
       if (found == nbInputs) {
-        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, pub.getName());
-        // throw;  // Lead to compilation errors in all Modelica models
-        // throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pub.getName());  // Same
+        throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pubName);
       }
       pub.publish(inputs[found]);
     }
 
     for (int i = 0; i < subCount; i++) {
       helicscpp::Input sub = manager->fed_->getSubscription(i);
-      std::cout << sub.getName();
+      std::string subName = getLocalHelicsPubName(sub.getName());
 
       // assign subscription thanks to name
       int found = 0;
       while (found < nbOutputs) {
-        if (outputsName[found] == sub.getName())
+        if (outputsName[found] == subName)
           break;
         found++;
       }
       if (found == nbOutputs)
-        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, sub.getName());
+        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
       outputs[found] = sub.getDouble();
     }
     manager->fed_->requestTime(time);
   }
 }
-*/
+
 modelica_real
 computeDelay(ModelManager* manager, DYNDATA* data, int exprNumber, double exprValue, double time, double delayTime, double delayMax) {
   return manager->computeDelay(data, exprNumber, exprValue, time, delayTime, delayMax);
