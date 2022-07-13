@@ -1,0 +1,328 @@
+{
+  "name": "Dynawo",
+  "core_type": "zmq",
+  "terminate_on_error": true,
+  "source_only": false,
+  "observer": false,
+  "only_update_on_change": true,
+
+  "log_level": "No_print",
+
+  "uninterruptible": true,
+  "period": 0.001,
+
+  "publications": [
+    {
+      "key": "U_1",
+      "info": "_BUS____1_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_1",
+      "info": "_BUS____1_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_2",
+      "info": "_BUS____2_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_2",
+      "info": "_BUS____2_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_3",
+      "info": "_BUS____3_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_3",
+      "info": "_BUS____3_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_4",
+      "info": "_BUS____4_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_4",
+      "info": "_BUS____4_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_5",
+      "info": "_BUS____5_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_5",
+      "info": "_BUS____5_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_6",
+      "info": "_BUS____6_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_6",
+      "info": "_BUS____6_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_7",
+      "info": "_BUS____7_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_7",
+      "info": "_BUS____7_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_8",
+      "info": "_BUS____8_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_8",
+      "info": "_BUS____8_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_9",
+      "info": "_BUS____9_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_9",
+      "info": "_BUS____9_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_10",
+      "info": "_BUS___10_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_10",
+      "info": "_BUS___10_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_11",
+      "info": "_BUS___11_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_11",
+      "info": "_BUS___11_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_12",
+      "info": "_BUS___12_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_12",
+      "info": "_BUS___12_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_13",
+      "info": "_BUS___13_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_13",
+      "info": "_BUS___13_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_14",
+      "info": "_BUS___14_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_14",
+      "info": "_BUS___14_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_15",
+      "info": "_BUS___15_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_15",
+      "info": "_BUS___15_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_16",
+      "info": "_BUS___16_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_16",
+      "info": "_BUS___16_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_17",
+      "info": "_BUS___17_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_17",
+      "info": "_BUS___17_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_18",
+      "info": "_BUS___18_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_18",
+      "info": "_BUS___18_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_19",
+      "info": "_BUS___19_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_19",
+      "info": "_BUS___19_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_20",
+      "info": "_BUS___20_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_20",
+      "info": "_BUS___20_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_21",
+      "info": "_BUS___21_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_21",
+      "info": "_BUS___21_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_22",
+      "info": "_BUS___22_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_22",
+      "info": "_BUS___22_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_23",
+      "info": "_BUS___23_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_23",
+      "info": "_BUS___23_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_24",
+      "info": "_BUS___24_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_24",
+      "info": "_BUS___24_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_25",
+      "info": "_BUS___25_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_25",
+      "info": "_BUS___25_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_26",
+      "info": "_BUS___26_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_26",
+      "info": "_BUS___26_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_27",
+      "info": "_BUS___27_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_27",
+      "info": "_BUS___27_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_28",
+      "info": "_BUS___28_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_28",
+      "info": "_BUS___28_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_29",
+      "info": "_BUS___29_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_29",
+      "info": "_BUS___29_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_30",
+      "info": "_BUS___30_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_30",
+      "info": "_BUS___30_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_31",
+      "info": "_BUS___31_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_31",
+      "info": "_BUS___31_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_32",
+      "info": "_BUS___32_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_32",
+      "info": "_BUS___32_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_33",
+      "info": "_BUS___33_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_33",
+      "info": "_BUS___33_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_34",
+      "info": "_BUS___34_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_34",
+      "info": "_BUS___34_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_35",
+      "info": "_BUS___35_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_35",
+      "info": "_BUS___35_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_36",
+      "info": "_BUS___36_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_36",
+      "info": "_BUS___36_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_37",
+      "info": "_BUS___37_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_37",
+      "info": "_BUS___37_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_38",
+      "info": "_BUS___38_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_38",
+      "info": "_BUS___38_TN_phipu_value@NETWORK"
+    },
+    {
+      "key": "U_39",
+      "info": "_BUS___39_TN_Upu_value@NETWORK"
+    },
+    {
+      "key": "Phi_39",
+      "info": "_BUS___39_TN_phipu_value@NETWORK"
+    }
+  ]
+}

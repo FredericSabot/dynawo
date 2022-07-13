@@ -643,6 +643,89 @@
     <par type="DOUBLE" name="weight_gen_8" value="2264.9282"/>
     <par type="DOUBLE" name="weight_gen_9" value="2264.9282"/>
   </set>
+  <set id="CosimInterface">
+    <par type="DOUBLE" name="automaton_SamplingTime" value="0.002"/>
+    <par type="STRING" name="automaton_InputsName_1_" value="U_1"/>
+    <par type="STRING" name="automaton_InputsName_2_" value="Phi_1"/>
+    <par type="STRING" name="automaton_InputsName_3_" value="U_2"/>
+    <par type="STRING" name="automaton_InputsName_4_" value="Phi_2"/>
+    <par type="STRING" name="automaton_InputsName_5_" value="U_3"/>
+    <par type="STRING" name="automaton_InputsName_6_" value="Phi_3"/>
+    <par type="STRING" name="automaton_InputsName_7_" value="U_4"/>
+    <par type="STRING" name="automaton_InputsName_8_" value="Phi_4"/>
+    <par type="STRING" name="automaton_InputsName_9_" value="U_5"/>
+    <par type="STRING" name="automaton_InputsName_10_" value="Phi_5"/>
+    <par type="STRING" name="automaton_InputsName_11_" value="U_6"/>
+    <par type="STRING" name="automaton_InputsName_12_" value="Phi_6"/>
+    <par type="STRING" name="automaton_InputsName_13_" value="U_7"/>
+    <par type="STRING" name="automaton_InputsName_14_" value="Phi_7"/>
+    <par type="STRING" name="automaton_InputsName_15_" value="U_8"/>
+    <par type="STRING" name="automaton_InputsName_16_" value="Phi_8"/>
+    <par type="STRING" name="automaton_InputsName_17_" value="U_9"/>
+    <par type="STRING" name="automaton_InputsName_18_" value="Phi_9"/>
+    <par type="STRING" name="automaton_InputsName_19_" value="U_10"/>
+    <par type="STRING" name="automaton_InputsName_20_" value="Phi_10"/>
+    <par type="STRING" name="automaton_InputsName_21_" value="U_11"/>
+    <par type="STRING" name="automaton_InputsName_22_" value="Phi_11"/>
+    <par type="STRING" name="automaton_InputsName_23_" value="U_12"/>
+    <par type="STRING" name="automaton_InputsName_24_" value="Phi_12"/>
+    <par type="STRING" name="automaton_InputsName_25_" value="U_13"/>
+    <par type="STRING" name="automaton_InputsName_26_" value="Phi_13"/>
+    <par type="STRING" name="automaton_InputsName_27_" value="U_14"/>
+    <par type="STRING" name="automaton_InputsName_28_" value="Phi_14"/>
+    <par type="STRING" name="automaton_InputsName_29_" value="U_15"/>
+    <par type="STRING" name="automaton_InputsName_30_" value="Phi_15"/>
+    <par type="STRING" name="automaton_InputsName_31_" value="U_16"/>
+    <par type="STRING" name="automaton_InputsName_32_" value="Phi_16"/>
+    <par type="STRING" name="automaton_InputsName_33_" value="U_17"/>
+    <par type="STRING" name="automaton_InputsName_34_" value="Phi_17"/>
+    <par type="STRING" name="automaton_InputsName_35_" value="U_18"/>
+    <par type="STRING" name="automaton_InputsName_36_" value="Phi_18"/>
+    <par type="STRING" name="automaton_InputsName_37_" value="U_19"/>
+    <par type="STRING" name="automaton_InputsName_38_" value="Phi_19"/>
+    <par type="STRING" name="automaton_InputsName_39_" value="U_20"/>
+    <par type="STRING" name="automaton_InputsName_40_" value="Phi_20"/>
+    <par type="STRING" name="automaton_InputsName_41_" value="U_21"/>
+    <par type="STRING" name="automaton_InputsName_42_" value="Phi_21"/>
+    <par type="STRING" name="automaton_InputsName_43_" value="U_22"/>
+    <par type="STRING" name="automaton_InputsName_44_" value="Phi_22"/>
+    <par type="STRING" name="automaton_InputsName_45_" value="U_23"/>
+    <par type="STRING" name="automaton_InputsName_46_" value="Phi_23"/>
+    <par type="STRING" name="automaton_InputsName_47_" value="U_24"/>
+    <par type="STRING" name="automaton_InputsName_48_" value="Phi_24"/>
+    <par type="STRING" name="automaton_InputsName_49_" value="U_25"/>
+    <par type="STRING" name="automaton_InputsName_50_" value="Phi_25"/>
+    <par type="STRING" name="automaton_InputsName_51_" value="U_26"/>
+    <par type="STRING" name="automaton_InputsName_52_" value="Phi_26"/>
+    <par type="STRING" name="automaton_InputsName_53_" value="U_27"/>
+    <par type="STRING" name="automaton_InputsName_54_" value="Phi_27"/>
+    <par type="STRING" name="automaton_InputsName_55_" value="U_28"/>
+    <par type="STRING" name="automaton_InputsName_56_" value="Phi_28"/>
+    <par type="STRING" name="automaton_InputsName_57_" value="U_29"/>
+    <par type="STRING" name="automaton_InputsName_58_" value="Phi_29"/>
+    <par type="STRING" name="automaton_InputsName_59_" value="U_30"/>
+    <par type="STRING" name="automaton_InputsName_60_" value="Phi_30"/>
+    <par type="STRING" name="automaton_InputsName_61_" value="U_31"/>
+    <par type="STRING" name="automaton_InputsName_62_" value="Phi_31"/>
+    <par type="STRING" name="automaton_InputsName_63_" value="U_32"/>
+    <par type="STRING" name="automaton_InputsName_64_" value="Phi_32"/>
+    <par type="STRING" name="automaton_InputsName_65_" value="U_33"/>
+    <par type="STRING" name="automaton_InputsName_66_" value="Phi_33"/>
+    <par type="STRING" name="automaton_InputsName_67_" value="U_34"/>
+    <par type="STRING" name="automaton_InputsName_68_" value="Phi_34"/>
+    <par type="STRING" name="automaton_InputsName_69_" value="U_35"/>
+    <par type="STRING" name="automaton_InputsName_70_" value="Phi_35"/>
+    <par type="STRING" name="automaton_InputsName_71_" value="U_36"/>
+    <par type="STRING" name="automaton_InputsName_72_" value="Phi_36"/>
+    <par type="STRING" name="automaton_InputsName_73_" value="U_37"/>
+    <par type="STRING" name="automaton_InputsName_74_" value="Phi_37"/>
+    <par type="STRING" name="automaton_InputsName_75_" value="U_38"/>
+    <par type="STRING" name="automaton_InputsName_76_" value="Phi_38"/>
+    <par type="STRING" name="automaton_InputsName_77_" value="U_39"/>
+    <par type="STRING" name="automaton_InputsName_78_" value="Phi_39"/>
+    <par type="INT" name="automaton_NbInputs" value="78"/>
+    <par type="INT" name="automaton_NbOutputs" value="0"/>
+  </set>
   <set id="Fault">
     <par type="DOUBLE" name="fault_RPu" value="0.0001"/>
     <par type="DOUBLE" name="fault_XPu" value="0.0001"/>
@@ -653,7 +736,7 @@
     <par type="INT" name="order" value="2"/>
     <par type="DOUBLE" name="initStep" value="0.000001"/>
     <par type="DOUBLE" name="minStep" value="0.000001"/>
-    <par type="DOUBLE" name="maxStep" value="10"/>
+    <par type="DOUBLE" name="maxStep" value="0.001"/>
     <par type="DOUBLE" name="absAccuracy" value="1e-4"/>
     <par type="DOUBLE" name="relAccuracy" value="1e-4"/>
   </set>

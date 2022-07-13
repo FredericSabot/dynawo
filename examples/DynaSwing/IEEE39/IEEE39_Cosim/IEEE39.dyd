@@ -246,6 +246,86 @@
   <dyn:connect id1="LOAD___31_EC" var1="load_switchOffSignal1" id2="NETWORK" var2="_BUS___31_TN_switchOff"/>
   <dyn:connect id1="LOAD___39_EC" var1="load_switchOffSignal1" id2="NETWORK" var2="_BUS___39_TN_switchOff"/>
 
+  <dyn:blackBoxModel id="CosimInterface" lib="CosimulationAutomaton" parFile="IEEE39.par" parId="CosimInterface"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____1_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_1_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____1_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_2_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____2_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_3_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____2_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_4_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____3_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_5_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____3_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_6_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____4_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_7_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____4_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_8_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____5_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_9_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____5_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_10_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____6_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_11_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____6_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_12_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____7_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_13_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____7_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_14_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____8_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_15_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____8_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_16_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____9_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_17_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS____9_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_18_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___10_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_19_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___10_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_20_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___11_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_21_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___11_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_22_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___12_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_23_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___12_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_24_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___13_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_25_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___13_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_26_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___14_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_27_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___14_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_28_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___15_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_29_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___15_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_30_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___16_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_31_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___16_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_32_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___17_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_33_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___17_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_34_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___18_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_35_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___18_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_36_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___19_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_37_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___19_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_38_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___20_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_39_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___20_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_40_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___21_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_41_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___21_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_42_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___22_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_43_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___22_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_44_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___23_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_45_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___23_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_46_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___24_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_47_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___24_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_48_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___25_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_49_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___25_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_50_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___26_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_51_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___26_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_52_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___27_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_53_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___27_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_54_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___28_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_55_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___28_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_56_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___29_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_57_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___29_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_58_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___30_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_59_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___30_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_60_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___31_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_61_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___31_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_62_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___32_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_63_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___32_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_64_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___33_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_65_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___33_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_66_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___34_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_67_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___34_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_68_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___35_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_69_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___35_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_70_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___36_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_71_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___36_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_72_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___37_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_73_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___37_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_74_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___38_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_75_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___38_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_76_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___39_TN_Upu_value" id2="CosimInterface" var2="automaton_inputs_77_"/>
+  <dyn:connect id1="NETWORK" var1="_BUS___39_TN_phipu_value" id2="CosimInterface" var2="automaton_inputs_78_"/>
+
   <dyn:blackBoxModel id="NodeFault" lib="NodeFault" parFile="IEEE39.par" parId="Fault"/>
   <dyn:connect id1="NodeFault" var1="fault_terminal" id2="NETWORK" var2="_BUS___39_TN_ACPIN"/>
 
