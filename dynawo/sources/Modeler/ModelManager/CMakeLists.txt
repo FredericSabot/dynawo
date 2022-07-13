@@ -28,6 +28,8 @@ set(MODEL_MANAGER_INCLUDE_HEADERS
     DYNModelManagerOwnFunctions.h
     )
 
+find_package(HELICS REQUIRED HINTS /usr/local/lib)
+
 add_library(HelicsLib SHARED IMPORTED)
 set(HelicsLib_FILE_PATH "/usr/local/lib/libhelicsSharedLib.so")
 set_target_properties(HelicsLib PROPERTIES IMPORTED_LOCATION ${HelicsLib_FILE_PATH})
@@ -55,6 +57,7 @@ target_link_libraries(dynawo_ModelManager
     dynawo_SolverKINSubModel
     Boost::serialization
     Boost::system
+    HELICS::helicsCpp98
   )
 
 set_target_properties(dynawo_ModelManager PROPERTIES VERSION ${MODEL_MANAGER_VERSION_STRING}

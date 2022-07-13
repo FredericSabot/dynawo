@@ -84,6 +84,8 @@ add_definitions(-DBOOST_ALL_DYN_LINK)
 # Tell BOOST to disable auto linking
 add_definitions(-DBOOST_ALL_NO_LIB)
 
+find_package(HELICS REQUIRED HINTS /usr/local/lib)
+
 find_package(Boost 1.64 REQUIRED
   COMPONENTS
     filesystem
@@ -136,6 +138,10 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${MODEL_NAME}_Init.cpp)
     )
 endif()
 
+add_library(HelicsLib SHARED IMPORTED)
+set(HelicsLib_FILE_PATH "/usr/local/lib/libhelicsSharedLib.so")
+set_target_properties(HelicsLib PROPERTIES IMPORTED_LOCATION ${HelicsLib_FILE_PATH})
+
 add_library(lib SHARED ${MODEL_SOURCES})
 set_target_properties(lib PROPERTIES OUTPUT_NAME ${MODEL_NAME} PREFIX "")
 
@@ -157,4 +163,5 @@ target_link_libraries(lib
     Dynawo::dynawo_ModelManager
     Boost::system
     $ENV{DYNAWO_ADDITIONAL_LIBRARY_FOR_PREASSEMBLED}
+    HELICS::helicsCpp98
 )
