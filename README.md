@@ -68,7 +68,7 @@ Please refer to [https://dynawo.github.io/publications/](https://dynawo.github.i
 
 ## References
 
-[1] W. -x. Liu, N. Liu, Y. -f. Fan, L. -x. Zhang and x. Zhang, "Reliability analysis of Wide Area Measurement System based on the Centralized Distributed model," 2009 IEEE/PES Power Systems Conference and Exposition, 2009, pp. 1-6, doi: 10.1109/PSCE.2009.4840137.
+[1] Hillberg, Emil & Trondheim, Ntnu & Norway, & Kjølle, Gerd & Toftevaag, Trond. (2011). Reliability evaluation of wide area monitoring applications and extreme contingencies.
 
 [2] P. Demetriou, M. Asprou, J. Quirós-Tortós, and E. Kyriakides, “Dynamic IEEE Test Systems for Transient Analysis,” IEEE Systems Journal, vol. 11, no. 4, pp. 2108-2117, Dec. 2017.
 
