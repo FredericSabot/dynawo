@@ -64,6 +64,15 @@ VRLimitationUsRefMax      =             Voltage regulator : upper limit reached 
 UVATripped                =              Under-voltage generator trip
 UVAArming                 =              Under-voltage automaton for generator arming
 UVADisarming              =              Under-voltage automaton for generator disarming
+// --> Out-of-step protection
+OOSTripped                =              Out-of-step generator trip
+OOSArming                 =              Out-of-step for generator arming
+// --> Speed protection
+SpeedTripped              =              Speed protection trip
+OverspeedArming           =              Over-speed protection arming
+OverspeedDisarming        =              Over-speed protection disarming
+UnderspeedArming          =              Over-speed protection arming
+UnderspeedDisarming       =              Over-speed protection disarming
 // --> CurrentLimit
 OverloadUp                =             Overload %1% : activation
 OverloadDown              =             Overload %1% : deactivation
@@ -77,6 +86,30 @@ IdealSwitchSwitchOn       =             Ideal switch closed
 // --> HVDC Line
 DCLineOpen                =             DC line open
 DCLineClosed              =             DC line closed
+// --> Low voltage ride-through automaton
+LVRTTripped                =              LVRT generator trip
+LVRTArming                 =              LVRT automaton for generator arming
+LVRTDisarming              =              LVRT automaton for generator disarming
+// --> Distance protection
+DistanceTrippedZone1       =              Distance protection trip zone 1
+DistanceTrippedZone2       =              Distance protection trip zone 2
+DistanceTrippedZone3       =              Distance protection trip zone 3
+DistanceTrippedZone4       =              Distance protection trip zone 4
+Zone1Arming                =              Distance protection zone 1 arming
+Zone2Arming                =              Distance protection zone 2 arming
+Zone3Arming                =              Distance protection zone 3 arming
+Zone4Arming                =              Distance protection zone 4 arming
+Zone1Disarming             =              Distance protection zone 1 disarming
+Zone2Disarming             =              Distance protection zone 2 disarming
+Zone3Disarming             =              Distance protection zone 3 disarming
+Zone4Disarming             =              Distance protection zone 4 disarming
+// --> Under-frequency load shedding
+UFLS1Arming                =              UFLS step 1 arming
+UFLS1Activated             =              UFLS step 1 activated
+UFLS2Arming                =              UFLS step 2 arming
+UFLS2Activated             =              UFLS step 2 activated
+UFLS3Arming                =              UFLS step 3 arming
+UFLS3Activated             =              UFLS step 3 activated
 //-------------  C++ models ----------------------------------------------
 // --> BUS
 NodeOff                   =             BUS : switch off

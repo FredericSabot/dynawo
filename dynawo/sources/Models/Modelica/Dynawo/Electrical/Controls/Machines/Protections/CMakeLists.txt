@@ -13,6 +13,10 @@
 set(MODEL_FILES
   package.mo
   package.order
+  OutOfStep.mo
+  OutOfStep.extvar
+  SpeedProtection.mo
+  SpeedProtection.extvar
   UVA.mo
   UVA.extvar
   )
