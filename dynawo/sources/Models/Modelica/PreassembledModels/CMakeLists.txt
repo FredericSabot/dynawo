@@ -17,6 +17,10 @@ set(MODELICA_PREASSEMBLED_MODELS
   CurrentLimitAutomaton.xml
   CurrentLimitAutomatonTwoLevels.xml
   DiscretePI.xml
+  DistanceProtectionLineFourZones.xml
+  DistanceProtectionLineFourZonesWithBlinder.xml
+  DistanceProtectionLineTwoZones.xml
+  DistanceProtectionLineTwoZonesWithBlinder.xml
   DoubleStep.xml
   EventConnectedStatus.xml
   EventQuadripoleConnection.xml
@@ -127,6 +131,9 @@ set(MODELICA_PREASSEMBLED_MODELS
   LoadTwoTransformers.xml
   LoadTwoTransformersTapChangers.xml
   LoadZIP.xml
+  LossOfSynchronismProtection.xml
+  LVRT4Points.xml
+  LVRT10Points.xml
   Measurements.xml
   NodeFault.xml
   PhaseShifterBlockingI.xml
@@ -143,6 +150,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   ShuntB.xml
   SignalN.xml
   SineWave.xml
+  SpeedProtection.xml
   StaticVarCompensator.xml
   StaticVarCompensatorPV.xml
   StaticVarCompensatorPVModeHandling.xml
@@ -161,6 +169,8 @@ set(MODELICA_PREASSEMBLED_MODELS
   TapChangerBlockingAutomaton4.xml
   TapChangerBlockingAutomaton5.xml
   TransformerFixedRatio.xml
+  UFLS3Steps.xml
+  UFLS10Steps.xml
   UnderVoltageAutomaton.xml
   VRRemote.xml
   WeightedDifference.xml

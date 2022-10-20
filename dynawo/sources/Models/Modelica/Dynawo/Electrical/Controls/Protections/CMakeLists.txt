@@ -8,22 +8,22 @@
 #
 # This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 
-# Protection models
-
 set(MODEL_FILES
   package.mo
   package.order
   BaseClasses.mo
-  LossOfSynchronismProtection.mo
-  LossOfSynchronismProtection.extvar
-  LVRT4Points.mo
-  LVRT4Points.extvar
-  LVRT10Points.mo
-  LVRT10Points.extvar
-  SpeedProtection.mo
-  SpeedProtection.extvar
-  UVA.mo
-  UVA.extvar
+  DistanceProtectionLineFourZones.mo
+  DistanceProtectionLineFourZones.extvar
+  DistanceProtectionLineFourZonesWithBlinder.mo
+  DistanceProtectionLineFourZonesWithBlinder.extvar
+  DistanceProtectionLineTwoZones.mo
+  DistanceProtectionLineTwoZones.extvar
+  DistanceProtectionLineTwoZonesWithBlinder.mo
+  DistanceProtectionLineTwoZonesWithBlinder.extvar
+  UFLS3Steps.mo
+  UFLS3Steps.extvar
+  UFLS10Steps.mo
+  UFLS10Steps.extvar
   )
 
 #
