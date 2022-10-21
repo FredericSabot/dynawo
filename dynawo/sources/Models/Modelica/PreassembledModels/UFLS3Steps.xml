@@ -13,7 +13,7 @@
 -->
 <dyn:dynamicModelsArchitecture xmlns:dyn="http://www.rte-france.com/dynawo">
   <!-- Under-frequency load shedding-->
-  <dyn:modelicaModel id="UFLS">
-    <dyn:unitDynamicModel id="ufls" name="Dynawo.Electrical.Controls.Protections.UFLS"/>
+  <dyn:modelicaModel id="UFLS3Steps">
+    <dyn:unitDynamicModel id="ufls" name="Dynawo.Electrical.Controls.Protections.UFLS3Steps"/>
   </dyn:modelicaModel>
 </dyn:dynamicModelsArchitecture>

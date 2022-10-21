@@ -105,11 +105,26 @@ Zone3Disarming             =              Distance protection zone 3 disarming
 Zone4Disarming             =              Distance protection zone 4 disarming
 // --> Under-frequency load shedding
 UFLS1Arming                =              UFLS step 1 arming
-UFLS1Activated             =              UFLS step 1 activated
 UFLS2Arming                =              UFLS step 2 arming
-UFLS2Activated             =              UFLS step 2 activated
 UFLS3Arming                =              UFLS step 3 arming
+UFLS4Arming                =              UFLS step 4 arming
+UFLS5Arming                =              UFLS step 5 arming
+UFLS6Arming                =              UFLS step 6 arming
+UFLS7Arming                =              UFLS step 7 arming
+UFLS8Arming                =              UFLS step 8 arming
+UFLS9Arming                =              UFLS step 9 arming
+UFLS10Arming               =              UFLS step 10 arming
+UFLS1Activated             =              UFLS step 1 activated
+UFLS2Activated             =              UFLS step 2 activated
 UFLS3Activated             =              UFLS step 3 activated
+UFLS4Activated             =              UFLS step 4 activated
+UFLS5Activated             =              UFLS step 5 activated
+UFLS6Activated             =              UFLS step 6 activated
+UFLS7Activated             =              UFLS step 7 activated
+UFLS8Activated             =              UFLS step 8 activated
+UFLS9Activated             =              UFLS step 9 activated
+UFLS10Activated            =              UFLS step 10 activated
+
 //-------------  C++ models ----------------------------------------------
 // --> BUS
 NodeOff                   =             BUS : switch off
