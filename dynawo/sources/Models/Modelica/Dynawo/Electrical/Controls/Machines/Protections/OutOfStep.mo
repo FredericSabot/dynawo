@@ -32,7 +32,7 @@ protected
 
 equation
   // Voltage comparison with the minimum accepted value
-  when abs(thetaMonitored) >= thetaMax and not(pre(switchOffSignal.value)) then
+  when abs(thetaMonitored) >= thetaMax and thetaMonitored < 0 and not(pre(switchOffSignal.value)) then
     tThresholdReached = time;
     Timeline.logEvent1(TimelineKeys.OOSArming);
   /*
