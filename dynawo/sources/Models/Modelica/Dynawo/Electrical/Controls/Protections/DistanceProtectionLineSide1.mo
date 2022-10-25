@@ -1,6 +1,6 @@
 within Dynawo.Electrical.Controls.Protections;
 
-model DistanceProtectionLineSide1 "Simplified version of a quadrilateral distance relay, disconnects side 1 of the protected line when the apparent impedance in within a protected zone for longer than a set duration"
+model DistanceProtectionLineSide1 "Simple triangular distance relay, disconnects side 1 of the protected line when the apparent impedance in within a protected zone for longer than a set duration"
   /*
   * Copyright (c) 2015-2019, RTE (http://www.rte-france.com)
   * See AUTHORS.txt
@@ -16,6 +16,9 @@ model DistanceProtectionLineSide1 "Simplified version of a quadrilateral distanc
   import Dynawo.Connectors;
   import Dynawo.NonElectrical.Logs.Timeline;
   import Dynawo.NonElectrical.Logs.TimelineKeys;
+
+  import Dynawo.Electrical.Controls.Basics.SwitchOff;
+  extends SwitchOff.SwitchOffProtection;
 
 public
   parameter Types.Time T1 "Time delay of trip in zone 1";
@@ -38,10 +41,9 @@ public
   Complex Z "Apparent impedance in pu (base UNom, SNom)";
   Boolean forward "True if Z is between -45° and 135° in the complex plane";
 
-  // Real state "Monitored state of the line";
   Boolean connectionStatus "True if state = 2 or 3 (i.e. side1 (or both sides) of the line are closed)";
 
-  Connectors.ZPin state(value(start = 2)) "Switch off message for the protected line";
+  Connectors.ZPin lineState(value(start = 2)) "Switch off message for the protected line";
 
   Types.Time tThresholdReached1(start = Constants.inf) "Time when enters zone 1";
   Types.Time tThresholdReached2(start = Constants.inf) "Time when enters zone 2";
@@ -49,13 +51,21 @@ public
   Types.Time tThresholdReached4(start = Constants.inf) "Time when enters zone 4";
 
 equation
-  Z = UMonitoredPu^2 / Complex(max(PMonitoredPu, 0.001), -max(QMonitoredPu, 0.001));
+  if running.value then
+    Z = UMonitoredPu^2 / Complex(max(PMonitoredPu, 0.001), -max(QMonitoredPu, 0.001));
+    forward = if Z.re > -Z.im then true else false;
 
-  // forward = if ComplexMath.arg(Z) < (3/4 * Constants.pi) or ComplexMath.arg(Z) > (-1/4 * Constants.pi) then true else false;
-  forward = if Z.re > -Z.im then true else false;
+    connectionStatus = if (pre(lineState.value) == 2 or pre(lineState.value) == 3) then true else false;
+  else
+    Z = Complex(999, 999);
+    forward = true;
+    connectionStatus = false;
+  end if;
 
-  connectionStatus = if (pre(state.value) == 2 or pre(state.value) == 3) then true else false; // TODO: remove pre() if possible (currently, the protections can still arm/disarm after tripping (which has no effect except creating unnecessary timeline events))
-
+  /*
+  When equations are not included in the "if running.value" condition because this is not
+  supported by the Dynawo backend
+  */
   // Impedance comparison with the zone 1
   when (Z.re <= R1 and Z.im <= X1 and forward) and connectionStatus then
     tThresholdReached1 = time;
@@ -92,34 +102,37 @@ equation
     Timeline.logEvent1(TimelineKeys.Zone4Disarming);
   end when;
 
-
   // Trips
+  /*
+  Trips are not included in the if running.value condition to avoid the following Modelica error
+  Following variable is discrete, but does not appear on the LHS of a when-statement: ‘lineState.value‘.
+  */
   when time - tThresholdReached1 >= T1 and pre(connectionStatus) then
-    if pre(state.value) == 2 or pre(state.value) == 4 then
-      state.value = 4;
+    if lineState.value == 2 or lineState.value == 4 then
+      lineState.value = 4;
     else
-      state.value = 1;
+      lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone1);
   elsewhen time - tThresholdReached2 >= T2 and pre(connectionStatus) then
-    if pre(state.value) == 2 or pre(state.value) == 4 then
-      state.value = 4;
+    if lineState.value == 2 or lineState.value == 4 then
+      lineState.value = 4;
     else
-      state.value = 1;
+      lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone2);
   elsewhen time - tThresholdReached3 >= T3 and pre(connectionStatus) then
-    if pre(state.value) == 2 or pre(state.value) == 4 then
-      state.value = 4;
+    if lineState.value == 2 or lineState.value == 4 then
+      lineState.value = 4;
     else
-      state.value = 1;
+      lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone3);
   elsewhen time - tThresholdReached4 >= T4 and pre(connectionStatus) then
-    if pre(state.value) == 2 or pre(state.value) == 4 then
-      state.value = 4;
+    if lineState.value == 2 or lineState.value == 4 then
+      lineState.value = 4;
     else
-      state.value = 1;
+      lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone4);
   end when;
