@@ -61,8 +61,10 @@ package BaseClasses
     Boolean step10Activated (start = false) if (nbSteps >= 10) "True if step 10 of UFLS has been activated";
 
     Real deltaPQ (start = 0) "Reduction of P and Q due to UFLS disconnections, to connect to the variables deltaP and deltaQ in the load model";
+    Real deltaPQfiltered (start = 0) "Smoothed out version of deltaPQ for better numerical stability";
 
   equation
+    der(deltaPQfiltered) = 1000 * (deltaPQ - deltaPQfiltered);
     // Frequency comparison with first UFLS step
     when omegaMonitoredPu <= omega1Pu and not pre(step1Activated) then
       tThresholdReached1 = time;
