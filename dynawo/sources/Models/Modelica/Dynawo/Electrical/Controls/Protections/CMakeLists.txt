@@ -12,8 +12,6 @@ set(MODEL_FILES
   package.mo
   package.order
   BaseClasses.mo
-  DistanceProtection.mo
-  DistanceProtection.extvar
   DistanceProtectionLineSide1.mo
   DistanceProtectionLineSide1.extvar
   DistanceProtectionLineSide2.mo
