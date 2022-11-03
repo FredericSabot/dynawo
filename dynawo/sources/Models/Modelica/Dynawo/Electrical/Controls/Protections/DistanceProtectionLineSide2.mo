@@ -39,7 +39,6 @@ public
   Types.ActivePowerPu PMonitoredPu "Monitored active power in pu (base SNom)";
   Types.ReactivePowerPu QMonitoredPu "Monitored reactive power in pu (base SNom)";
   Complex Z "Apparent impedance in pu (base UNom, SNom)";
-  Boolean forward "True if Z is between -45° and 135° in the complex plane";
 
   Boolean connectionStatus "True if state = 2 or 3 (i.e. side1 (or both sides) of the line are closed)";
 
@@ -57,12 +56,10 @@ equation
     else
       Z = Complex(999,999);
     end if;
-    forward = if Z.re > -Z.im then true else false;
 
     connectionStatus = if (pre(lineState.value) == 2 or pre(lineState.value) == 3) then true else false;
   else
     Z = Complex(999, 999);
-    forward = true;
     connectionStatus = false;
   end if;
 
@@ -71,37 +68,37 @@ equation
   supported by the Dynawo backend
   */
   // Impedance comparison with the zone 1
-  when (Z.re <= R1 and Z.im <= X1 and forward) and connectionStatus then
+  when (Z.re <= R1 and Z.im <= X1 and Z.re > -Z.im) and connectionStatus then
     tThresholdReached1 = time;
     Timeline.logEvent1(TimelineKeys.Zone1Arming);
-  elsewhen not (Z.re <= R1 and Z.im <= X1 and forward) and pre(tThresholdReached1) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R1 and Z.im <= X1 and Z.re > -Z.im) and pre(tThresholdReached1) <> Constants.inf and connectionStatus then
     tThresholdReached1 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone1Disarming);
   end when;
 
   // Impedance comparison with the zone 2
-  when (Z.re <= R2 and Z.im <= X2 and forward) and connectionStatus then
+  when (Z.re <= R2 and Z.im <= X2 and Z.re > -Z.im) and connectionStatus then
     tThresholdReached2 = time;
     Timeline.logEvent1(TimelineKeys.Zone2Arming);
-  elsewhen not (Z.re <= R2 and Z.im <= X2 and forward) and pre(tThresholdReached2) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R2 and Z.im <= X2 and Z.re > -Z.im) and pre(tThresholdReached2) <> Constants.inf and connectionStatus then
     tThresholdReached2 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone2Disarming);
   end when;
 
   // Impedance comparison with the zone 3
-  when (Z.re <= R3 and Z.im <= X3 and forward) and connectionStatus then
+  when (Z.re <= R3 and Z.im <= X3 and Z.re > -Z.im) and connectionStatus then
     tThresholdReached3 = time;
     Timeline.logEvent1(TimelineKeys.Zone3Arming);
-  elsewhen not (Z.re <= R3 and Z.im <= X3 and forward) and pre(tThresholdReached3) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R3 and Z.im <= X3 and Z.re > -Z.im) and pre(tThresholdReached3) <> Constants.inf and connectionStatus then
     tThresholdReached3 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone3Disarming);
   end when;
 
   // Impedance comparison with the zone 4
-  when (Z.re <= R4 and Z.im <= X4 and forward) and connectionStatus then
+  when (Z.re <= R4 and Z.im <= X4 and Z.re > -Z.im) and connectionStatus then
     tThresholdReached4 = time;
     Timeline.logEvent1(TimelineKeys.Zone4Arming);
-  elsewhen not (Z.re <= R4 and Z.im <= X4 and forward) and pre(tThresholdReached4) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R4 and Z.im <= X4 and Z.re > -Z.im) and pre(tThresholdReached4) <> Constants.inf and connectionStatus then
     tThresholdReached4 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone4Disarming);
   end when;
