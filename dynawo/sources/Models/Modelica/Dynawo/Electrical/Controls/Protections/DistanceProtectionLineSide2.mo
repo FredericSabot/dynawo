@@ -52,7 +52,11 @@ public
 
 equation
   if running.value then
-    Z = UMonitoredPu^2 / Complex(max(PMonitoredPu, 0.001), -max(QMonitoredPu, 0.001));
+    if PMonitoredPu^2 + QMonitoredPu^2 > 1e-6 then
+      Z = UMonitoredPu^2 / Complex(PMonitoredPu, -QMonitoredPu);
+    else
+      Z = Complex(999,999);
+    end if;
     forward = if Z.re > -Z.im then true else false;
 
     connectionStatus = if (pre(lineState.value) == 2 or pre(lineState.value) == 3) then true else false;
@@ -63,7 +67,7 @@ equation
   end if;
 
   /*
-  When equations are not included in the "if running.value" condition because this is not
+  The when equations are not included in the "if running.value" condition because this is not
   supported by the Dynawo backend
   */
   // Impedance comparison with the zone 1
