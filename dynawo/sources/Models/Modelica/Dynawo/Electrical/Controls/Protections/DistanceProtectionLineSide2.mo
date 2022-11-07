@@ -37,10 +37,10 @@ public
 
   Types.VoltageModulePu UMonitoredPu "Monitored voltage in pu (base UNom)";
   Types.ActivePowerPu PMonitoredPu "Monitored active power in pu (base SNom)";
+  Types.ActivePowerPu PMonitoredPuFilter;
   Types.ReactivePowerPu QMonitoredPu "Monitored reactive power in pu (base SNom)";
+  Types.ReactivePowerPu QMonitoredPuFilter;
   Complex Z "Apparent impedance in pu (base UNom, SNom)";
-
-  Boolean connectionStatus "True if state = 2 or 3 (i.e. side1 (or both sides) of the line are closed)";
 
   Connectors.ZPin lineState(value(start = 2)) "Switch off message for the protected line";
 
@@ -50,86 +50,91 @@ public
   Types.Time tThresholdReached4(start = Constants.inf) "Time when enters zone 4";
 
 equation
-  if running.value then
-    if PMonitoredPu^2 + QMonitoredPu^2 > 1e-6 then
-      Z = UMonitoredPu^2 / Complex(PMonitoredPu, -QMonitoredPu);
+  if lineState.value == 2 or lineState.value == 4 and running.value then  // Can only read PMonitoredPu and QMonitoredPu if the line is connected on (at least) side2
+    if time < 0.1 then  //TODO: clean initialisation
+      PMonitoredPuFilter = PMonitoredPu;
+      QMonitoredPuFilter = QMonitoredPu;
+    else
+      der(PMonitoredPuFilter) = 1e3 * (PMonitoredPu - PMonitoredPuFilter);
+      der(QMonitoredPuFilter) = 1e3 * (QMonitoredPu - QMonitoredPuFilter);
+    end if;
+    if PMonitoredPuFilter^2 + QMonitoredPuFilter^2 > 1e-6 then
+      Z = UMonitoredPu^2 / Complex(PMonitoredPuFilter, -QMonitoredPuFilter);
     else
       Z = Complex(999,999);
     end if;
-
-    connectionStatus = if (pre(lineState.value) == 2 or pre(lineState.value) == 3) then true else false;
   else
+    PMonitoredPuFilter = 0;
+    QMonitoredPuFilter = 0;
     Z = Complex(999, 999);
-    connectionStatus = false;
   end if;
-
   /*
-  The when equations are not included in the "if running.value" condition because this is not
+  The when equations are not included in the "if lineState.value" condition because this is not
   supported by the Dynawo backend
   */
   // Impedance comparison with the zone 1
-  when (Z.re <= R1 and Z.im <= X1 and Z.re > -Z.im) and connectionStatus then
+  when (Z.re <= R1 and Z.im <= X1 and Z.re > -Z.im)  then
     tThresholdReached1 = time;
     Timeline.logEvent1(TimelineKeys.Zone1Arming);
-  elsewhen not (Z.re <= R1 and Z.im <= X1 and Z.re > -Z.im) and pre(tThresholdReached1) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R1 and Z.im <= X1 and Z.re > -Z.im) and pre(tThresholdReached1) <> Constants.inf  then
     tThresholdReached1 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone1Disarming);
   end when;
 
   // Impedance comparison with the zone 2
-  when (Z.re <= R2 and Z.im <= X2 and Z.re > -Z.im) and connectionStatus then
+  when (Z.re <= R2 and Z.im <= X2 and Z.re > -Z.im)  then
     tThresholdReached2 = time;
     Timeline.logEvent1(TimelineKeys.Zone2Arming);
-  elsewhen not (Z.re <= R2 and Z.im <= X2 and Z.re > -Z.im) and pre(tThresholdReached2) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R2 and Z.im <= X2 and Z.re > -Z.im) and pre(tThresholdReached2) <> Constants.inf  then
     tThresholdReached2 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone2Disarming);
   end when;
 
   // Impedance comparison with the zone 3
-  when (Z.re <= R3 and Z.im <= X3 and Z.re > -Z.im) and connectionStatus then
+  when (Z.re <= R3 and Z.im <= X3 and Z.re > -Z.im)  then
     tThresholdReached3 = time;
     Timeline.logEvent1(TimelineKeys.Zone3Arming);
-  elsewhen not (Z.re <= R3 and Z.im <= X3 and Z.re > -Z.im) and pre(tThresholdReached3) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R3 and Z.im <= X3 and Z.re > -Z.im) and pre(tThresholdReached3) <> Constants.inf  then
     tThresholdReached3 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone3Disarming);
   end when;
 
   // Impedance comparison with the zone 4
-  when (Z.re <= R4 and Z.im <= X4 and Z.re > -Z.im) and connectionStatus then
+  when (Z.re <= R4 and Z.im <= X4 and Z.re > -Z.im)  then
     tThresholdReached4 = time;
     Timeline.logEvent1(TimelineKeys.Zone4Arming);
-  elsewhen not (Z.re <= R4 and Z.im <= X4 and Z.re > -Z.im) and pre(tThresholdReached4) <> Constants.inf and connectionStatus then
+  elsewhen not (Z.re <= R4 and Z.im <= X4 and Z.re > -Z.im) and pre(tThresholdReached4) <> Constants.inf  then
     tThresholdReached4 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone4Disarming);
   end when;
 
   // Trips
   /*
-  Trips are not included in the if running.value condition to avoid the following Modelica error
+  Trips are not included in the if lineState.value condition to avoid the following Modelica error
   Following variable is discrete, but does not appear on the LHS of a when-statement: ‘lineState.value‘.
   */
-  when time - tThresholdReached1 >= T1 and pre(connectionStatus) then
+  when time - tThresholdReached1 >= T1  then
     if lineState.value == 2 or lineState.value == 3 then
       lineState.value = 3;
     else
       lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone1);
-  elsewhen time - tThresholdReached2 >= T2 and pre(connectionStatus) then
+  elsewhen time - tThresholdReached2 >= T2  then
     if lineState.value == 2 or lineState.value == 3 then
       lineState.value = 3;
     else
       lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone2);
-  elsewhen time - tThresholdReached3 >= T3 and pre(connectionStatus) then
+  elsewhen time - tThresholdReached3 >= T3  then
     if lineState.value == 2 or lineState.value == 3 then
       lineState.value = 3;
     else
       lineState.value = 1;
     end if;
     Timeline.logEvent1(TimelineKeys.DistanceTrippedZone3);
-  elsewhen time - tThresholdReached4 >= T4 and pre(connectionStatus) then
+  elsewhen time - tThresholdReached4 >= T4  then
     if lineState.value == 2 or lineState.value == 3 then
       lineState.value = 3;
     else
