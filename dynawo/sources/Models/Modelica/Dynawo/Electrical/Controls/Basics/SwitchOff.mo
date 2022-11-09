@@ -373,10 +373,10 @@ end SwitchOffIdealSwitch;
 
   equation
     when not(running.value) then
-      Timeline.logEvent1 (TimelineKeys.LineOpen);
+      Timeline.logEvent1 (TimelineKeys.ProtectionDisconnected);
       state = Constants.state.Open;
     elsewhen running.value and not(pre(running.value)) then
-      Timeline.logEvent1 (TimelineKeys.LineClosed);
+      Timeline.logEvent1 (TimelineKeys.ProtectionConnected);
       state = Constants.state.Closed;
     end when;
 
