@@ -17,6 +17,8 @@ set(MODELICA_PREASSEMBLED_MODELS
   CurrentLimitAutomaton.xml
   DistanceProtectionLineSide1.xml
   DistanceProtectionLineSide2.xml
+  DistanceProtectionLineSide1LoadBlinder.xml
+  DistanceProtectionLineSide2LoadBlinder.xml
   DoubleStep.xml
   EventConnectedStatus.xml
   EventQuadripoleConnection.xml
