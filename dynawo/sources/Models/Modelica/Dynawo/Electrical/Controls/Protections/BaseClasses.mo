@@ -1,5 +1,17 @@
 within Dynawo.Electrical.Controls.Protections;
 
+/*
+* Copyright (c) 2022, RTE (http://www.rte-france.com)
+* See AUTHORS.txt
+* All rights reserved.
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, you can obtain one at http://mozilla.org/MPL/2.0/.
+* SPDX-License-Identifier: MPL-2.0
+*
+* This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
+*/
+
 package BaseClasses
 
   extends Icons.BasesPackage;
@@ -11,6 +23,8 @@ package BaseClasses
     import Dynawo.NonElectrical.Logs.TimelineKeys;
 
     parameter Types.Time tLagAction "Time-lag due to the actual trip action in s";
+
+    parameter Types.Time tFilter = 0.01 "First order delay in the frequency measurement in s";
 
     parameter Integer nbSteps(min = 1, max = 10) "Number of steps in the UFLS scheme";
 
@@ -36,7 +50,7 @@ package BaseClasses
     parameter Real UFLSStep9 if (nbSteps >= 9) "Share of load disconnected by step 9 of UFLS";
     parameter Real UFLSStep10 if (nbSteps >= 10) "Share of load disconnected by step 10 of UFLS";
 
-    Types.Frequency omegaMonitoredPu "Monitored frequency";
+    Types.Frequency omegaMonitoredPu "Monitored frequency in pu (base omegaNom)";
 
     Types.Time tThresholdReached1(start = Constants.inf) "Time when reaches 1st UFLS threshold";
     Types.Time tThresholdReached2(start = Constants.inf) if (nbSteps >= 2) "Time when reaches 2nd UFLS threshold";
@@ -64,7 +78,7 @@ package BaseClasses
     Real deltaPQfiltered (start = 0) "Smoothed out version of deltaPQ for better numerical stability";
 
   equation
-    der(deltaPQfiltered) = 1000 * (deltaPQ - deltaPQfiltered);
+    der(deltaPQfiltered) * tFilter = deltaPQ - deltaPQfiltered;
     // Frequency comparison with first UFLS step
     when omegaMonitoredPu <= omega1Pu and not pre(step1Activated) then
       tThresholdReached1 = time;

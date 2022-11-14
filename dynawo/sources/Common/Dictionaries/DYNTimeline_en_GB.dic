@@ -61,7 +61,7 @@ VRLimitationEfdMax        =             Voltage regulator : upper limit reached 
 VRLimitationUsRefMin      =             Voltage regulator : lower limit reached (UsRef)
 VRLimitationUsRefMax      =             Voltage regulator : upper limit reached (UsRef)
 // --> Protection
-ProtectionDisconnected    =              Protection deconnected
+ProtectionDisconnected    =              Protection disconnected
 ProtectionConnected       =              Protection connected
 // --> Under-voltage automaton
 UVATripped                =              Under-voltage generator trip
