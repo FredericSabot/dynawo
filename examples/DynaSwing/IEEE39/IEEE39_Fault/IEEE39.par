@@ -33,7 +33,8 @@
   </set>
   <set id="Generator30">
     <par type="INT" name="generator_ExcitationPu" value="1"/>
-    <par type="DOUBLE" name="generator_md" value="0.0"/> <!--Neglect saturation to ease comparison between simulators-->
+    <par type="DOUBLE" name="generator_md" value="0.0"/>
+    <!--Neglect saturation to ease comparison between simulators-->
     <par type="DOUBLE" name="generator_mq" value="0.0"/>
     <par type="DOUBLE" name="generator_nd" value="0.0"/>
     <par type="DOUBLE" name="generator_nq" value="0.0"/>
@@ -549,10 +550,10 @@
     <par type="DOUBLE" name="generator_Tpq0" value="0.900"/>
     <par type="DOUBLE" name="generator_Tppq0" value="0.004"/>
     <par type="DOUBLE" name="generator_UNom" value="26"/>
-    <par type="DOUBLE" name="generator_SNom" value="911"/>
-    <par type="DOUBLE" name="generator_PNomTurb" value="819.9"/>
-    <par type="DOUBLE" name="generator_PNomAlt" value="819.9"/>
-    <par type="DOUBLE" name="generator_SnTfo" value="911"/>
+    <par type="DOUBLE" name="generator_SNom" value="922.222"/>
+    <par type="DOUBLE" name="generator_PNomTurb" value="830"/>
+    <par type="DOUBLE" name="generator_PNomAlt" value="830"/>
+    <par type="DOUBLE" name="generator_SnTfo" value="922.222"/>
     <par type="DOUBLE" name="generator_UNomHV" value="345"/>
     <par type="DOUBLE" name="generator_UNomLV" value="26"/>
     <par type="DOUBLE" name="generator_UBaseHV" value="345"/>
@@ -561,8 +562,8 @@
     <par type="DOUBLE" name="generator_XTfPu" value="0.1"/>
     <par type="DOUBLE" name="governor_KGover" value="5"/>
     <par type="DOUBLE" name="governor_PMin" value="0"/>
-    <par type="DOUBLE" name="governor_PMax" value="819.9"/>
-    <par type="DOUBLE" name="governor_PNom" value="819.9"/>
+    <par type="DOUBLE" name="governor_PMax" value="830"/>
+    <par type="DOUBLE" name="governor_PNom" value="830"/>
     <par type="DOUBLE" name="governor_T1" value="0.100"/>
     <par type="DOUBLE" name="governor_T2" value="0.0001"/>
     <par type="DOUBLE" name="governor_T3" value="0.200"/>
@@ -597,7 +598,7 @@
     <par type="DOUBLE" name="generator_nq" value="0.0"/>
     <par type="DOUBLE" name="generator_MdPuEfd" value="0"/>
     <par type="DOUBLE" name="generator_DPu" value="2"/>
-    <par type="DOUBLE" name="generator_H" value="2.4862"/>
+    <par type="DOUBLE" name="generator_H" value="45"/> <!--500/11.1111-->
     <par type="DOUBLE" name="generator_RaPu" value="0.0010"/>
     <par type="DOUBLE" name="generator_XlPu" value="0.154"/>
     <par type="DOUBLE" name="generator_XdPu" value="2.040"/>
@@ -611,18 +612,42 @@
     <par type="DOUBLE" name="generator_Tpq0" value="0.900"/>
     <par type="DOUBLE" name="generator_Tppq0" value="0.004"/>
     <par type="DOUBLE" name="generator_UNom" value="26"/>
-    <par type="DOUBLE" name="generator_SNom" value="911"/>
-    <par type="DOUBLE" name="generator_PNomTurb" value="819.9"/>
-    <par type="DOUBLE" name="generator_PNomAlt" value="819.9"/>
-    <par type="DOUBLE" name="generator_SnTfo" value="911"/>
+    <par type="DOUBLE" name="generator_SNom" value="1111.1111"/>
+    <par type="DOUBLE" name="generator_PNomTurb" value="1000"/>
+    <par type="DOUBLE" name="generator_PNomAlt" value="1000"/>
+    <par type="DOUBLE" name="generator_SnTfo" value="1111.1111"/>
     <par type="DOUBLE" name="generator_UNomHV" value="345"/>
     <par type="DOUBLE" name="generator_UNomLV" value="26"/>
     <par type="DOUBLE" name="generator_UBaseHV" value="345"/>
     <par type="DOUBLE" name="generator_UBaseLV" value="26"/>
     <par type="DOUBLE" name="generator_RTfPu" value="0.0"/>
     <par type="DOUBLE" name="generator_XTfPu" value="0.1"/>
+    <par type="DOUBLE" name="governor_KGover" value="5"/>
+    <par type="DOUBLE" name="governor_PMin" value="0"/>
+    <par type="DOUBLE" name="governor_PMax" value="1000"/>
+    <par type="DOUBLE" name="governor_PNom" value="1000"/>
+    <!--Same parameters as the governor and voltage regulator of gen 38-->
+    <par type="DOUBLE" name="governor_T1" value="0.100"/>
+    <par type="DOUBLE" name="governor_T2" value="0.0001"/>
+    <par type="DOUBLE" name="governor_T3" value="0.200"/>
+    <par type="DOUBLE" name="governor_T4" value="0.100"/>
+    <par type="DOUBLE" name="governor_T5" value="8.720"/>
+    <par type="DOUBLE" name="governor_F" value="0.300"/>
     <par type="DOUBLE" name="Pm_ValueIn" value="0"/>
     <par type="DOUBLE" name="URef_ValueIn" value="0"/>
+    <par type="DOUBLE" name="voltageRegulator_VRmax" value="1"/>
+    <par type="DOUBLE" name="voltageRegulator_VRmin" value="-1"/>
+    <par type="DOUBLE" name="voltageRegulator_Tr" value="0.0001"/>
+    <par type="DOUBLE" name="voltageRegulator_Ka" value="50"/>
+    <par type="DOUBLE" name="voltageRegulator_Ta" value="0.060"/>
+    <par type="DOUBLE" name="voltageRegulator_Ke" value="-0.0393"/>
+    <par type="DOUBLE" name="voltageRegulator_Te" value="0.440"/>
+    <par type="DOUBLE" name="voltageRegulator_Kf" value="0.07"/>
+    <par type="DOUBLE" name="voltageRegulator_Tf" value="1"/>
+    <par type="DOUBLE" name="voltageRegulator_E1" value="3.375"/>
+    <par type="DOUBLE" name="voltageRegulator_SE1" value="0.0644"/>
+    <par type="DOUBLE" name="voltageRegulator_E2" value="4.5"/>
+    <par type="DOUBLE" name="voltageRegulator_SE2" value="0.2363"/>
     <reference name="generator_P0Pu" origData="IIDM" origName="p_pu" type="DOUBLE"/>
     <reference name="generator_Q0Pu" origData="IIDM" origName="q_pu" type="DOUBLE"/>
     <reference name="generator_U0Pu" origData="IIDM" origName="v_pu" type="DOUBLE"/>
@@ -640,8 +665,8 @@
     <par type="DOUBLE" name="weight_gen_5" value="2205.9865"/>
     <par type="DOUBLE" name="weight_gen_6" value="2205.9865"/>
     <par type="DOUBLE" name="weight_gen_7" value="2205.9865"/>
-    <par type="DOUBLE" name="weight_gen_8" value="2264.9282"/>
-    <par type="DOUBLE" name="weight_gen_9" value="2264.9282"/>
+    <par type="DOUBLE" name="weight_gen_8" value="2292.8283"/>
+    <par type="DOUBLE" name="weight_gen_9" value="55555.555"/>
   </set>
   <set id="Fault">
     <par type="DOUBLE" name="fault_RPu" value="0.0001"/>
