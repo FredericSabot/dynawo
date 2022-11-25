@@ -95,7 +95,10 @@ ConnectorCalculatedVariable::evalJt(const double /*t*/, const double /*cj*/, Spa
   model_->evalJCalculatedVarI(indexCalculatedVariable_, JModel);
 
   for (std::size_t i = 0, iEnd = varExtIndexes_.size(); i < iEnd; ++i) {  // d(f)/dyModel = d(calculatedVariable)/d(yModel)
-    Jt.addTerm(model_->getOffsetY() + varExtIndexes_[i], JModel[i]);
+    if (std::isnan(JModel[i]) || std::isinf(JModel[i]))
+      Jt.addTerm(model_->getOffsetY() + varExtIndexes_[i], 0);
+    else
+      Jt.addTerm(model_->getOffsetY() + varExtIndexes_[i], JModel[i]);
   }
 }
 
