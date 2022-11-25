@@ -16,7 +16,9 @@ set(MODELICA_PREASSEMBLED_MODELS
   CombiTimeTable.xml
   CurrentLimitAutomaton.xml
   DistanceProtectionLineSide1.xml
+  DistanceProtectionLineSide1Disarm.xml
   DistanceProtectionLineSide2.xml
+  DistanceProtectionLineSide2Disarm.xml
   DistanceProtectionLineSide1LoadBlinder.xml
   DistanceProtectionLineSide2LoadBlinder.xml
   DoubleStep.xml

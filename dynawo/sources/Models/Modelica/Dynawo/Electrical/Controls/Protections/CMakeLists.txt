@@ -14,10 +14,14 @@ set(MODEL_FILES
   BaseClasses.mo
   DistanceProtectionLineSide1.mo
   DistanceProtectionLineSide1.extvar
+  DistanceProtectionLineSide1Disarm.mo
+  DistanceProtectionLineSide1Disarm.extvar
   DistanceProtectionLineSide1LoadBlinder.mo
   DistanceProtectionLineSide1LoadBlinder.extvar
   DistanceProtectionLineSide2.mo
   DistanceProtectionLineSide2.extvar
+  DistanceProtectionLineSide2Disarm.mo
+  DistanceProtectionLineSide2Disarm.extvar
   DistanceProtectionLineSide2LoadBlinder.mo
   DistanceProtectionLineSide2LoadBlinder.extvar
   UFLS10Steps.mo
