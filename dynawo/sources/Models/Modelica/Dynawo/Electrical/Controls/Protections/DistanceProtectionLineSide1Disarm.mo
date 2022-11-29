@@ -80,7 +80,7 @@ equation
   when (Z.re <= R1Pu and Z.im <= X1Pu and Z.re > -Z.im) then
     tThresholdReached1 = time;
     Timeline.logEvent1(TimelineKeys.Zone1Arming);
-  elsewhen not (Z.re <= R1Pu and Z.im <= X1Pu and Z.re > -Z.im) and pre(tThresholdReached1) <> Constants.inf and time - pre(tThresholdReached1) > T1 - CircuitBreakerTime then
+  elsewhen not (Z.re <= R1Pu and Z.im <= X1Pu and Z.re > -Z.im) and pre(tThresholdReached1) <> Constants.inf and time - pre(tThresholdReached1) < T1 - CircuitBreakerTime then
     tThresholdReached1 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone1Disarming);
   end when;
@@ -89,7 +89,7 @@ equation
   when (Z.re <= R2Pu and Z.im <= X2Pu and Z.re > -Z.im) then
     tThresholdReached2 = time;
     Timeline.logEvent1(TimelineKeys.Zone2Arming);
-  elsewhen not (Z.re <= R2Pu and Z.im <= X2Pu and Z.re > -Z.im) and pre(tThresholdReached2) <> Constants.inf and time - pre(tThresholdReached2) > T2 - CircuitBreakerTime then
+  elsewhen not (Z.re <= R2Pu and Z.im <= X2Pu and Z.re > -Z.im) and pre(tThresholdReached2) <> Constants.inf and time - pre(tThresholdReached2) < T2 - CircuitBreakerTime then
     tThresholdReached2 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone2Disarming);
   end when;
@@ -98,7 +98,7 @@ equation
   when (Z.re <= R3Pu and Z.im <= X3Pu and Z.re > -Z.im) then
     tThresholdReached3 = time;
     Timeline.logEvent1(TimelineKeys.Zone3Arming);
-  elsewhen not (Z.re <= R3Pu and Z.im <= X3Pu and Z.re > -Z.im) and pre(tThresholdReached3) <> Constants.inf and time - pre(tThresholdReached3) > T3 - CircuitBreakerTime then
+  elsewhen not (Z.re <= R3Pu and Z.im <= X3Pu and Z.re > -Z.im) and pre(tThresholdReached3) <> Constants.inf and time - pre(tThresholdReached3) < T3 - CircuitBreakerTime then
     tThresholdReached3 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone3Disarming);
   end when;
@@ -107,7 +107,7 @@ equation
   when (Z.re <= R4Pu and Z.im <= X4Pu and Z.re > -Z.im) then
     tThresholdReached4 = time;
     Timeline.logEvent1(TimelineKeys.Zone4Arming);
-  elsewhen not (Z.re <= R4Pu and Z.im <= X4Pu and Z.re > -Z.im) and pre(tThresholdReached4) <> Constants.inf and time - pre(tThresholdReached4) > T4 - CircuitBreakerTime then
+  elsewhen not (Z.re <= R4Pu and Z.im <= X4Pu and Z.re > -Z.im) and pre(tThresholdReached4) <> Constants.inf and time - pre(tThresholdReached4) < T4 - CircuitBreakerTime then
     tThresholdReached4 = Constants.inf;
     Timeline.logEvent1(TimelineKeys.Zone4Disarming);
   end when;
