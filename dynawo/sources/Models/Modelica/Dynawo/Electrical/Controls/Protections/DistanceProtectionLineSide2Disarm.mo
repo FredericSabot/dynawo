@@ -77,7 +77,7 @@ equation
   supported by the Dynawo backend
   */
   // Impedance comparison with the zone 1
-  when (Z.re <= R1Pu and Z.im <= X1Pu and Z.re > -Z.im) then
+  when (Z.re <= R1Pu and Z.im <= X1Pu and Z.re > -Z.im) and pre(tThresholdReached1) == Constants.inf then
     tThresholdReached1 = time;
     Timeline.logEvent1(TimelineKeys.Zone1Arming);
   elsewhen not (Z.re <= R1Pu and Z.im <= X1Pu and Z.re > -Z.im) and pre(tThresholdReached1) <> Constants.inf and time - pre(tThresholdReached1) < T1 - CircuitBreakerTime then
@@ -86,7 +86,7 @@ equation
   end when;
 
   // Impedance comparison with the zone 2
-  when (Z.re <= R2Pu and Z.im <= X2Pu and Z.re > -Z.im) then
+  when (Z.re <= R2Pu and Z.im <= X2Pu and Z.re > -Z.im) and pre(tThresholdReached2) == Constants.inf then
     tThresholdReached2 = time;
     Timeline.logEvent1(TimelineKeys.Zone2Arming);
   elsewhen not (Z.re <= R2Pu and Z.im <= X2Pu and Z.re > -Z.im) and pre(tThresholdReached2) <> Constants.inf and time - pre(tThresholdReached2) < T2 - CircuitBreakerTime then
@@ -95,7 +95,7 @@ equation
   end when;
 
   // Impedance comparison with the zone 3
-  when (Z.re <= R3Pu and Z.im <= X3Pu and Z.re > -Z.im) then
+  when (Z.re <= R3Pu and Z.im <= X3Pu and Z.re > -Z.im) and pre(tThresholdReached3) == Constants.inf then
     tThresholdReached3 = time;
     Timeline.logEvent1(TimelineKeys.Zone3Arming);
   elsewhen not (Z.re <= R3Pu and Z.im <= X3Pu and Z.re > -Z.im) and pre(tThresholdReached3) <> Constants.inf and time - pre(tThresholdReached3) < T3 - CircuitBreakerTime then
@@ -104,7 +104,7 @@ equation
   end when;
 
   // Impedance comparison with the zone 4
-  when (Z.re <= R4Pu and Z.im <= X4Pu and Z.re > -Z.im) then
+  when (Z.re <= R4Pu and Z.im <= X4Pu and Z.re > -Z.im) and pre(tThresholdReached4) == Constants.inf then
     tThresholdReached4 = time;
     Timeline.logEvent1(TimelineKeys.Zone4Arming);
   elsewhen not (Z.re <= R4Pu and Z.im <= X4Pu and Z.re > -Z.im) and pre(tThresholdReached4) <> Constants.inf and time - pre(tThresholdReached4) < T4 - CircuitBreakerTime then
