@@ -109,9 +109,9 @@ set(MODELICA_PREASSEMBLED_MODELS
   LoadTwoTransformers.xml
   LoadTwoTransformersTapChangers.xml
   LoadZIP.xml
+  LossOfSynchronismProtection.xml
   Measurements.xml
   NodeFault.xml
-  OutOfStep.xml
   PhaseShifterBlockingI.xml
   PhaseShifterI.xml
   PhaseShifterP.xml

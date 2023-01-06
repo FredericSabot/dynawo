@@ -12,7 +12,7 @@
     of simulation tools for power systems.
 -->
 <dyn:dynamicModelsArchitecture xmlns:dyn="http://www.rte-france.com/dynawo">
-  <dyn:modelicaModel id="OutOfStep">
-    <dyn:unitDynamicModel id="oos" name="Dynawo.Electrical.Controls.Machines.Protections.OutOfStep"/>
+  <dyn:modelicaModel id="LossOfSynchronismProtection">
+    <dyn:unitDynamicModel id="lossOfSynchronismProtection" name="Dynawo.Electrical.Controls.Machines.Protections.LossOfSynchronismProtection"/>
   </dyn:modelicaModel>
 </dyn:dynamicModelsArchitecture>

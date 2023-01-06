@@ -13,8 +13,8 @@
 set(MODEL_FILES
   package.mo
   package.order
-  OutOfStep.mo
-  OutOfStep.extvar
+  LossOfSynchronismProtection.mo
+  LossOfSynchronismProtection.extvar
   SpeedProtection.mo
   SpeedProtection.extvar
   UVA.mo
