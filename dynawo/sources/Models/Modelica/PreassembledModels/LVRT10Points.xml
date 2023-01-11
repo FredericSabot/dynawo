@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-    Copyright (c) 2022, RTE (http://www.rte-france.com)
+    Copyright (c) 2015-2019, RTE (http://www.rte-france.com)
     See AUTHORS.txt
     All rights reserved.
     This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,11 +8,11 @@
     file, you can obtain one at http://mozilla.org/MPL/2.0/.
     SPDX-License-Identifier: MPL-2.0
 
-    This file is part of Dynawo, an hybrid C++/Modelica open source suite
-    of simulation tools for power systems.
+    This file is part of Dynawo, an hybrid C++/Modelica open source time domain
+    simulation tool for power systems.
 -->
 <dyn:dynamicModelsArchitecture xmlns:dyn="http://www.rte-france.com/dynawo">
-  <dyn:modelicaModel id="DistanceProtectionLineSide2Disarm">
-    <dyn:unitDynamicModel id="distance" name="Dynawo.Electrical.Controls.Protections.DistanceProtectionLineSide2Disarm"/>
+  <dyn:modelicaModel id="LVRT10Points">
+    <dyn:unitDynamicModel id="lvrt" name="Dynawo.Electrical.Controls.Machines.Protections.LVRT10Points"/>
   </dyn:modelicaModel>
 </dyn:dynamicModelsArchitecture>

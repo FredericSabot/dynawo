@@ -1,4 +1,4 @@
-within Dynawo.Electrical.Controls;
+within Dynawo.Electrical.Controls.Machines.Protections;
 
 /*
 * Copyright (c) 2022, RTE (http://www.rte-france.com)
@@ -12,6 +12,4 @@ within Dynawo.Electrical.Controls;
 * This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 */
 
-package Protections "Models of protections"
-  extends Icons.Package;
-end Protections;
+model LVRT4Points = BaseClasses.BaseLVRT(NbPoints = 4);

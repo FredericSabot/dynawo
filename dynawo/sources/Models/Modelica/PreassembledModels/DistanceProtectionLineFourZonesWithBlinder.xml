@@ -12,7 +12,7 @@
     of simulation tools for power systems.
 -->
 <dyn:dynamicModelsArchitecture xmlns:dyn="http://www.rte-france.com/dynawo">
-  <dyn:modelicaModel id="DistanceProtectionLineSide1Disarm">
-    <dyn:unitDynamicModel id="distance" name="Dynawo.Electrical.Controls.Protections.DistanceProtectionLineSide1Disarm"/>
+  <dyn:modelicaModel id="DistanceProtectionLineFourZonesWithBlinder">
+    <dyn:unitDynamicModel id="distance" name="Dynawo.Electrical.Controls.Protections.DistanceProtectionLineFourZonesWithBlinder"/>
   </dyn:modelicaModel>
 </dyn:dynamicModelsArchitecture>
