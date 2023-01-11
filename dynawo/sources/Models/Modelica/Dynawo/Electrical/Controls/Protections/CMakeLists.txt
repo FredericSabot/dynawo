@@ -12,26 +12,18 @@ set(MODEL_FILES
   package.mo
   package.order
   BaseClasses.mo
-  DistanceProtectionLineSide1.mo
-  DistanceProtectionLineSide1.extvar
-  DistanceProtectionLineSide1Disarm.mo
-  DistanceProtectionLineSide1Disarm.extvar
-  DistanceProtectionLineSide1Special.mo
-  DistanceProtectionLineSide1Special.extvar
-  DistanceProtectionLineSide1LoadBlinder.mo
-  DistanceProtectionLineSide1LoadBlinder.extvar
-  DistanceProtectionLineSide2.mo
-  DistanceProtectionLineSide2.extvar
-  DistanceProtectionLineSide2Disarm.mo
-  DistanceProtectionLineSide2Disarm.extvar
-  DistanceProtectionLineSide2Special.mo
-  DistanceProtectionLineSide2Special.extvar
-  DistanceProtectionLineSide2LoadBlinder.mo
-  DistanceProtectionLineSide2LoadBlinder.extvar
-  UFLS10Steps.mo
-  UFLS10Steps.extvar
+  DistanceProtectionLineFourZones.mo
+  DistanceProtectionLineFourZones.extvar
+  DistanceProtectionLineFourZonesWithBlinder.mo
+  DistanceProtectionLineFourZonesWithBlinder.extvar
+  DistanceProtectionLineTwoZones.mo
+  DistanceProtectionLineTwoZones.extvar
+  DistanceProtectionLineTwoZonesWithBlinder.mo
+  DistanceProtectionLineTwoZonesWithBlinder.extvar
   UFLS3Steps.mo
   UFLS3Steps.extvar
+  UFLS10Steps.mo
+  UFLS10Steps.extvar
   )
 
 #

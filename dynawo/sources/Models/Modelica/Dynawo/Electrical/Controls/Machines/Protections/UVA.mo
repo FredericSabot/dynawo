@@ -41,7 +41,7 @@ equation
   end when;
 
   // Delay before tripping the generator
-  when time - tThresholdReached >= tLagAction and pre(UMonitoredPu) > 0 then  // Do not act if generator was already disconnected (e.g. by another protection)
+  when time - tThresholdReached >= tLagAction and not(pre(switchOffSignal.value)) then
     switchOffSignal.value = true;
     Timeline.logEvent1(TimelineKeys.UVATripped);
   end when;

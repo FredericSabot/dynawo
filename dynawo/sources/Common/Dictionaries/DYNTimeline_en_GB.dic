@@ -71,11 +71,12 @@ UVADisarming              =              Under-voltage automaton for generator d
 OOSTripped                =              Out-of-step generator trip
 OOSArming                 =              Out-of-step for generator arming
 // --> Speed protection
-SpeedTripped              =              Speed protection trip
 OverspeedArming           =              Over-speed protection arming
 OverspeedDisarming        =              Over-speed protection disarming
-UnderspeedArming          =              Over-speed protection arming
-UnderspeedDisarming       =              Over-speed protection disarming
+OverspeedTripped          =              Over-speed protection trip
+UnderspeedArming          =              Under-speed protection arming
+UnderspeedDisarming       =              Under-speed protection disarming
+UnderspeedTripped         =              Under-speed protection trip
 // --> CurrentLimit
 OverloadUp                =             Overload %1% : activation
 OverloadDown              =             Overload %1% : deactivation

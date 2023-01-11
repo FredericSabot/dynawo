@@ -15,14 +15,10 @@ set(MODELICA_PREASSEMBLED_MODELS
   Bus.xml
   CombiTimeTable.xml
   CurrentLimitAutomaton.xml
-  DistanceProtectionLineSide1.xml
-  DistanceProtectionLineSide1Disarm.xml
-  DistanceProtectionLineSide1Special.xml
-  DistanceProtectionLineSide2.xml
-  DistanceProtectionLineSide2Disarm.xml
-  DistanceProtectionLineSide2Special.xml
-  DistanceProtectionLineSide1LoadBlinder.xml
-  DistanceProtectionLineSide2LoadBlinder.xml
+  DistanceProtectionLineFourZones.xml
+  DistanceProtectionLineFourZonesWithBlinder.xml
+  DistanceProtectionLineTwoZones.xml
+  DistanceProtectionLineTwoZonesWithBlinder.xml
   DoubleStep.xml
   EventConnectedStatus.xml
   EventQuadripoleConnection.xml
@@ -111,9 +107,11 @@ set(MODELICA_PREASSEMBLED_MODELS
   LoadTwoTransformers.xml
   LoadTwoTransformersTapChangers.xml
   LoadZIP.xml
+  LossOfSynchronismProtection.xml
+  LVRT4Points.xml
+  LVRT10Points.xml
   Measurements.xml
   NodeFault.xml
-  OutOfStep.xml
   PhaseShifterBlockingI.xml
   PhaseShifterI.xml
   PhaseShifterP.xml

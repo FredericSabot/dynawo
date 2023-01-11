@@ -359,7 +359,7 @@ equation
 end SwitchOffIdealSwitch;
 
   partial model SwitchOffProtection "Switch-off signal for a protection"
-    /* The two possible/expected switch-off signals for a line are:
+    /* The two possible/expected switch-off signals for a protection are:
        - a switch-off signal coming from the node in case of a node disconnection
        - a switch-off signal coming from the user (event)
     */

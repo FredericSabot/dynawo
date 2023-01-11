@@ -13,41 +13,39 @@ within Dynawo.Electrical.Controls.Machines.Protections;
 */
 
 model SpeedProtection "Sends a tripping signal to the generator when the frequency goes outside a safe region"
-
   import Modelica.Constants;
   import Modelica.Blocks.Interfaces.RealInput;
-  import Dynawo.Connectors;
   import Dynawo.NonElectrical.Logs.Timeline;
   import Dynawo.NonElectrical.Logs.TimelineKeys;
 
-  parameter Types.VoltageModulePu omegaMinPu "Frequency threshold under which the automaton is activated in pu (base omegaNom)";
-  parameter Types.VoltageModulePu omegaMaxPu "Frequency threshold above which the automaton is activated in pu (base omegaNom)";
+  parameter Types.AngularVelocityPu OmegaMinPu "Frequency threshold under which the automaton is activated in pu (base omegaNom)";
+  parameter Types.AngularVelocityPu OmegaMaxPu "Frequency threshold above which the automaton is activated in pu (base omegaNom)";
   parameter Types.Time tLagAction "Time-lag due to the actual trip action in s";
 
-  RealInput omegaMonitoredPu "Monitored voltage in pu (base UNom)" annotation(
+  RealInput omegaMonitoredPu "Monitored frequency in pu (base omegaNom)" annotation(
   Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
 
-  Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
+  Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
 
 protected
-  Types.Time tThresholdReachedMin (start = Constants.inf) "Time when the minimum frequency threshold was reached";
-  Types.Time tThresholdReachedMax (start = Constants.inf) "Time when the maximum frequency threshold was reached";
+  Types.Time tThresholdReachedMin(start = Constants.inf) "Time when the minimum frequency threshold was reached in s";
+  Types.Time tThresholdReachedMax(start = Constants.inf) "Time when the maximum frequency threshold was reached in s";
 
 equation
   // Frequency comparison with the minimum accepted value
-  when omegaMonitoredPu <= omegaMinPu and not(pre(switchOffSignal.value)) then
+  when omegaMonitoredPu <= OmegaMinPu and not(pre(switchOffSignal.value)) then
     tThresholdReachedMin = time;
     Timeline.logEvent1(TimelineKeys.UnderspeedArming);
-  elsewhen omegaMonitoredPu > omegaMinPu and pre(tThresholdReachedMin) <> Constants.inf and not(pre(switchOffSignal.value)) then
+  elsewhen omegaMonitoredPu > OmegaMinPu and pre(tThresholdReachedMin) <> Constants.inf and not(pre(switchOffSignal.value)) then
     tThresholdReachedMin = Constants.inf;
     Timeline.logEvent1(TimelineKeys.UnderspeedDisarming);
   end when;
 
   // Frequency comparison with the maximum accepted value
-  when omegaMonitoredPu >= omegaMaxPu and not(pre(switchOffSignal.value)) then
+  when omegaMonitoredPu >= OmegaMaxPu and not(pre(switchOffSignal.value)) then
     tThresholdReachedMax = time;
     Timeline.logEvent1(TimelineKeys.OverspeedArming);
-  elsewhen omegaMonitoredPu < omegaMaxPu and pre(tThresholdReachedMin) <> Constants.inf and not(pre(switchOffSignal.value)) then
+  elsewhen omegaMonitoredPu < OmegaMaxPu and pre(tThresholdReachedMax) <> Constants.inf and not(pre(switchOffSignal.value)) then
     tThresholdReachedMax = Constants.inf;
     Timeline.logEvent1(TimelineKeys.OverspeedDisarming);
   end when;
@@ -55,12 +53,12 @@ equation
   // Delay before tripping the generator
   when time - tThresholdReachedMin >= tLagAction then
     switchOffSignal.value = true;
-    Timeline.logEvent1(TimelineKeys.SpeedTripped);
+    Timeline.logEvent1(TimelineKeys.UnderspeedTripped);
   elsewhen time - tThresholdReachedMax >= tLagAction then
     switchOffSignal.value = true;
-    Timeline.logEvent1(TimelineKeys.SpeedTripped);
+    Timeline.logEvent1(TimelineKeys.OverspeedTripped);
   end when;
 
-annotation(preferredView = "text",
+  annotation(preferredView = "text",
     Documentation(info = "<html><head></head><body>This model will send a tripping order to a generator if the frequency stays below a min threshold or above a max threshold during a certain amount of time.</body></html>"));
 end SpeedProtection;
