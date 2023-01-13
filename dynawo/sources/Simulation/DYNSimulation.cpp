@@ -110,6 +110,7 @@
 #include "DYNSolverFactory.h"
 #include "DYNTimer.h"
 #include "DYNModelMulti.h"
+#include "DYNModelNetwork.h"
 #include "DYNModeler.h"
 #include "DYNFileSystemUtils.h"
 #include "DYNTerminate.h"
@@ -177,7 +178,8 @@ lostEquipmentsOutputFile_(""),
 finalState_(std::numeric_limits<double>::max()),
 dumpLocalInitValues_(false),
 dumpGlobalInitValues_(false),
-wasLoggingEnabled_(false) {
+wasLoggingEnabled_(false),
+subnetworkSequenceStack_({{1}}) {
   SignalHandler::setSignalHandlers();
 
 #ifdef _MSC_VER
@@ -732,6 +734,7 @@ Simulation::initFromData(const shared_ptr<DataInterface>& data, const shared_ptr
   modeler.initSystem();
 
   model_ = modeler.getModel();
+  networkModel_ = modeler.modelNetwork_;
   model_->setWorkingDirectory(context_->getWorkingDirectory());
   model_->setTimeline(timeline_);
   model_->setConstraints(constraintsCollection_);
@@ -923,6 +926,7 @@ Simulation::simulate() {
       }
     }
     int currentIterNb = 0;
+    bool stopForSplitting = false;
     while (!end() && !SignalHandler::gotExitSignal() && criteriaChecked) {
       double elapsed = timer.elapsed();
       double timeout = jobEntry_->getSimulationEntry()->getTimeout();
@@ -934,11 +938,10 @@ Simulation::simulate() {
 
       bool isCheckCriteriaIter = data_ && activateCriteria_ && currentIterNb % criteriaStep_ == 0;
 
-      bool stopForSplitting = false;
       try {
         solver_->solve(tStop_, tCurrent_);
       } catch (const Error& e) {
-        if (e.key() == DYN::KeyError_t::SystemSplitting) {  // TODO(fsabot): Create a SystemSplitting KeyError to replace this one
+        if (e.key() == DYN::KeyError_t::SystemSplitting) {
           stopForSplitting = true;
         } else {
           throw e;
@@ -1027,6 +1030,44 @@ Simulation::simulate() {
     }
     if (timetableOutputFile_ != "")
         remove(timetableOutputFile_);
+
+    boost::static_pointer_cast<ModelNetwork>(networkModel_)->subNetworkId_ = 1;  // Test
+    /*
+
+    terminate();  // TODO: add + sequenceId to all output files
+    // TODO: add relevant catch, and remove terminate from SimulationLauncher and DynAlgo
+    if (stopForSplitting) {
+      // clean outputs (e.g. timeline and curvestreams?)
+      // TODO
+
+      // search for newly created subnetworks
+      std::vector<shared_ptr<SubNetwork>> subNetworks = networkModel_->busContainer_->getSubNetworks();
+      std::vector<int> newSubNetworkIds;
+      for (int i = 0; i < subNetworks.size(); i++) {
+        if(!std::find(oldSubNetworks.begin(), oldSubNetworks.end(), subNetworks[i]))
+          newSubNetworkIds.push(i);
+      }
+
+      // simulate subnetworks individually
+      for (auto& id : newSubNetworkIds) {
+
+        initialStateFile_ = initialStateFile_ + sequenceId
+        boost::static_pointer_cast<ModelNetwork>(networkModel_)->subNetworkId_ = id;
+        init();
+
+        current_sequence += id;
+
+        simulate();
+      }
+    }
+
+    if (all islands are simulated) {  // Stack empty (see below)
+      // merge outputs
+    }
+    // TODO: use sequenceStack to list the sequence that still have to be run (instead of recursive calls)
+    // TODO: store the errors to continue the simulate if convergence issue or other in a particular island but not the others
+    */
+
   } catch (const Terminate& t) {
     Trace::warn() << t.what() << Trace::endline;
     model_->printMessages();

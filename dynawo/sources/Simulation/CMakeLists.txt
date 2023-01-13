@@ -45,6 +45,7 @@ target_link_libraries(dynawo_Simulation
     dynawo_API_CSTR
     dynawo_API_LEQ
     dynawo_ModelerCommon
+    dynawo_CPPModelsNetwork
     dynawo_DataInterface
     dynawo_DataInterfaceFactory
     Boost::filesystem
@@ -77,6 +78,8 @@ target_include_directories(dynawo_SimulationCommon
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${INCLUDEDIR_NAME}>
+  PRIVATE
+    /home/fsabot/Desktop/dynawo_new/dynawo/sources/Models/CPP/ModelNetwork
   )
 
 target_link_libraries(dynawo_SimulationCommon

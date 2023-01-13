@@ -77,6 +77,8 @@ class Modeler {
     return model_;
   }
 
+  boost::shared_ptr<SubModel> modelNetwork_;  ///< model of the network
+
  private:
   /**
    * @brief network initialization

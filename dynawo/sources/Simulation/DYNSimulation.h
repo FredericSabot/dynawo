@@ -63,6 +63,7 @@ namespace DYN {
 class Message;
 class MessageTimeline;
 class Model;
+class ModelNetwork;
 class Solver;
 class DynamicData;
 class DataInterface;
@@ -622,6 +623,7 @@ class Simulation {
   boost::shared_ptr<job::JobEntry> jobEntry_;  ///< jobs data description
   boost::shared_ptr<Solver> solver_;  ///< solver used for the simulation
   boost::shared_ptr<Model> model_;  ///< model used for the simulation
+  boost::shared_ptr<SubModel> networkModel_;  ///< model of the network used for the simulation
   boost::shared_ptr<DataInterface> data_;  ///< Data interface associated to the job
   boost::shared_ptr<DynamicData> dyd_;  ///< Dynamic data container associated to the job
   boost::shared_ptr<timeline::Timeline> timeline_;  ///< instance of the timeline where events are stored
@@ -679,6 +681,8 @@ class Simulation {
   std::vector<double> zCurrent_;  ///< current values of the model's discrete variables
 
   bool wasLoggingEnabled_;  ///< true if logging was enabled by an upper project
+
+  std::vector<std::vector<int>> subnetworkSequenceStack_;  ///< ...
 
  private:
   /**

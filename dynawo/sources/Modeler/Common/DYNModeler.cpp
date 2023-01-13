@@ -93,6 +93,7 @@ Modeler::initNetwork() {
 
   model_->addSubModel(modelNetwork, "DYNModelNetwork" + string(sharedLibraryExtension()));
   subModels_["NETWORK"] = modelNetwork;
+  modelNetwork_ = modelNetwork;
 }
 
 void
