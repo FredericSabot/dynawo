@@ -45,7 +45,7 @@ target_link_libraries(dynawo_Simulation
     dynawo_API_CSTR
     dynawo_API_LEQ
     dynawo_ModelerCommon
-    dynawo_CPPModelsNetwork
+    DYNModelNetwork
     dynawo_DataInterface
     dynawo_DataInterfaceFactory
     Boost::filesystem

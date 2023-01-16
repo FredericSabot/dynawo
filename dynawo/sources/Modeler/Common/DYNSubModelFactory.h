@@ -182,12 +182,12 @@ class SubModelDelete {
  * @brief SubModelFactory getter
  * @return A pointer to a new instance of SubModelFactory
  */
-extern "C" DYN::SubModelFactory* getFactory();
+// extern "C" DYN::SubModelFactory* getFactory();
 
 /**
  * @brief SubModelFactory destroy method
  * @param factory the SubModelFactory to destroy
  */
-extern "C" void deleteFactory(DYN::SubModelFactory* factory);
+// extern "C" void deleteFactory(DYN::SubModelFactory* factory);
 
 #endif  // MODELER_COMMON_DYNSUBMODELFACTORY_H_

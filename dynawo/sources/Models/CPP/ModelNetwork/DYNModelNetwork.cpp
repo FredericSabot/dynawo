@@ -30,7 +30,6 @@
 
 #include "PARParametersSet.h"
 #include "DYNModelConstants.h"
-#include "DYNModelBus.h"
 #include "DYNModelSwitch.h"
 #include "DYNModelLine.h"
 #include "DYNModelTwoWindingsTransformer.h"
@@ -1444,6 +1443,11 @@ ModelNetwork::setGequations() {
       offset += GpropComponent.size();
     }
   }
+}
+
+std::vector< boost::shared_ptr<SubNetwork> >
+ModelNetwork::getSubNetworks() {
+  return busContainer_->getSubNetworks();
 }
 
 }  // namespace DYN

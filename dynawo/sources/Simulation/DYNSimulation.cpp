@@ -843,6 +843,8 @@ Simulation::init() {
   Trace::info() << DYNLog(CurveInitEnd, ss.str()) << Trace::endline;
   Trace::info() << "-----------------------------------------------------------------------" << Trace::endline<< Trace::endline;
 
+  subNetworks_ = boost::static_pointer_cast<ModelNetwork>(networkModel_)->getSubNetworks();
+
   solver_->setTimeline(timeline_);
 }
 
@@ -1031,43 +1033,41 @@ Simulation::simulate() {
     if (timetableOutputFile_ != "")
         remove(timetableOutputFile_);
 
-    boost::static_pointer_cast<ModelNetwork>(networkModel_)->subNetworkId_ = 1;  // Test
-    /*
 
-    terminate();  // TODO: add + sequenceId to all output files
-    // TODO: add relevant catch, and remove terminate from SimulationLauncher and DynAlgo
+    terminate();  // TODO(fsabot): add + sequenceId to all output files
+    // TODO(fsabot): add relevant catch, and remove terminate from SimulationLauncher and DynAlgo
     if (stopForSplitting) {
+      init();  // TODO(fsabot): add sequenceId (minus current subnetwork id) to initfile
       // clean outputs (e.g. timeline and curvestreams?)
-      // TODO
+      // TODO(fsabot)
 
       // search for newly created subnetworks
-      std::vector<shared_ptr<SubNetwork>> subNetworks = networkModel_->busContainer_->getSubNetworks();
+      std::vector<shared_ptr<SubNetwork>> newSubNetworks = boost::static_pointer_cast<ModelNetwork>(networkModel_)->getSubNetworks();
       std::vector<int> newSubNetworkIds;
-      for (int i = 0; i < subNetworks.size(); i++) {
-        if(!std::find(oldSubNetworks.begin(), oldSubNetworks.end(), subNetworks[i]))
-          newSubNetworkIds.push(i);
+      for (int i = 0; i < newSubNetworks.size(); i++) {
+        if (std::find(subNetworks_.begin(), subNetworks_.end(), newSubNetworks[i]) != subNetworks_.end())
+          newSubNetworkIds.push_back(i);
       }
+
+      std::cout << newSubNetworkIds.size() << std::endl;  // Should be equal 2
 
       // simulate subnetworks individually
       for (auto& id : newSubNetworkIds) {
-
-        initialStateFile_ = initialStateFile_ + sequenceId
+        // initialStateFile_ = initialStateFile_ + sequenceId
         boost::static_pointer_cast<ModelNetwork>(networkModel_)->subNetworkId_ = id;
         init();
 
-        current_sequence += id;
+        // current_sequence += id;
 
         simulate();
       }
     }
 
-    if (all islands are simulated) {  // Stack empty (see below)
+    /*if (all islands are simulated) {  // Stack empty (see below)
       // merge outputs
-    }
-    // TODO: use sequenceStack to list the sequence that still have to be run (instead of recursive calls)
-    // TODO: store the errors to continue the simulate if convergence issue or other in a particular island but not the others
-    */
-
+    }*/
+    // TODO(fsabot): use sequenceStack to list the sequence that still have to be run (instead of recursive calls)
+    // TODO(fsabot): store the errors to continue the simulate if convergence issue or other in a particular island but not the others
   } catch (const Terminate& t) {
     Trace::warn() << t.what() << Trace::endline;
     model_->printMessages();

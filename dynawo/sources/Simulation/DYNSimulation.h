@@ -34,6 +34,7 @@
 #include "DYNSignalHandler.h"
 #include "PARParametersSetCollection.h"
 #include "DYNDataInterface.h"
+#include "DYNModelBus.h"
 
 namespace timeline {
 class Timeline;
@@ -719,6 +720,8 @@ class Simulation {
    * @brief configure the lost equipments outputs
    */
   void configureLostEquipmentsOutputs();
+
+  std::vector<boost::shared_ptr<SubNetwork>> subNetworks_;  ///< List of subnetworks
 };
 
 }  // end of namespace DYN

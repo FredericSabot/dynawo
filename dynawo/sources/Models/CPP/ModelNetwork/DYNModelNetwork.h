@@ -28,6 +28,7 @@
 
 #include "DYNModelCPP.h"
 #include "DYNSubModelFactory.h"
+#include "DYNModelBus.h"
 
 namespace DYN {
 class ModelBusContainer;
@@ -290,6 +291,13 @@ class ModelNetwork : public ModelCPP, private boost::noncopyable {
    * @copydoc SubModel::printModel() const
    */
   void printModel() const;
+
+
+  /**
+   * @brief get the list of subnetworks in the network model
+   * @return list of subnetworks
+  */
+  std::vector< boost::shared_ptr<SubNetwork> > getSubNetworks();
 
   int subNetworkId_;  ///< Id of the subnetwork that will be simulated after a system splitting
 
