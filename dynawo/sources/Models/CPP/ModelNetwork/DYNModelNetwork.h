@@ -299,7 +299,14 @@ class ModelNetwork : public ModelCPP, private boost::noncopyable {
   */
   std::vector< boost::shared_ptr<SubNetwork> > getSubNetworks();
 
-  int subNetworkId_;  ///< Id of the subnetwork that will be simulated after a system splitting
+
+  /**
+   * @brief set the subnetwork to simulate
+   * @param subNetworkId id of the subnetwork to simulate
+  */
+  void setSubNetwork(int subNetworkId);
+
+  int subNetworkId_;  ///< Id of the subnetwork to simulate
 
  protected:
   /**

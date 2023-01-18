@@ -179,7 +179,10 @@ finalState_(std::numeric_limits<double>::max()),
 dumpLocalInitValues_(false),
 dumpGlobalInitValues_(false),
 wasLoggingEnabled_(false),
-subnetworkSequenceStack_({{1}}) {
+subNetworkSequenceStack_(),
+subNetworkSequenceList_(),
+currentSequenceString_(""),
+parentSequenceString_("") {
   SignalHandler::setSignalHandlers();
 
 #ifdef _MSC_VER
@@ -750,7 +753,7 @@ Simulation::initStructure() {
 }
 
 void
-Simulation::init() {
+Simulation::init(boost::optional<int> subNetworkId) {
 #if defined(_DEBUG_) || defined(PRINT_TIMERS)
   Timer timer("Simulation::init()");
 #endif
@@ -796,7 +799,16 @@ Simulation::init() {
   Trace::info() << DYNLog(ModelBuildingEnd) << Trace::endline;
   Trace::info() << "-----------------------------------------------------------------------" << Trace::endline<< Trace::endline;
 
-  if (initialStateFile_ != "") {
+  if (parentSequenceString_ != "") {
+    std::string initialStateFile = finalState_.dumpFile_->string() + parentSequenceString_;
+
+    Trace::info() << "-----------------------------------------------------------------------" << Trace::endline;
+    Trace::info() << DYNLog(ModelInitialStateLoad) << Trace::endline;
+    Trace::info() << "-----------------------------------------------------------------------" << Trace::endline;
+    t0 = loadState(initialStateFile);  // loadState and return initial time
+    Trace::info() << DYNLog(ModelInitialStateLoadEnd) << Trace::endline;
+    Trace::info() << "-----------------------------------------------------------------------" << Trace::endline<< Trace::endline;
+  } else if (initialStateFile_ != "") {
     Trace::info() << "-----------------------------------------------------------------------" << Trace::endline;
     Trace::info() << DYNLog(ModelInitialStateLoad) << Trace::endline;
     Trace::info() << "-----------------------------------------------------------------------" << Trace::endline;
@@ -810,6 +822,9 @@ Simulation::init() {
     Trace::warn() << DYNLog(WrongStartTime, tStart_, t0) << Trace::endline;
     tStart_ = t0;
   }
+
+  if (subNetworkId)
+    boost::static_pointer_cast<ModelNetwork>(networkModel_)->setSubNetwork(*subNetworkId);
 
   // When a simulation starts with a dumpfile (initial condition of variables for dynamic models),
   // initial condition's calculation is not necessary for those dynamic models;
@@ -917,157 +932,164 @@ Simulation::simulate() {
 
   bool criteriaChecked = true;
   try {
-    // update state variable only if the IIDM final state is exported, or criteria is checked, or lost equipments are exported
-    if (data_ && (finalState_.iidmFile_ || activateCriteria_ || isLostEquipmentsExported())) {
-      data_->getStateVariableReference();   // Each state variable in DataInterface has a mapped reference variable in dynamic model,
-                                         // either in a modelica model or in a C++ model.
-      // save initial connection state at t0 for each equipment
-      if (isLostEquipmentsExported()) {
-        data_->updateFromModel(false);  // force state variables' init
-        connectedComponents_ = data_->findConnectedComponents();
-      }
-    }
-    int currentIterNb = 0;
-    bool stopForSplitting = false;
-    while (!end() && !SignalHandler::gotExitSignal() && criteriaChecked) {
-      double elapsed = timer.elapsed();
-      double timeout = jobEntry_->getSimulationEntry()->getTimeout();
-      if (elapsed > timeout) {
-        Trace::warn() << DYNLog(SimulationTimeoutReached, jobEntry_->getName(), timeout) << Trace::endline;
-        endSimulationWithError(false);
-        return;
+    subNetworkSequenceStack_.push({0});  // TODO(fsabot): allow to read initial value from par
+    subNetworkSequenceList_.push_back({0});
+    while (!subNetworkSequenceStack_.empty()) {
+      std::vector<int> currentSequence = subNetworkSequenceStack_.front();
+      subNetworkSequenceStack_.pop();
+
+      std::stringstream currentSequence_ss;
+      for (auto& it : currentSequence)
+        currentSequence_ss << "_" << it;
+      currentSequenceString_ = currentSequence_ss.str();
+
+      std::stringstream parentSequence_ss;
+      for (auto it = currentSequence.begin(); it != std::prev(currentSequence.end()); it++)
+        parentSequence_ss << "_" << *it;
+      parentSequenceString_ = parentSequence_ss.str();
+
+      if (parentSequenceString_ != "") {
+        configureSimulationOutputs();  // Use to reset output files collections (except log)
+
+        int currentSubNetworkId = currentSequence.back();
+        init(currentSubNetworkId);
       }
 
-      bool isCheckCriteriaIter = data_ && activateCriteria_ && currentIterNb % criteriaStep_ == 0;
-
-      try {
-        solver_->solve(tStop_, tCurrent_);
-      } catch (const Error& e) {
-        if (e.key() == DYN::KeyError_t::SystemSplitting) {
-          stopForSplitting = true;
-        } else {
-          throw e;
+      // update state variable only if the IIDM final state is exported, or criteria is checked, or lost equipments are exported
+      if (data_ && (finalState_.iidmFile_ || activateCriteria_ || isLostEquipmentsExported())) {
+        data_->getStateVariableReference();   // Each state variable in DataInterface has a mapped reference variable in dynamic model,
+                                          // either in a modelica model or in a C++ model.
+        // save initial connection state at t0 for each equipment
+        if (isLostEquipmentsExported()) {
+          data_->updateFromModel(false);  // force state variables' init
+          connectedComponents_ = data_->findConnectedComponents();
         }
       }
-      solver_->printSolve();
-      if (currentIterNb == 0)
-        printHighestDerivativesValues();
+      int currentIterNb = 0;
+      bool stopForSplitting = false;
+      while (!end() && !SignalHandler::gotExitSignal() && criteriaChecked) {
+        double elapsed = timer.elapsed();
+        double timeout = jobEntry_->getSimulationEntry()->getTimeout();
+        if (elapsed > timeout) {
+          Trace::warn() << DYNLog(SimulationTimeoutReached, jobEntry_->getName(), timeout) << Trace::endline;
+          endSimulationWithError(false);
+          return;
+        }
 
-      BitMask solverState = solver_->getState();
-      bool modifZ = false;
-      if (solverState.getFlags(ModeChange)) {
-        updateCurves(true);
-        Trace::info() << DYNLog(NewStartPoint) << Trace::endline;
-        solver_->reinit();
-        model_->getCurrentZ(zCurrent_);
+        bool isCheckCriteriaIter = data_ && activateCriteria_ && currentIterNb % criteriaStep_ == 0;
+
+        try {
+          solver_->solve(tStop_, tCurrent_);
+        } catch (const Error& e) {
+          if (e.key() == DYN::KeyError_t::SystemSplitting) {
+            stopForSplitting = true;
+          } else {
+            throw e;
+          }
+        }
         solver_->printSolve();
-        printHighestDerivativesValues();
-      } else if (solverState.getFlags(NotSilentZChange)
-          || solverState.getFlags(SilentZNotUsedInDiscreteEqChange)
-          || solverState.getFlags(SilentZNotUsedInContinuousEqChange)) {
-        updateCurves(true);
-        model_->getCurrentZ(zCurrent_);
-        modifZ = true;
-      }
+        if (currentIterNb == 0)
+          printHighestDerivativesValues();
 
-      if (isCheckCriteriaIter)
-        model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
-      updateCurves(!isCheckCriteriaIter && !modifZ);
-
-      model_->checkDataCoherence(tCurrent_);
-      model_->printMessages();
-      if (timetableOutputFile_ != "" && currentIterNb % timetableSteps_ == 0)
-        printCurrentTime(timetableOutputFile_);
-
-      if (isCheckCriteriaIter) {
-        criteriaChecked = checkCriteria(tCurrent_, false);
-      }
-      ++currentIterNb;
-
-      model_->notifyTimeStep();
-
-      if (hasIntermediateStateToDump() && !isCheckCriteriaIter) {
-        // In case it was not already done beause of check criteria and intermediate state dump will be done at least one for current
-        // iteration
-        model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
-      }
-      while (hasIntermediateStateToDump()) {
-        const ExportStateDefinition& dumpDefinition = intermediateStates_.front();
-        data_->exportStateVariables();
-        if (dumpDefinition.dumpFile_) {
-          dumpState(*dumpDefinition.dumpFile_);
+        BitMask solverState = solver_->getState();
+        bool modifZ = false;
+        if (solverState.getFlags(ModeChange)) {
+          updateCurves(true);
+          Trace::info() << DYNLog(NewStartPoint) << Trace::endline;
+          solver_->reinit();
+          model_->getCurrentZ(zCurrent_);
+          solver_->printSolve();
+          printHighestDerivativesValues();
+        } else if (solverState.getFlags(NotSilentZChange)
+            || solverState.getFlags(SilentZNotUsedInDiscreteEqChange)
+            || solverState.getFlags(SilentZNotUsedInContinuousEqChange)) {
+          updateCurves(true);
+          model_->getCurrentZ(zCurrent_);
+          modifZ = true;
         }
-        if (dumpDefinition.iidmFile_) {
-          dumpIIDMFile(*dumpDefinition.iidmFile_);
+
+        if (isCheckCriteriaIter)
+          model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
+        updateCurves(!isCheckCriteriaIter && !modifZ);
+
+        model_->checkDataCoherence(tCurrent_);
+        model_->printMessages();
+        if (timetableOutputFile_ != "" && currentIterNb % timetableSteps_ == 0)
+          printCurrentTime(timetableOutputFile_);
+
+        if (isCheckCriteriaIter) {
+          criteriaChecked = checkCriteria(tCurrent_, false);
         }
-        intermediateStates_.pop();
+        ++currentIterNb;
+
+        model_->notifyTimeStep();
+
+        if (hasIntermediateStateToDump() && !isCheckCriteriaIter) {
+          // In case it was not already done beause of check criteria and intermediate state dump will be done at least one for current
+          // iteration
+          model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
+        }
+        while (hasIntermediateStateToDump()) {
+          const ExportStateDefinition& dumpDefinition = intermediateStates_.front();
+          data_->exportStateVariables();
+          if (dumpDefinition.dumpFile_) {
+            dumpState(*dumpDefinition.dumpFile_);
+          }
+          if (dumpDefinition.iidmFile_) {
+            dumpIIDMFile(*dumpDefinition.iidmFile_);
+          }
+          intermediateStates_.pop();
+        }
+
+        if (stopForSplitting)
+          break;
       }
 
-      if (stopForSplitting)
-        break;
-    }
+      // If we haven't evaluated the calculated variables for the last iteration before, we must do it here if it might be used in the post process
+      if (finalState_.iidmFile_ || exportCurvesMode_ != EXPORT_CURVES_NONE || activateCriteria_)
+        model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
 
-    // If we haven't evaluated the calculated variables for the last iteration before, we must do it here if it might be used in the post process
-    if (finalState_.iidmFile_ || exportCurvesMode_ != EXPORT_CURVES_NONE || activateCriteria_)
-      model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
-
-    if (SignalHandler::gotExitSignal() && !end()) {
-      if (timeline_) {
-        addEvent(DYNTimeline(SignalReceived));
-      }
-      throw DYNError(Error::GENERAL, SignalReceived);
-    } else if (!criteriaChecked) {
-      if (timeline_) {
-        addEvent(DYNTimeline(CriteriaNotChecked));
-      }
-      throw DYNError(Error::SIMULATION, CriteriaNotChecked);
-    } else if (end() && data_ && activateCriteria_) {
-      criteriaChecked = checkCriteria(tCurrent_, true);
-      if (!criteriaChecked) {
+      if (SignalHandler::gotExitSignal() && !end()) {
+        if (timeline_) {
+          addEvent(DYNTimeline(SignalReceived));
+        }
+        throw DYNError(Error::GENERAL, SignalReceived);
+      } else if (!criteriaChecked) {
         if (timeline_) {
           addEvent(DYNTimeline(CriteriaNotChecked));
         }
         throw DYNError(Error::SIMULATION, CriteriaNotChecked);
+      } else if (end() && data_ && activateCriteria_) {
+        criteriaChecked = checkCriteria(tCurrent_, true);
+        if (!criteriaChecked) {
+          if (timeline_) {
+            addEvent(DYNTimeline(CriteriaNotChecked));
+          }
+          throw DYNError(Error::SIMULATION, CriteriaNotChecked);
+        }
       }
+      if (timetableOutputFile_ != "")
+          remove(timetableOutputFile_);
+
+
+      terminate();
+      // TODO(fsabot): add relevant catch, and remove terminate from SimulationLauncher and DynAlgo
+      if (stopForSplitting) {
+        // search for newly created subnetworks
+        std::vector<shared_ptr<SubNetwork>> newSubNetworks = boost::static_pointer_cast<ModelNetwork>(networkModel_)->getSubNetworks();
+        std::vector<int> newIds = newSubNetworkIds(subNetworks_, newSubNetworks);
+
+        for (auto& id : newIds) {
+          std::vector<int> newSequence = currentSequence;
+          newSequence.push_back(id);
+          subNetworkSequenceStack_.push(newSequence);
+          subNetworkSequenceList_.push_back(newSequence);
+        }
+      }
+
+      // TODO(fsabot): merge outputs
+      // TODO(fsabot): store the errors to continue the simulation if convergence issue or other in a particular island but not the others
     }
-    if (timetableOutputFile_ != "")
-        remove(timetableOutputFile_);
-
-
-    terminate();  // TODO(fsabot): add + sequenceId to all output files
-    // TODO(fsabot): add relevant catch, and remove terminate from SimulationLauncher and DynAlgo
-    if (stopForSplitting) {
-      init();  // TODO(fsabot): add sequenceId (minus current subnetwork id) to initfile
-      // clean outputs (e.g. timeline and curvestreams?)
-      // TODO(fsabot)
-
-      // search for newly created subnetworks
-      std::vector<shared_ptr<SubNetwork>> newSubNetworks = boost::static_pointer_cast<ModelNetwork>(networkModel_)->getSubNetworks();
-      std::vector<int> newSubNetworkIds;
-      for (int i = 0; i < newSubNetworks.size(); i++) {
-        if (std::find(subNetworks_.begin(), subNetworks_.end(), newSubNetworks[i]) != subNetworks_.end())
-          newSubNetworkIds.push_back(i);
-      }
-
-      std::cout << newSubNetworkIds.size() << std::endl;  // Should be equal 2
-
-      // simulate subnetworks individually
-      for (auto& id : newSubNetworkIds) {
-        // initialStateFile_ = initialStateFile_ + sequenceId
-        boost::static_pointer_cast<ModelNetwork>(networkModel_)->subNetworkId_ = id;
-        init();
-
-        // current_sequence += id;
-
-        simulate();
-      }
-    }
-
-    /*if (all islands are simulated) {  // Stack empty (see below)
-      // merge outputs
-    }*/
-    // TODO(fsabot): use sequenceStack to list the sequence that still have to be run (instead of recursive calls)
-    // TODO(fsabot): store the errors to continue the simulate if convergence issue or other in a particular island but not the others
   } catch (const Terminate& t) {
     Trace::warn() << t.what() << Trace::endline;
     model_->printMessages();
@@ -1083,6 +1105,25 @@ Simulation::simulate() {
     endSimulationWithError(criteriaChecked);
     throw;
   }
+}
+
+std::vector<int>
+Simulation::newSubNetworkIds(std::vector<shared_ptr<SubNetwork>> subNetworks1, std::vector<shared_ptr<SubNetwork>> subNetworks2) {
+  std::vector<int> newIds;
+
+  for (int i = 0; i < subNetworks2.size(); i++) {
+    auto sub2 = subNetworks2[i];
+    bool found = false;
+    for (auto& sub1 : subNetworks1) {
+      if (sub1->equals(sub2)) {
+        found = true;
+        break;
+      }
+    }
+    if (!found)
+      newIds.push_back(i);
+  }
+  return newIds;
 }
 
 bool
@@ -1217,28 +1258,28 @@ Simulation::terminate() {
 
   if (curvesOutputFile_ != "") {
     ofstream fileCurves;
-    openFileStream(fileCurves, curvesOutputFile_);
+    openFileStream(fileCurves, curvesOutputFile_ + currentSequenceString_);
     printCurves(fileCurves);
     fileCurves.close();
   }
 
   if (finalStateValuesOutputFile_ != "") {
     ofstream fileFinalStateValues;
-    openFileStream(fileFinalStateValues, finalStateValuesOutputFile_);
+    openFileStream(fileFinalStateValues, finalStateValuesOutputFile_ + currentSequenceString_);
     printFinalStateValues(fileFinalStateValues);
     fileFinalStateValues.close();
   }
 
   if (timelineOutputFile_ != "") {
     ofstream fileTimeline;
-    openFileStream(fileTimeline, timelineOutputFile_);
+    openFileStream(fileTimeline, timelineOutputFile_ + currentSequenceString_);
     printTimeline(fileTimeline);
     fileTimeline.close();
   }
 
   if (constraintsOutputFile_ != "") {
     ofstream fileConstraints;
-    openFileStream(fileConstraints, constraintsOutputFile_);
+    openFileStream(fileConstraints, constraintsOutputFile_ + currentSequenceString_);
     printConstraints(fileConstraints);
     fileConstraints.close();
   }
@@ -1252,7 +1293,7 @@ Simulation::terminate() {
 
   if (data_ && isLostEquipmentsExported()) {
     ofstream fileLostEquipments;
-    openFileStream(fileLostEquipments, lostEquipmentsOutputFile_);
+    openFileStream(fileLostEquipments, lostEquipmentsOutputFile_ + currentSequenceString_);
     printLostEquipments(fileLostEquipments);
     fileLostEquipments.close();
   }
@@ -1397,14 +1438,14 @@ Simulation::dumpIIDMFile(const boost::filesystem::path& iidmFile) {
 void
 Simulation::dumpIIDMFile() {
   if (finalState_.iidmFile_) {
-    dumpIIDMFile(*finalState_.iidmFile_);
+    dumpIIDMFile(finalState_.iidmFile_->string() + currentSequenceString_);
   }
 }
 
 void
 Simulation::dumpState() {
   if (finalState_.dumpFile_) {
-    dumpState(*finalState_.dumpFile_);
+    dumpState(finalState_.dumpFile_->string() + currentSequenceString_);
   }
 }
 

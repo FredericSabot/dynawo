@@ -929,5 +929,17 @@ SubNetwork::turnOnNodes() {
   }
 }
 
+bool
+SubNetwork::equals(shared_ptr<SubNetwork> subnetwork) {
+  if (bus_.size() != subnetwork->nbBus())
+    return false;
+
+  for (int i = 0; i < subnetwork->nbBus(); i++) {
+    if (std::find(bus_.begin(), bus_.end(), subnetwork->bus(i)) == bus_.end())
+      return false;
+  }
+  return true;
+}
+
 
 }  // namespace DYN

@@ -816,7 +816,7 @@ ModelNetwork::analyseComponents() {
     be relaunched once for each subnetwork to simulate) the first time a splitting event is encountered.
     */
     if (timeOfLastSplitting_ == getCurrentTime()) {
-      Trace::debug() << DYNLog(KeepSubNetwork, subNetworkId_) << Trace::endline;
+      Trace::info() << DYNLog(KeepSubNetwork, subNetworkId_) << Trace::endline;
       for (unsigned int i = 0; i < subNetworks.size(); ++i) {
         if (i == subNetworkId_)
           subNetworks[i]->turnOnNodes();
@@ -828,6 +828,11 @@ ModelNetwork::analyseComponents() {
       throw DYNError(Error::SIMULATION, SystemSplitting);
     }
   }
+}
+
+void
+ModelNetwork::setSubNetwork(int subNetworkId) {
+  subNetworkId_ = subNetworkId;
 }
 
 void

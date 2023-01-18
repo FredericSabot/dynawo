@@ -168,7 +168,7 @@ class Simulation {
   /**
    * @brief initialize the simulation
    */
-  void init();
+  void init(boost::optional<int> subNetworkId = boost::none);
 
   /**
    * @brief calculate the initial conditions of the simulation
@@ -683,7 +683,11 @@ class Simulation {
 
   bool wasLoggingEnabled_;  ///< true if logging was enabled by an upper project
 
-  std::vector<std::vector<int>> subnetworkSequenceStack_;  ///< ...
+  std::queue<std::vector<int>> subNetworkSequenceStack_;  ///< Subnetwork sequences that still have to be run
+  std::vector<std::vector<int>> subNetworkSequenceList_;  ///< Subnetwork sequences that have been or will be run
+  std::string currentSequenceString_;  ///< subnetwork sequence that is currently run in string format, e.g. "_1_1_2"
+  std::string parentSequenceString_;  ///< subnetwork sequence that generated the currently run sequence, in string format, e.g. "_1_1"
+  // (empty if current sequence has no parent)
 
  private:
   /**
@@ -720,6 +724,14 @@ class Simulation {
    * @brief configure the lost equipments outputs
    */
   void configureLostEquipmentsOutputs();
+
+  /**
+   * @brief return the ids (indexes) of the subnetworks in subNetworks2 which are not in subNetworks1
+   * @param subNetworks1 First list of subnetworks
+   * @param subNetworks2 Second list of subnetworks
+   * @return list of indexes of subnetworks in subNetworks2 which are not in subNetworks1
+  */
+  std::vector<int> newSubNetworkIds(std::vector<boost::shared_ptr<SubNetwork>> subNetworks1, std::vector<boost::shared_ptr<SubNetwork>> subNetworks2);
 
   std::vector<boost::shared_ptr<SubNetwork>> subNetworks_;  ///< List of subnetworks
 };

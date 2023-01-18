@@ -706,6 +706,14 @@ class SubNetwork {  ///< sub-network gathering buses connected by AC components
    */
   void turnOnNodes();  // turn on all buses within the sub-network
 
+
+  /**
+   * @brief returns true if has the same buses as subnetwork
+   * @param subnetwork subnetwork which is compared to self
+   * @return whether or not the subnetworks are the same
+  */
+  bool equals(boost::shared_ptr<SubNetwork> subnetwork);
+
  private:
   int num_;  ///< number of bus
   std::vector<boost::shared_ptr<ModelBus> > bus_;  ///< vector of ModelBus located within the sub-network
