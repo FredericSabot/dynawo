@@ -22,10 +22,11 @@
     </dyn:modeler>
     <dyn:simulation startTime="0" stopTime="20"/>
     <dyn:outputs directory="outputs">
+      <dyn:timeline exportMode="TXT"/>
       <dyn:finalState exportIIDMFile="true" exportDumpFile="true"/>
       <dyn:curves inputFile="RBTS.crv" exportMode="CSV"/>
       <dyn:logs>
-        <dyn:appender tag="" file="dynawo.log" lvlFilter="DEBUG"/>
+        <dyn:appender tag="" file="dynawo.log" lvlFilter="INFO"/>
         <dyn:appender tag="NETWORK" file="dynawoNetwork.log" lvlFilter="DEBUG"/>
       </dyn:logs>
     </dyn:outputs>
