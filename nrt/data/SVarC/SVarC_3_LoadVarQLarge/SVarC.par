@@ -51,7 +51,6 @@
     <par type="DOUBLE" name="SVarC_tThresholdUp" value="60"/>
     <par type="DOUBLE" name="SVarC_tThresholdDown" value="0"/>
     <par type="INT" name="SVarC_Mode0" value="2"/>
-    <par type="DOUBLE" name="URef_ValueIn" value="225"/>
   </set>
   <!-- Load -->
   <set id="4">
@@ -63,9 +62,9 @@
     <par type="DOUBLE" name="load_UPhase0" value="0"/>
   </set>
   <!-- Load variation -->
-  <set id="5">
-    <par type="DOUBLE" name="event_tEvent" value="1"/>
-    <par type="DOUBLE" name="event_stateEvent1" value="0"/>
-    <par type="DOUBLE" name="event_stateEvent2" value="3"/>
+  <set id="6">
+    <par type="DOUBLE" name="step_Value0" value="0"/>
+    <par type="DOUBLE" name="step_tStep" value="1"/>
+    <par type="DOUBLE" name="step_Height" value="3"/>
   </set>
 </parametersSet>

@@ -11,10 +11,15 @@
 set(MODEL_FILES
   package.mo
   package.order
+  BooleanTable.mo
+  CombiTimeTable.mo
+  DoubleStep.mo
+  IntegerDoubleStep.mo
   Perturbation.mo
   Perturbation_INIT.mo
   SetPoint.mo
   SetPoint_INIT.mo
+  SineWave.mo
   Step.mo
   Step_INIT.mo
   SwitchOff.mo

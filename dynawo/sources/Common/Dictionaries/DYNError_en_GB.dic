@@ -26,6 +26,7 @@ OpenFileFailed              =             failed to open file %1%
 NoJobDefined                =             no job found in the .jobs file
 IncorrectDelay              =             inconsistent delay %1% at time %2% (max delay is %3%)
 SystemSplitting             =             gracefully stopping the simulator before a system split
+IterationStepAndTimeStepBothDefined =     iteration step and time step can't be defined at the same time
 //---------------- SOLVER -----------------------------------------
 SolverSubModelYvsF          =             model's initialisation %1% :  Variables number %2% not equals to the equations number %3%
 SolverYvsF                  =             variables number %1% not equals to the equations number %2%
@@ -52,8 +53,8 @@ SolverUnstableZMode         =             discrete events are unstable during th
 SolverUnbalanced            =             the number of algebraic/differential variables is different from the number of algebraic/differential equations in the simulated problem
 WrongLinearSolverChoice     =             the linear solver name provided is not valid
 SolverMissingParam          =             no value found for mandatory solver parameter '%1%' (parameter set '%2%', parameter file '%3%')
-SolverJacobianWithNulColumn =             jacobian has nul column %1%: equation '%2%' is ill-formed
-SolverJacobianWithNulRow    =             jacobian has nul row %1%: variable '%2%' is ill-formed
+SolverJacobianWithNulColumn =             jacobian has zero column %1%: equation '%2%' is ill-formed
+SolverJacobianWithNulRow    =             jacobian has zero row %1%: variable '%2%' is ill-formed
 SolverJacobianTwoEqualLines =             jacobian has equal lines %1% and %2%, corresponding to variables '%3%' and '%4%'
 SolverJacobianTwoEqualCol   =             jacobian has equal columns %1% and %2%, corresponding to equations '%3%' and '%4%'
 InvalidAlgebraicMode        =             invalid algebraic restoration mode: %1%
@@ -261,6 +262,7 @@ MissingParameterId          =             missing 'parId' attribute for model %1
 //---EXTVAR------------------
 ExternalVariableAttributeNotDefined=      external variable (%1%) does not have a value for the attribute "%2%"
 ExternalVariableAttributeOnlyForArray=    external variable (%1%) could not have the attribute "%2%", only defined for array variable
+ExternalVariableAttributeOnlyForArrayAndContinuous=    external variable (%1%) could not have the attribute "%2%", only defined for array and continuous variable
 ExternalVariableIDNotUnique =             external variable id (%1%) is not unique
 //---FS----------------------
 //---JOB---------------------

@@ -11,9 +11,9 @@
     This file is part of Dynawo, an hybrid C++/Modelica open source suite of
     simulation tools for power systems.
 -->
-<external_variables xmlns="http://www.rte-france.com/dynawo" xmlns:xi="http://www.w3.org/2001/XInclude">
+<external_variables xmlns="http://www.rte-france.com/dynawo">
   <variable type="continuous" id="Theta1"/>
   <variable type="continuous" id="Theta2"/>
   <variable type="continuous" id="KACEmulation"/>
-  <variable type="continuous" id="PRefSetPu"/>
+  <variable type="continuous" id="PRefSetPu" optional="true"/>
 </external_variables>

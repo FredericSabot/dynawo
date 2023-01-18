@@ -26,7 +26,7 @@
 
 #include <IIDM/Network.h>
 
-#include "DYNDataInterface.h"
+#include "DYNDataInterfaceImpl.h"
 #include "DYNCriteria.h"
 #include "DYNServiceManagerInterfaceIIDM.h"
 
@@ -73,7 +73,7 @@ class HvdcLineInterface;
 /**
  * @brief Data interface implementation
  */
-class DataInterfaceIIDM : public DataInterface {
+class DataInterfaceIIDM : public DataInterfaceImpl {
  public:
   /**
    * @brief Build an instance of this class by reading a file
@@ -432,6 +432,12 @@ class DataInterfaceIIDM : public DataInterface {
   void configureGeneratorCriteria(const boost::shared_ptr<criteria::CriteriaCollection>& criteria);
 
   /**
+   * @brief Setter for timeline
+   * @param timeline timeline output
+   */
+  void setTimeline(const boost::shared_ptr<timeline::Timeline>& timeline);
+
+  /**
    * @brief Copy data interface info
    *
    * This does NOT copy criteria and IIDM network
@@ -469,6 +475,7 @@ class DataInterfaceIIDM : public DataInterface {
   std::map<std::string, boost::shared_ptr<GeneratorInterface> > generatorComponents_;  ///< map of generators by name
   std::map<std::string, std::vector<boost::shared_ptr<CalculatedBusInterfaceIIDM> > > calculatedBusComponents_;  ///< calculatedBus per voltageLevel
   std::vector<boost::shared_ptr<Criteria> > criteria_;  ///< table of criteria to check
+  boost::shared_ptr<timeline::Timeline> timeline_;  ///< instance of the timeline where events are stored
   boost::shared_ptr<ServiceManagerInterfaceIIDM> serviceManager_;  ///< Service manager
 };  ///< Generic data interface for IIDM format files
 }  // namespace DYN

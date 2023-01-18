@@ -8,6 +8,7 @@
 #
 # This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 
+add_subdirectory(IEC I)
 add_subdirectory(WECC W)
 
 set(MODEL_FILES
@@ -19,5 +20,5 @@ set(MODEL_FILES
 # Modelica models install
 #
 foreach( MODEL_FILE ${MODEL_FILES} )
-    INSTALL_MODEL_file(${MODEL_FILE})
+    install_model_file(${MODEL_FILE})
 endforeach( MODEL_FILE )

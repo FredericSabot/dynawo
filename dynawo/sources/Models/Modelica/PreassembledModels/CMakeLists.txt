@@ -11,40 +11,63 @@
 # Preassembled models
 
 set(MODELICA_PREASSEMBLED_MODELS
+  BooleanTable.xml
   Bus.xml
+  CombiTimeTable.xml
   CurrentLimitAutomaton.xml
+  DiscretePI.xml
+  DoubleStep.xml
   EventConnectedStatus.xml
   EventQuadripoleConnection.xml
   EventQuadripoleDisconnection.xml
   EventSetPointBoolean.xml
   EventSetPointReal.xml
+  EventSetPointDouble.xml
   EventSetPointDoubleReal.xml
   GeneratorFictitious.xml
   GeneratorPQ.xml
   GeneratorPQPropSignalN.xml
+  GeneratorPQPropSignalNSFR.xml
   GeneratorPQPropDiagramPQSignalN.xml
+  GeneratorPQPropDiagramPQSignalNSFR.xml
   GeneratorPV.xml
+  GeneratorPVFixed.xml
+  GeneratorPVDiagramPQ.xml
   GeneratorPVSignalN.xml
+  GeneratorPVRpclSignalN.xml
+  GeneratorPVRpcl2SignalN.xml
+  GeneratorPVSignalNSFR.xml
+  GeneratorPVTfoSignalN.xml
+  GeneratorPVTfoDiagramPQSignalN.xml
+  GeneratorPVTfoRpclSignalN.xml
+  GeneratorPVTfoRpcl2SignalN.xml
+  GeneratorPVTfoDiagramPQRpclSignalN.xml
+  GeneratorPVTfoDiagramPQRpcl2SignalN.xml
   GeneratorPVDiagramPQSignalN.xml
+  GeneratorPVDiagramPQRpclSignalN.xml
+  GeneratorPVDiagramPQRpcl2SignalN.xml
+  GeneratorPVDiagramPQSignalNSFR.xml
   GeneratorPVPropSignalN.xml
+  GeneratorPVPropSignalNSFR.xml
   GeneratorPVRemoteSignalN.xml
+  GeneratorPVRemoteSignalNSFR.xml
   GeneratorPVRemoteDiagramPQSignalN.xml
+  GeneratorPVRemoteDiagramPQSignalNSFR.xml
   GeneratorSynchronousFourWindings.xml
   GeneratorSynchronousThreeWindings.xml
   GeneratorSynchronousFourWindingsProportionalRegulations.xml
-  GeneratorSynchronousFourWindingsProportionalRegulationsStepPm.xml
-  GeneratorSynchronousFourWindingsProportionalRegulationsStepURef.xml
   GeneratorSynchronousThreeWindingsProportionalRegulations.xml
   GeneratorSynchronousFourWindingsGoverPropVRPropInt.xml
   GeneratorSynchronousThreeWindingsGoverPropVRPropInt.xml
   GeneratorSynchronousFourWindingsTGov1Sexs.xml
   GeneratorSynchronousFourWindingsTGov1SexsPss2A.xml
-  GeneratorSynchronousFourWindingsTGov1SexsPss2AStepURef.xml
+  GeneratorSynchronousFourWindingsVRKundur.xml
+  GeneratorSynchronousFourWindingsVRKundurPssKundur.xml
   GeneratorSynchronousFourWindingsGovSteam1ExcIEEEST4B.xml
   GeneratorSynchronousFourWindingsGovSteam1ExcIEEEST4BPssIEEE2B.xml
-  GeneratorSynchronousFourWindingsGovSteam1ExcIEEEST4BPssIEEE2BStepURef.xml
   GeneratorSynchronousFourWindingsHydroG_IEEET1VR.xml
   GeneratorSynchronousFourWindingsGovernorBPAGG_IEEET1VR.xml
+  GeneratorSynchronousProportionalRegulationsInternalParameters.xml
   GenericAutomaton.xml
   GridFormingConverterDroopControl.xml
   GridFormingConverterMatchingControl.xml
@@ -77,18 +100,22 @@ set(MODELICA_PREASSEMBLED_MODELS
   HvdcVSCDanglingP.xml
   HvdcVSCDanglingUdc.xml
   HvdcVSCEmulation.xml
+  IECWT4ACurrentSource.xml
   InfiniteBus.xml
+  InfiniteBusFromTable.xml
   InfiniteBusWithImpedance.xml
   InfiniteBusWithVariations.xml
   InjectorBG.xml
+  IntegerDoubleStep.xml
   Line.xml
   LoadAlphaBeta.xml
-  LoadAlphaBetaStepP.xml
   LoadAlphaBetaRestorative.xml
   LoadAlphaBetaRestorativeLimitsRecalc.xml
+  LoadAlphaBetaMotor.xml
   LoadOneTransformer.xml
   LoadOneTransformerTapChanger.xml
   LoadPQ.xml
+  LoadShedding.xml
   LoadTwoTransformers.xml
   LoadTwoTransformersTapChangers.xml
   LoadZIP.xml
@@ -102,9 +129,12 @@ set(MODELICA_PREASSEMBLED_MODELS
   PowerTransferHVDCEmulation.xml
   PIAntiWindUpTable.xml
   ShuntBWithSections.xml
+  SecondaryFrequencyRegulation.xml
+  SecondaryVoltageControlSimp.xml
   SetPoint.xml
+  ShuntB.xml
   SignalN.xml
-  StaticVarCompensatorStepURef.xml
+  SineWave.xml
   StaticVarCompensator.xml
   StaticVarCompensatorPV.xml
   StaticVarCompensatorPVModeHandling.xml
@@ -115,6 +145,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   StaticVarCompensatorPVPropRemote.xml
   StaticVarCompensatorPVPropRemoteModeHandling.xml
   Step.xml
+  Switch.xml
   TapChangerAutomaton.xml
   TapChangerBlockingAutomaton1.xml
   TapChangerBlockingAutomaton2.xml
@@ -139,6 +170,8 @@ install(PROGRAMS ${PYTHON_SCRIPTS_PREASSEMBLED_MODELS} DESTINATION ${SBINDIR_NAM
 foreach( FILE ${MODELICA_PREASSEMBLED_MODELS} )
   compile_preassembled_model(${FILE})
 endforeach( FILE )
+
+include(CMakeListsModelsTargets.txt)
 
 if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
   add_subdirectory(test)

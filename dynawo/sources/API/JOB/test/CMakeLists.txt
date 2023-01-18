@@ -16,10 +16,12 @@ set(MODULE_SOURCES
   TestCurvesEntry.cpp
   TestDynModelsEntry.cpp
   TestFinalStateEntry.cpp
+  TestFinalStateValuesEntry.cpp
   TestInitialStateEntry.cpp
   TestInitValuesEntry.cpp
   TestJobCollection.cpp
   TestJobEntry.cpp
+  TestLocalInitEntry.cpp
   TestLogsEntry.cpp
   TestLostEquipmentsEntry.cpp
   TestModelerEntry.cpp
@@ -44,7 +46,7 @@ add_custom_target(${MODULE_NAME}-pre-tests
   )
 
 add_custom_target(${MODULE_NAME}-tests
-  COMMAND ${CMAKE_COMMAND} -E env "${runtime_tests_PATH}" "DYNAWO_XSD_DIR=./" $<TARGET_FILE:${MODULE_NAME}>
+  COMMAND ${CMAKE_COMMAND} -E env "${runtime_tests_PATH}" "DYNAWO_XSD_DIR=./" "DYNAWO_USE_XSD_VALIDATION=true" $<TARGET_FILE:${MODULE_NAME}>
   DEPENDS
     ${MODULE_NAME}-pre-tests
     ${MODULE_NAME}

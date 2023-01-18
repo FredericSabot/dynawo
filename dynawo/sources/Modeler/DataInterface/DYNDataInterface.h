@@ -27,6 +27,7 @@
 #include "CRTCriteriaCollection.h"
 #include "LEQLostEquipmentsCollection.h"
 #include "DYNServiceManagerInterface.h"
+#include "TLTimeline.h"
 
 namespace DYN {
 class NetworkInterface;
@@ -205,6 +206,21 @@ class DataInterface {
    * @returns cloned data interface
    */
   virtual boost::shared_ptr<DataInterface> clone() const = 0;
+
+  /**
+  * @brief test if some network components does not have a dynamic model
+  *
+  * A network model will be instantiated if at least one of the static components does not have a dynamic model
+  *
+  * @return do we need to instantiate the network
+  */
+  virtual bool instantiateNetwork() const = 0;
+
+  /**
+   * @brief Setter for timeline
+   * @param timeline timeline output
+   */
+  virtual void setTimeline(const boost::shared_ptr<timeline::Timeline>& timeline) = 0;
 };  ///< Class for data interface
 
 #ifdef __clang__

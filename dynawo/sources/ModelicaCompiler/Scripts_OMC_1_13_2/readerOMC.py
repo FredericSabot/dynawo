@@ -584,7 +584,7 @@ class ReaderOMC:
     # @param eq : equation pseudo code
     # @param defined_var_eq : name of the variable defined by this equation
     def analyse_equations_and_get_types(self, eq, defined_var_eq):
-        if "{" in eq: return
+        if eq.startswith("[{"): return
         der_var_ptrn = re.compile(r'der\s*\((?P<var>[\(\S\) ]+?)\)')
         diff_var = []
         types = []
@@ -874,7 +874,16 @@ class ReaderOMC:
                         self.map_equation_formula[index] = list_body[-1].lstrip().strip('\n')
                         break
 
-
+        for f in self.list_func_16dae_c:
+            (body, depend) = replace_dynamic_indexing(f.body)
+            f.body = body
+            name_var_eval = None
+            if f.get_num_omc() in self.map_num_eq_vars_defined.keys():
+                if len(self.map_num_eq_vars_defined[f.get_num_omc()]) > 1:
+                    error_exit("   Error: Found an equation (id: " + f.get_num_omc()+") defining multiple variables. This is not supported in Dynawo.")
+                name_var_eval = self.map_num_eq_vars_defined[f.get_num_omc()] [0]
+            if name_var_eval is not None and len(depend) > 0:
+                self.map_vars_depend_vars[name_var_eval].extend(depend)
         # Reading the function ..._setupDataStruc(...)
         file_to_read = self._16dae_c_file
         function_name = self.mod_name + "_initializeDAEmodeData"
@@ -926,6 +935,7 @@ class ReaderOMC:
 
                 # "takewhile" only stops when the whole body of the function is read
                 list_body = list(itertools.takewhile(stop_reading_function, it))
+                (list_body, depend) = replace_dynamic_indexing(list_body)
 
                 for line in list_body:
                     if ptrn_assign_var.search(line) is not None:
@@ -1081,6 +1091,7 @@ class ReaderOMC:
         ptrn_assign_var = re.compile(r'^[ ]*data->modelData->(?P<var>\S*)\.attribute[ ]*\/\* (?P<varName>[ \w\$\.()\[\],]*) [\w(),\.\[\]]+ \*\/.start[ ]*=[^;]*;$')
         ptrn_param = re.compile(r'data->simulationInfo->(?P<var>\S*)[ ]*\/\* (?P<varName>[ \w\$\.()\[\],]*) PARAM \*\/[ ]*=[^;]*;')
         ptrn_param_boolean_test = re.compile(r'data->simulationInfo->(?P<var>\S*)[ ]*\/\* (?P<varName>[ \w\$\.()\[\],]*) PARAM \*\/[ ]*==[^;]*;')
+        ptrn_param_bool_assignment = re.compile(r'data->simulationInfo->booleanParameter\[(?P<var>\S*)\][ ]*\/\* (?P<varName>[ \w\$\.()\[\],]*) PARAM \*\/[ ]*=[^;]*;')
         ptrn_assign_auxiliary_var = re.compile(r'^[ ]*data->localData(?P<var>\S*)[ ]*\/\* (?P<varName>[ \w\$\.()\[\],]*) [\w(),\.]+ \*\/[ ]*=[^;]*;')
         ptrn_assign_extobjs = re.compile(r'^[ ]*data->simulationInfo->extObjs\[(?P<var>[0-9]+)\][ ]*=[^;]*;$')
 
@@ -1096,10 +1107,15 @@ class ReaderOMC:
 
                 # "takewhile" only stops when the whole body of the function is read
                 list_body = list(itertools.takewhile(stop_reading_function, it))
+                (list_body, depend) = replace_dynamic_indexing(list_body)
 
                 for line in list_body:
                     if ptrn_assign_var.search(line) is not None:
                         match = re.search(ptrn_assign_var, line)
+                        var = match.group('varName')
+                        self.var_init_val[ var ] = list_body
+                    if ptrn_param_bool_assignment.search(line) is not None:
+                        match = re.search(ptrn_param, line)
                         var = match.group('varName')
                         self.var_init_val[ var ] = list_body
                     if ptrn_param.search(line) is not None and ptrn_param_boolean_test.search(line) is None:
@@ -1332,6 +1348,7 @@ class ReaderOMC:
         ptrn_var2 = re.compile(r'static const modelica_integer _OMC_LIT.*')
         ptrn_table_size= re.compile(r'static _index_t _OMC_LIT[0-9]+_dims*')
         ptrn_table= re.compile(r'static base_array_t const _OMC_LIT*')
+        ptrn_real_array= re.compile(r'static const modelica_real _OMC_LIT[0-9]+_data*')
 
         with open(file_to_read,'r') as f:
             while True:
@@ -1356,7 +1373,19 @@ class ReaderOMC:
                     next_iter = next(it, None)
                 table_declaration+=next_iter
                 self.list_vars_literal.append(table_declaration)
-                next(it, None)
+
+        with open(file_to_read,'r') as f:
+            while True:
+                it = itertools.dropwhile(lambda line: (ptrn_real_array.search(line) is None), f)
+                next_iter = next(it, None) # Line on which "dropwhile" stopped
+                if next_iter is None: break # If we reach the end of the file, exit loop
+
+                table_declaration = ""
+                while next_iter.strip() != "};" :
+                    table_declaration+=next_iter
+                    next_iter = next(it, None)
+                table_declaration+=next_iter
+                self.list_vars_literal.append(table_declaration)
 
     ##
     # Read *_literals.h file and store all string declaration with type '_OMC_LIT'
@@ -1649,12 +1678,14 @@ class ReaderOMC:
         map_num_eq_vars_defined = self.get_map_num_eq_vars_defined()
         name_func_to_search = {}
         for func in self.list_omc_functions:
-            if "omc_Modelica_" in func.get_name() and not "omc_Modelica_Blocks_Tables_Internal_getTable" in func.get_name(): continue
+            if "omc_Modelica_" in func.get_name() and "omc_Modelica_Blocks_Tables_Internal_getTable" not in func.get_name() \
+            and "omc_Modelica_Blocks_Tables_Internal_getTimeTable" not in func.get_name(): continue
             name_func_to_search[func.get_name()] = func
 
         # dictionary that stores the number of equations that depends on a specific variable
         variable_to_equation_dependencies = {}
         function_to_eval_variable = {}
+
         for f in self.list_func_16dae_c:
             f_num_omc = f.get_num_omc()
             name_var_eval = None
@@ -1832,6 +1863,16 @@ class ReaderOMC:
         func.add_params(OmcFunctionParameter("time", "modelica_real", 3, True))
         func.add_params(OmcFunctionParameter("delayTime", "modelica_real", 4, True))
         func.add_params(OmcFunctionParameter("delayMax", "modelica_real", 5, True))
+        self.list_omc_functions.append(func)
+
+        func = RawOmcFunctions()
+        func.set_name("array_alloc_scalar_real_array")
+        func.set_signature("void array_alloc_scalar_real_array(real_array_t* dest, int n, modelica_real first, ...)")
+        func.set_return_type("void")
+        func.add_params(OmcFunctionParameter("dest", "real_array_t*", 0, True))
+        func.add_params(OmcFunctionParameter("n", "int", 1, True))
+        for i in range(100):
+            func.add_params(OmcFunctionParameter("%dth" % (i), "modelica_real", 2, True))
         self.list_omc_functions.append(func)
 
 

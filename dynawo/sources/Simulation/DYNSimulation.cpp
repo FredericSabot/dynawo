@@ -63,6 +63,8 @@
 #include "FSVFinalStateValueFactory.h"
 #include "FSVXmlExporter.h"
 #include "FSVXmlImporter.h"
+#include "FSVCsvExporter.h"
+#include "FSVTxtExporter.h"
 
 #include "CSTRConstraintsCollection.h"
 #include "CSTRConstraintsCollectionFactory.h"
@@ -118,6 +120,7 @@
 #include "DYNDataInterfaceFactory.h"
 #include "DYNExecUtils.h"
 #include "DYNSignalHandler.h"
+#include "DYNIoDico.h"
 #include "DYNBitMask.h"
 
 using std::ofstream;
@@ -164,13 +167,14 @@ initialStateFile_(""),
 exportCurvesMode_(EXPORT_CURVES_NONE),
 curvesInputFile_(""),
 curvesOutputFile_(""),
-exportFinalStateValuesMode_(EXPORT_FINAL_STATE_VALUES_XML),
+exportFinalStateValuesMode_(EXPORT_FINAL_STATE_VALUES_NONE),
 finalStateValuesInputFile_(""),
 finalStateValuesOutputFile_(""),
 exportTimelineMode_(EXPORT_TIMELINE_NONE),
 exportTimelineWithTime_(true),
 exportTimelineMaxPriority_(boost::none),
 timelineOutputFile_(""),
+filterTimeline_(false),
 exportConstraintsMode_(EXPORT_CONSTRAINTS_NONE),
 constraintsOutputFile_(""),
 exportLostEquipmentsMode_(EXPORT_LOSTEQUIPMENTS_NONE),
@@ -233,14 +237,9 @@ Simulation::configureSimulationInputs() {
 
   if (jobEntry_->getModelerEntry()->getNetworkEntry()) {
     iidmFile_ = createAbsolutePath(jobEntry_->getModelerEntry()->getNetworkEntry()->getIidmFile(), context_->getInputDirectory());
+
     if (!data_ && !exists(iidmFile_))  // no need to check iidm file if data interface is provided
       throw DYNError(Error::GENERAL, UnknownIidmFile, iidmFile_);
-
-    networkParFile_ = createAbsolutePath(jobEntry_->getModelerEntry()->getNetworkEntry()->getNetworkParFile(), context_->getInputDirectory());
-    if (!exists(networkParFile_))
-      throw DYNError(Error::GENERAL, UnknownParFile, networkParFile_);
-    networkParFile_ = jobEntry_->getModelerEntry()->getNetworkEntry()->getNetworkParFile();
-    networkParSet_ = jobEntry_->getModelerEntry()->getNetworkEntry()->getNetworkParId();
   }
   if (jobEntry_->getModelerEntry()->getInitialStateEntry()) {
     initialStateFile_ = createAbsolutePath(jobEntry_->getModelerEntry()->getInitialStateEntry()->getInitialStateFile(), context_->getInputDirectory());
@@ -353,6 +352,7 @@ Simulation::configureTimelineOutputs() {
     setTimelineExportMode(exportModeFlag);
     exportTimelineWithTime_ = jobEntry_->getOutputsEntry()->getTimelineEntry()->getExportWithTime();
     exportTimelineMaxPriority_ = jobEntry_->getOutputsEntry()->getTimelineEntry()->getMaxPriority();
+    filterTimeline_ = jobEntry_->getOutputsEntry()->getTimelineEntry()->isFilter();
     setTimelineOutputFile(outputFile);
   } else {
     setTimelineExportMode(Simulation::EXPORT_TIMELINE_NONE);
@@ -431,8 +431,22 @@ Simulation::configureFinalStateValueOutputs() {
     importFinalStateValuesRequest();
 
     //---- exportMode ----
-    setFinalStateValuesExportMode(Simulation::EXPORT_FINAL_STATE_VALUES_XML);
-    string outputFile = createAbsolutePath("finalStateValues.xml", finalStateValuesDir);
+    std::string exportMode = jobEntry_->getOutputsEntry()->getFinalStateValuesEntry()->getExportMode();
+    exportFinalStateValuesMode_t exportModeFlag = EXPORT_FINAL_STATE_VALUES_NONE;
+    std::string outputFile = "";
+    if (exportMode == "XML") {
+      exportModeFlag = EXPORT_FINAL_STATE_VALUES_XML;
+      outputFile = createAbsolutePath("finalStateValues.xml", finalStateValuesDir);
+    } else if (exportMode == "CSV") {
+      exportModeFlag = EXPORT_FINAL_STATE_VALUES_CSV;
+      outputFile = createAbsolutePath("finalStateValues.csv", finalStateValuesDir);
+    } else if (exportMode == "TXT") {
+      exportModeFlag = EXPORT_FINAL_STATE_VALUES_TXT;
+      outputFile = createAbsolutePath("finalStateValues.txt", finalStateValuesDir);
+    } else {
+      throw DYNError(Error::MODELER, UnknownFinalStateValuesExport, exportMode);
+    }
+    setFinalStateValuesExportMode(exportModeFlag);
     setFinalStateValuesOutputFile(outputFile);
   } else {
     setFinalStateValuesExportMode(Simulation::EXPORT_FINAL_STATE_VALUES_NONE);
@@ -603,10 +617,22 @@ Simulation::loadDynamicData() {
 
   data_->importStaticParameters();  // Import static model's parameters' values into DataInterface, these values are useful for referece parameters.
 
+  data_->setTimeline(timeline_);
+
   dyd_->setDataInterface(data_);
 
   dyd_->initFromDydFiles(dydFiles_);
   data_->mapConnections();
+
+  if (data_->instantiateNetwork()) {
+    networkParFile_ = createAbsolutePath(jobEntry_->getModelerEntry()->getNetworkEntry()->getNetworkParFile(), context_->getInputDirectory());
+    if (!exists(networkParFile_)) {
+      throw DYNError(Error::GENERAL, UnknownParFile, networkParFile_, context_->getInputDirectory());
+    } else {
+      networkParFile_ = jobEntry_->getModelerEntry()->getNetworkEntry()->getNetworkParFile();
+      networkParSet_ = jobEntry_->getModelerEntry()->getNetworkEntry()->getNetworkParId();
+    }
+  }
 
   // the Network parameter file path is considered to be relative to the jobs file directory
   dyd_->getNetworkParameters(networkParFile_, networkParSet_);
@@ -741,6 +767,16 @@ Simulation::initFromData(const shared_ptr<DataInterface>& data, const shared_ptr
   model_->setWorkingDirectory(context_->getWorkingDirectory());
   model_->setTimeline(timeline_);
   model_->setConstraints(constraintsCollection_);
+
+  if (jobEntry_->getLocalInitEntry() != nullptr) {
+    const std::string initParFile = createAbsolutePath(jobEntry_->getLocalInitEntry()->getParFile(), context_->getInputDirectory());
+    const std::string parId = jobEntry_->getLocalInitEntry()->getParId();
+    parameters::XmlImporter parametersImporter;
+    boost::shared_ptr<ParametersSetCollection> localInitSetCollection = parametersImporter.importFromFile(initParFile);
+    boost::shared_ptr<ParametersSet> localInitParameters = localInitSetCollection->getParametersSet(parId);
+
+    model_->setLocalInitParameters(localInitParameters);
+  }
 }
 
 void
@@ -965,7 +1001,15 @@ Simulation::simulate() {
           connectedComponents_ = data_->findConnectedComponents();
         }
       }
+      boost::shared_ptr<job::CurvesEntry> curvesEntry = jobEntry_->getOutputsEntry()->getCurvesEntry();
+      boost::optional<int> iterationStep;
+      boost::optional<double> timeStep;
+      if (curvesEntry != nullptr) {
+        iterationStep = curvesEntry->getIterationStep();
+        timeStep = curvesEntry->getTimeStep();
+      }
       int currentIterNb = 0;
+      double nextTimeStep = 0;
       bool stopForSplitting = false;
       while (!end() && !SignalHandler::gotExitSignal() && criteriaChecked) {
         double elapsed = timer.elapsed();
@@ -1006,6 +1050,47 @@ Simulation::simulate() {
           updateCurves(true);
           model_->getCurrentZ(zCurrent_);
           modifZ = true;
+        }
+
+        if (isCheckCriteriaIter)
+          model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
+
+        if (iterationStep) {
+          if (currentIterNb % *iterationStep == 0) {
+            updateCurves(!isCheckCriteriaIter && !modifZ);
+          }
+        } else if (timeStep) {
+          if (tCurrent_ >= nextTimeStep) {
+            nextTimeStep = tCurrent_ + *timeStep;
+            updateCurves(!isCheckCriteriaIter && !modifZ);
+          }
+        } else {
+          updateCurves(!isCheckCriteriaIter && !modifZ);
+        }
+
+        model_->checkDataCoherence(tCurrent_);
+        model_->printMessages();
+        if (timetableOutputFile_ != "" && currentIterNb % timetableSteps_ == 0)
+          printCurrentTime(timetableOutputFile_);
+
+        if (isCheckCriteriaIter) {
+          criteriaChecked = checkCriteria(tCurrent_, false);
+        }
+        ++currentIterNb;
+
+        model_->notifyTimeStep();
+
+        if (hasIntermediateStateToDump() && !isCheckCriteriaIter) {
+          // In case it was not already done beause of check criteria and intermediate state dump will be done at least one for current
+          // iteration
+          model_->evalCalculatedVariables(tCurrent_, solver_->getCurrentY(), solver_->getCurrentYP(), zCurrent_);
+        }
+        while (hasIntermediateStateToDump()) {
+          const ExportStateDefinition& dumpDefinition = intermediateStates_.front();
+          data_->exportStateVariables();
+          if (dumpDefinition.dumpFile_) {
+            dumpState(*dumpDefinition.dumpFile_);
+          }
         }
 
         if (isCheckCriteriaIter)
@@ -1194,7 +1279,7 @@ Simulation::updateCurves(bool updateCalculateVariable) {
 #if defined(_DEBUG_) || defined(PRINT_TIMERS)
   Timer timer("Simulation::updateCurves()");
 #endif
-  if (exportCurvesMode_ == EXPORT_CURVES_NONE)
+  if (exportCurvesMode_ == EXPORT_CURVES_NONE && exportFinalStateValuesMode_ == EXPORT_FINAL_STATE_VALUES_NONE)
     return;
 
   if (updateCalculateVariable)
@@ -1215,7 +1300,7 @@ void
 Simulation::addEvent(const MessageTimeline& messageTimeline) {
   if (timeline_) {
     const string name = "Simulation";
-    timeline_->addEvent(getCurrentTime(), name, messageTimeline.str(), messageTimeline.priority());
+    timeline_->addEvent(getCurrentTime(), name, messageTimeline.str(), messageTimeline.priority(), messageTimeline.getKey());
   }
 }
 
@@ -1338,39 +1423,56 @@ Simulation::printCurves(std::ostream& stream) const {
 }
 
 void Simulation::printFinalStateValues(std::ostream& stream) const {
-  switch (exportFinalStateValuesMode_) {
-    case EXPORT_FINAL_STATE_VALUES_NONE:
-      break;
-    case EXPORT_FINAL_STATE_VALUES_XML: {
-      stringstream pid_string;
-      pid_string << pid_;
+  if (exportFinalStateValuesMode_ != EXPORT_FINAL_STATE_VALUES_NONE) {
+    stringstream pid_string;
+    pid_string << pid_;
 
-      boost::shared_ptr<FinalStateValuesCollection> finalStateValuesCollection =
-        FinalStateValuesCollectionFactory::newInstance("Simulation_" + pid_string.str());
+    boost::shared_ptr<FinalStateValuesCollection> finalStateValuesCollection =
+      FinalStateValuesCollectionFactory::newInstance("Simulation_" + pid_string.str());
 
-      for (CurvesCollection::const_iterator itCurve = curvesCollection_->cbegin(); itCurve != curvesCollection_->cend(); ++itCurve) {
-        bool isFinalStateValue =
-          (*itCurve)->getExportType() == curves::Curve::EXPORT_AS_FINAL_STATE_VALUE ||
-          (*itCurve)->getExportType() == curves::Curve::EXPORT_AS_BOTH;
-        if ((*itCurve)->getAvailable() && isFinalStateValue) {
-          curves::Curve::const_iterator lastPoint = --(*itCurve)->cend();
-          boost::shared_ptr<finalStateValues::FinalStateValue> finalStateValue = finalStateValues::FinalStateValueFactory::newFinalStateValue();
-          finalStateValue->setModelName((*itCurve)->getModelName());
-          finalStateValue->setVariable((*itCurve)->getVariable());
-          finalStateValue->setValue((*lastPoint)->getValue());
-          finalStateValuesCollection->add(finalStateValue);
-        }
+    for (CurvesCollection::const_iterator itCurve = curvesCollection_->cbegin(); itCurve != curvesCollection_->cend(); ++itCurve) {
+      bool isFinalStateValue =
+        (*itCurve)->getExportType() == curves::Curve::EXPORT_AS_FINAL_STATE_VALUE ||
+        (*itCurve)->getExportType() == curves::Curve::EXPORT_AS_BOTH;
+      if ((*itCurve)->getAvailable() && isFinalStateValue) {
+        curves::Curve::const_iterator lastPoint = --(*itCurve)->cend();
+        boost::shared_ptr<finalStateValues::FinalStateValue> finalStateValue = finalStateValues::FinalStateValueFactory::newFinalStateValue();
+        finalStateValue->setModelName((*itCurve)->getModelName());
+        finalStateValue->setVariable((*itCurve)->getVariable());
+        finalStateValue->setValue((*lastPoint)->getValue());
+        finalStateValuesCollection->add(finalStateValue);
       }
+    }
 
-      finalStateValues::XmlExporter xmlExporter;
-      xmlExporter.exportToStream(finalStateValuesCollection, stream);
-      break;
+    switch (exportFinalStateValuesMode_) {
+      case EXPORT_FINAL_STATE_VALUES_XML: {
+          finalStateValues::XmlExporter xmlExporter;
+          xmlExporter.exportToStream(finalStateValuesCollection, stream);
+          break;
+        }
+      case EXPORT_FINAL_STATE_VALUES_CSV: {
+          finalStateValues::CsvExporter csvExporter;
+          csvExporter.exportToStream(finalStateValuesCollection, stream);
+          break;
+        }
+      case EXPORT_FINAL_STATE_VALUES_TXT: {
+          finalStateValues::TxtExporter txtExporter;
+          txtExporter.exportToStream(finalStateValuesCollection, stream);
+          break;
+        }
+      case EXPORT_FINAL_STATE_VALUES_NONE:
+        break;
     }
   }
 }
 
 void
 Simulation::printTimeline(std::ostream& stream) const {
+  if (filterTimeline_) {
+    DYN::IoDicos& dicos = DYN::IoDicos::instance();
+    const auto& oeDico = dicos.mergeOppositeEventsDicos();
+    timeline_->filter(oeDico);
+  }
   switch (exportTimelineMode_) {
     case EXPORT_TIMELINE_NONE:
       break;

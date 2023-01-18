@@ -53,8 +53,10 @@ where [option] can be:"
         build-3rd-party                       build 3rd party softwares
         config-dynawo                         configure Dynawo's compiling environment using CMake
         build-dynawo                          build Dynawo and install preassembled models (core, models cpp, models and solvers)
+        build-dynaflow                        build DynaFlow related models (and core, models cpp and solvers) and install preassembled models (core, models cpp, DynaFlow models and solvers)
+        build-dynaswing                       build DynaSwing related models (and core, models cpp and solvers) and install preassembled models (core, models cpp, DynaSwing models and solvers)
         build-dynawo-core                     build Dynawo without models
-        build-dynawo-lib                      build a specific Dynawo library
+        build-dynawo-target                   build a specific Dynawo target (use help to see all cmake targets)
         build-dynawo-models-cpp               build Dynawo CPP models
         build-dynawo-models                   build Dynawo preassembled models
         build-dynawo-solvers                  build Dynawo solver descriptions
@@ -86,7 +88,8 @@ where [option] can be:"
         jobs ([args])                         launch Dynawo simulation
         jobs-with-curves ([args])             launch Dynawo simulation and open resulting curves in a browser
         jobs-gdb ([args])                     launch Dynawo simulation in gdb
-        jobs-valgrind ([args])                launch Dynawo simulation in valgrind (defaut tool to check memory leakage)
+        jobs-gdbserver ([args])               launch Dynawo simulation in gdbserver
+        jobs-valgrind ([args])                launch Dynawo simulation in valgrind (default tool to check memory leakage)
         jobs-valgrind-callgrind ([args])      launch Dynawo simulation in valgrind with callgrind tool (profiling tool that records the call history)
         jobs-valgrind-dhat ([args])           launch Dynawo simulation in valgrind with dhat tool (dynamic heap analysis tool)
         jobs-valgrind-massif ([args])         launch Dynawo simulation in valgrind with massif tool (a heap profiler)
@@ -107,7 +110,6 @@ where [option] can be:"
         nrt-diff ([args])                     make a diff between two non-regression test outputs
         nrt-ref ([args])                      define or redefine automatically the non-regression tests references
         nrt-xsl ([args])                      update automatically the xml input files from the nrt
-        filter-timeline ([args])              filter timeline file to remove duplicated or opposed elements
         version-validation                    clean all built items, then build them all and run non-regression tests
         list-tests                            print all available unittest target
         list-models                           list all preassembled models you can use with clean-models or clean-build-models
@@ -434,7 +436,6 @@ set_environment() {
   export_var_env_force DYNAWO_CURVES_TO_HTML_DIR=$DYNAWO_HOME/util/curvesToHtml
   export_var_env_force DYNAWO_SCRIPTS_DIR=$DYNAWO_INSTALL_DIR/sbin
   export_var_env_force DYNAWO_NRT_DIFF_DIR=$DYNAWO_HOME/util/nrt_diff
-  export_var_env_force DYNAWO_TIMELINE_FILTER_DIR=$DYNAWO_HOME/util/timeline_filter
   export_var_env_force DYNAWO_ENV_DYNAWO=$SCRIPT
   export_var_env DYNAWO_CMAKE_GENERATOR="Unix Makefiles"
   export_var_env DYNAWO_CMAKE_BUILD_OPTION=""
@@ -453,9 +454,6 @@ set_environment() {
 
   # Only used until now by nrt
   export_var_env DYNAWO_NB_PROCESSORS_USED=1
-  if [ $DYNAWO_NB_PROCESSORS_USED -gt $TOTAL_CPU ]; then
-    error_exit "PROCESSORS_USED ($DYNAWO_NB_PROCESSORS_USED) is higher than the number of cpu of the system ($TOTAL_CPU)"
-  fi
 
   # OpenModelica config
   export_var_env_force DYNAWO_OPENMODELICA_VERSION=1_13_2
@@ -579,8 +577,8 @@ set_compiler() {
   else
     error_exit "DYNAWO_COMPILER environment variable needs to be GCC or CLANG."
   fi
-  export_var_env_force DYNAWO_C_COMPILER=$(command -v $DYNAWO_COMPILER_NAME)
-  export_var_env_force DYNAWO_CXX_COMPILER=$(command -v ${DYNAWO_COMPILER_NAME%cc}++) # Trick to remove cc from gcc and leave clang alone, because we want fo find g++ and clang++
+  export_var_env DYNAWO_C_COMPILER=$(command -v $DYNAWO_COMPILER_NAME)
+  export_var_env DYNAWO_CXX_COMPILER=$(command -v ${DYNAWO_COMPILER_NAME%cc}++) # Trick to remove cc from gcc and leave clang alone, because we want fo find g++ and clang++
 }
 
 set_commit_hook() {
@@ -879,16 +877,16 @@ build_dynawo_core() {
   fi
   if [ "$DYNAWO_CMAKE_GENERATOR" = "Unix Makefiles" ]; then
     cd $DYNAWO_BUILD_DIR
-    make -j $DYNAWO_NB_PROCESSORS_USED && make -j $DYNAWO_NB_PROCESSORS_USED install
+    make -j $DYNAWO_NB_PROCESSORS_USED install
   else
-    cmake --build $DYNAWO_BUILD_DIR $DYNAWO_CMAKE_BUILD_OPTION --config $DYNAWO_BUILD_TYPE && cmake --build $DYNAWO_BUILD_DIR --target install --config $DYNAWO_BUILD_TYPE
+    cmake --build $DYNAWO_BUILD_DIR $DYNAWO_CMAKE_BUILD_OPTION --target install
   fi
   RETURN_CODE=$?
   return ${RETURN_CODE}
 }
 
-# Compile a Dynawo library, use help to see all targets
-build_dynawo_lib() {
+# Compile a Dynawo target, use help to see all targets
+build_dynawo_target() {
   if [ ! -d "$DYNAWO_BUILD_DIR" ]; then
     error_exit "$DYNAWO_BUILD_DIR does not exist."
   fi
@@ -952,6 +950,28 @@ build_dynawo() {
   return ${RETURN_CODE}
 }
 
+build_dynaX() {
+  config_dynawo || error_exit "Error during config_dynawo."
+  if [ ! -d "$DYNAWO_BUILD_DIR" ]; then
+    error_exit "$DYNAWO_BUILD_DIR does not exist."
+  fi
+  cd $DYNAWO_BUILD_DIR
+  build_dynawo_core || error_exit "Error during build_dynawo_core."
+  build_dynawo_models_cpp || error_exit "Error during build_dynawo_models_cpp."
+  build_dynawo_solvers || error_exit "Error during build_dynawo_solvers."
+  build_dynawo_target $@
+  RETURN_CODE=$?
+  return ${RETURN_CODE}
+}
+
+build_dynaflow() {
+  build_dynaX DYNAFLOW_MODELS || error_exit "Error during build_dynaflow."
+}
+
+build_dynaswing() {
+  build_dynaX DYNASWING_MODELS || error_exit "Error during build_dynaflow."
+}
+
 build_user() {
   install_launcher || error_exit "Error during Dynawo installation."
 }
@@ -999,7 +1019,6 @@ build_tests() {
   if [ ${RETURN_CODE} -ne 0 ]; then
     return ${RETURN_CODE}
   fi
-  ${DYNAWO_PYTHON_COMMAND} $DYNAWO_TIMELINE_FILTER_DIR/test/timelineFilterTest.py
   return ${RETURN_CODE}
 }
 
@@ -1086,7 +1105,7 @@ clean_models() {
     return 0
   fi
   for model in `echo $@`; do
-    rm -rf $DYNAWO_BUILD_DIR/sources/Models/Modelica/P/${model}*
+    rm -rf $DYNAWO_BUILD_DIR/M/M/P/${model}*
   done
 }
 
@@ -1100,7 +1119,7 @@ clean_build_models() {
       error_exit "$model is not a valid model to build."
     fi
   done
-  build_dynawo_lib $@
+  build_dynawo_target $@
 }
 
 list_models() {
@@ -1415,11 +1434,11 @@ nrt() {
 
   if [ ${jenkins_mode} -ne 0 ]; then
     if [ ! -f "$DYNAWO_NRT_DIR/output/report.html" ]; then
-      error_exit "No report was generated by the non regression test script"
+      error_exit "No report was generated by the non-regression test script"
     fi
   else
     if [ ! -f "$DYNAWO_NRT_DIR/output/$DYNAWO_BRANCH_NAME/report.html" ]; then
-      error_exit "No report was generated by the non regression test script"
+      error_exit "No report was generated by the non-regression test script"
     fi
     if [ "$DYNAWO_RESULTS_SHOW" = true ] ; then
       verify_browser
@@ -1428,7 +1447,7 @@ nrt() {
   fi
 
   if [ ${FAILED_CASES_NUM} -ne 0 ]; then
-    error_exit "${FAILED_CASES_NUM} non regression tests failed"
+    error_exit "${FAILED_CASES_NUM} non-regression tests failed"
   fi
   if [ "$DYNAWO_BUILD_TYPE" = "Debug" ]; then
     echo "Warning: Debug mode is activated, references comparison was not done"
@@ -1568,10 +1587,6 @@ nrt_ref() {
 nrt_xsl() {
   export_var_env_force DYNAWO_NRT_SCRIPT_DIR=$DYNAWO_NRT_DIR
   $DYNAWO_PYTHON_COMMAND $DYNAWO_HOME/util/xsl/applyXsltToXml.py $@
-}
-
-filter_timeline() {
-  $DYNAWO_PYTHON_COMMAND $DYNAWO_TIMELINE_FILTER_DIR/timelineFilter.py $@
 }
 
 check_coding_files() {
@@ -1892,7 +1907,6 @@ deploy_dynawo() {
   cp -r $DYNAWO_NRT_DIR/nrt.py sbin/nrt/.
   cp -r $DYNAWO_NRT_DIR/resources sbin/nrt/.
   cp -r $DYNAWO_HOME/util/xsl sbin/.
-  cp -r $DYNAWO_HOME/util/timeline_filter sbin/.
 
   rm -f lib/*.la
   find OpenModelica/lib -name "*.la" -exec rm {} \;
@@ -2121,7 +2135,7 @@ unittest_gdb() {
     build_dynawo_core || error_exit
     build_dynawo_models_cpp || error_exit
   fi
-  list_of_tests=($(find $DYNAWO_BUILD_DIR/sources -executable -type f -exec basename {} \; | grep test))
+  list_of_tests=($(find $DYNAWO_BUILD_DIR -executable -type f -exec basename {} \; | grep test))
   if [[ ${#list_of_tests[@]} == 0 ]]; then
     echo "The list of tests is empty. This should not happen."
     exit 1
@@ -2134,7 +2148,7 @@ unittest_gdb() {
     done
     exit 1
   fi
-  unittest_exe=$(find $DYNAWO_BUILD_DIR/sources -name "$1")
+  unittest_exe=$(find $DYNAWO_BUILD_DIR -name "$1")
   if [ -z "$unittest_exe" ]; then
     echo "The unittest you gave is not available."
     echo "List of available unittests:"
@@ -2198,13 +2212,6 @@ reset_environment_variables_full() {
 ########### Main script #########
 #################################
 
-if [ "`uname`" = "Linux" ]; then
-  TOTAL_CPU=$(grep -c \^processor /proc/cpuinfo)
-else
-  echo "OS not supported."
-  exit 1
-fi
-
 if [ -n "$BASH_VERSION" ]; then
   SCRIPT=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && echo "$(pwd)"/"$(basename ${BASH_SOURCE[0]})")
 elif [ -n "$ZSH_VERSION" ]; then
@@ -2247,13 +2254,20 @@ case $MODE in
     build_dynawo || error_exit "Error while building Dynawo"
     ;;
 
+  build-dynaflow)
+    build_dynaflow || error_exit "Error while building DynaFlow"
+    ;;
+
+  build-dynaswing)
+    build_dynaswing || error_exit "Error while building DynaSwing"
+    ;;
+
   build-dynawo-core)
     build_dynawo_core || error_exit "Failed to build Dynawo core"
     ;;
 
-  build-dynawo-lib)
-    config_dynawo || error_exit "Error while configuring Dynawo"
-    build_dynawo_lib ${ARGS} || error_exit "Failed to build Dynawo lib"
+  build-dynawo-target)
+    build_dynawo_target ${ARGS} || error_exit "Failed to build Dynawo target"
     ;;
 
   build-dynawo-models)
@@ -2436,6 +2450,10 @@ case $MODE in
     launch_jobs --gdb ${ARGS} || error_exit "Dynawo job failed"
     ;;
 
+  jobs-gdbserver)
+    launch_jobs --gdbserver ${ARGS} || error_exit "Dynawo job failed"
+    ;;
+
   jobs-valgrind)
     launch_jobs --valgrind ${ARGS} || error_exit "Dynawo job failed"
     ;;
@@ -2465,11 +2483,11 @@ case $MODE in
     ;;
 
   nrt)
-    nrt ${ARGS} || error_exit "Error during Dynawo's non regression tests execution"
+    nrt ${ARGS} || error_exit "Error during Dynawo's non-regression tests execution"
     ;;
 
   nrt-clean)
-    nrt_clean || error_exit "Error during Dynawo's non regression tests clean"
+    nrt_clean || error_exit "Error during Dynawo's non-regression tests clean"
     ;;
 
   nrt-diff)
@@ -2482,10 +2500,6 @@ case $MODE in
 
   nrt-xsl)
     nrt_xsl ${ARGS} || error_exit "Error during Dynawo's NRT xsl execution"
-    ;;
-
-  filter-timeline)
-    filter_timeline ${ARGS} || error_exit "Error during timeline filtering"
     ;;
 
   nrt-doc)

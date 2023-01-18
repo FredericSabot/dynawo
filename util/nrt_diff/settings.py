@@ -16,7 +16,7 @@ import os
 # files and directories filters
 directories_included = [("*", "*")]
 directories_excluded = [(".svn", "*"), ("*", ".svn"), ("*", "BDD"), ("compilation", "*")]
-files_included = ["*.csv", "*.log", "*.xml", "*.h", "*.c", "*.cpp", "*.txt"]
+files_included = ["*.csv", "*.log", "*.xml", "*.h", "*.c", "*.cpp", "*.txt", "*.json"]
 files_excluded = []
 
 # comparison
@@ -32,3 +32,5 @@ maximum_threads_nb = 4
 # log destination
 logs_destination = "text file" # "console" or "text file"
 logs_file_path = os.path.join(os.path.dirname(__file__), "nrtDiff.txt")
+
+dtw_exceptions = {}
