@@ -87,11 +87,13 @@ model WTG4ACurrentSourceAggregateLVRT "WECC Wind Turbine model with a simplified
   Dynawo.Electrical.Controls.LVRT.LVRTAggr lVRTAggr annotation(
     Placement(visible = true, transformation(origin = {170, 30}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
-  line.switchOffSignal1.value = false;
+  /*line.switchOffSignal1.value = false;
   line.switchOffSignal2.value = false;
   injector.switchOffSignal1.value = false;
   injector.switchOffSignal2.value = false;
-  injector.switchOffSignal3.value = false;
+  injector.switchOffSignal3.value = false;*/
+  line.switchOffSignal1.value = injector.switchOffSignal1.value;
+  injector.switchOffSignal3.value = lVRTAggr.switchOffSignal.value;
   connect(wecc_repc.QInjRefPu, wecc_reec.QInjRefPu) annotation(
     Line(points = {{-29, -24}, {-16, -24}}, color = {0, 0, 127}));
   connect(line.terminal2, injector.terminal) annotation(
@@ -152,6 +154,7 @@ equation
     Line(points = {{140, 1}, {140, 30}, {158, 30}}, color = {0, 0, 127}));
   connect(lVRTAggr.y, currentReduction.f) annotation(
     Line(points = {{181, 30}, {184, 30}, {184, 10}, {165, 10}, {165, -4}, {172, -4}}, color = {0, 0, 127}));
+  // connect(lVRTAggr.switchOffSignal, injector.switchOffSignal1);
   annotation(
     Documentation(preferredView = "diagram",
     info = "<html>

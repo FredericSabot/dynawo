@@ -64,53 +64,59 @@ model LVRTAggr "Low voltage ride through with \"partial disconnection\" feature"
 
     y = f1*f2*f3;
 
-    if switchOffSignal.value == false then
-      if tThresholdReached > 999999999 then // Assume no reconnections
-        der(f1) = 0;
-        der(f2) = 0;
-        der(f3) = 0;
-        der(UMin1) = 0;
-        der(UMinInt) = 0;
-
-      elseif time - tThresholdReached <= T1 then
-        UMin1 = min(u, UMin1); // Use u_min + T*der(u_min) = if u <= u_min then u else u_min; if does not work
-        if UMin1 > UMinPu then
-          f1 = 1;
-        elseif UMin1 > d*UMinPu then
-          f1 = c * (1 - (UMinPu - UMin1)/(UMinPu - d*UMinPu));
-        else
-          f1 = 0;
-        end if;
-        der(f2) = 0;
-        der(f3) = 0;
-        der(UMinInt) = 0;
-
-      elseif time - tThresholdReached < TInt - 1e-4 then // To be sure this condition is never actived if TInt = T1
-        UMinInt = min(u, UMinInt);
-        if UMinInt > UMinPu then
-          f2 = 1;
-        elseif UMinInt > f*UMinPu then
-          f2 = e * (1 - (UMinPu - UMinInt)/(UMinPu - f*UMinPu));
-        else
-          f2 = 0;
-        end if;
-        der(f1) = 0;
-        der(f3) = 0;
-        der(UMin1) = 0;
-
-      else
-        der(f3) = -1/(u*T2 - TInt);
-        der(f1) = 0;
-        der(f2) = 0;
-        der(UMin1) = 0;
-        der(UMinInt) = 0;
-      end if;
-
-    // Full disconnection
-    else
-      f1 = 0;
+    if switchOffSignal.value == true then // Full disconnection
+      /*f1 = 0;
       f2 = 0;
-      f3 = 0;
+      f3 = 0;*/
+      der(f1) = -1e4  * f1; // Basically, f1 = 0
+      der(f2) = -1e4  * f2;
+      der(f3) = -1e4  * f3;
+      der(UMin1) = 0;
+      der(UMinInt) = 0;
+
+    elseif tThresholdReached > 999999999 then // Assume no reconnections
+      der(f1) = 0;
+      der(f2) = 0;
+      der(f3) = 0;
+      der(UMin1) = 0;
+      der(UMinInt) = 0;
+
+    elseif time - tThresholdReached <= T1 then
+      // min(u, pre(UMin1)); // Use u_min + T*der(u_min) = if u <= u_min then u else u_min; if does not work
+      // der(UMin1) = -1e4 * (UMin1-u);
+      der(UMin1) = -1e4 * (UMin1-min(u, UMin1));
+      if UMin1 > UMinPu then
+        der(f1) = -1e4  * (f1 - 1);
+      elseif UMin1 > d*UMinPu then
+        der(f1) = -1e4 * (1 - c * (1 - (UMinPu - UMin1)/(UMinPu - d*UMinPu)));
+      else
+        der(f1) = -1e4  * f1;
+      end if;
+      der(f2) = 0;
+      der(f3) = 0;
+      der(UMinInt) = 0;
+
+    elseif time - tThresholdReached < TInt - 1e-4 then // To be sure this condition is never actived if TInt = T1
+      // UMinInt = min(u, UMinInt);
+      // der(UMinInt) = -1e-6 * (UMinInt - u);
+      der(UMinInt) = -1e-6 * (UMinInt - min(u, UMinInt));
+      if UMinInt > UMinPu then
+        // f2 = 1;
+        der(f2) = -1e4  * (f2 - 1);
+      elseif UMinInt > f*UMinPu then
+        der(f2) = -1e4  * (f2 - e * (1 - (UMinPu - UMinInt)/(UMinPu - f*UMinPu)));
+      else
+        // f2 = 0;
+        der(f2) = -1e4  * f2;
+      end if;
+      der(f1) = 0;
+      der(f3) = 0;
+      der(UMin1) = 0;
+
+    else
+      der(f3) = -1/(u*T2 - TInt);
+      der(f1) = 0;
+      der(f2) = 0;
       der(UMin1) = 0;
       der(UMinInt) = 0;
     end if;

@@ -14,10 +14,49 @@
 <curvesInput xmlns="http://www.rte-france.com/dynawo">
     <curve model="WTG4A" variable="WTG4A_injector_PInjPu"/>
     <curve model="WTG4A" variable="WTG4A_injector_QInjPu"/>
+    <curve model="WTG4A" variable="WTG4A_injector_UPu"/>
+    <curve model="WTG4A" variable="WTG4A_line_terminal2_i_im"/>
     <curve model="WTG4A" variable="WTG4A_injector_terminal_V_re"/>
     <curve model="WTG4A" variable="WTG4A_injector_terminal_i_re"/>
     <curve model="WTG4A" variable="WTG4A_injector_terminal_V_im"/>
     <curve model="WTG4A" variable="WTG4A_injector_terminal_i_im"/>
     <curve model="WTG4A" variable="WTG4A_pll_omegaPLLPu"/>
+    <curve model="WTG4A" variable="WTG4A_lVRTAggr_u"/>
+    <curve model="WTG4A" variable="WTG4A_lVRTAggr_y"/>
+    <curve model="WTG4A" variable="WTG4A_lVRTAggr_switchOffSignal_value"/>
     <curve model="WTG4A" variable="WTG4A_driveTrainPmConstrant_PePu"/>
+
+    <curve model="LVRTAggr" variable="lvrtAggr_u"/>
+    <curve model="LVRTAggr" variable="lvrtAggr_y"/>
+
+    <curve model="UVA" variable="underVoltageAutomaton_UMonitoredPu"/>
+    <curve model="UVA" variable="underVoltageAutomaton_switchOffSignal_value"/>
+    <curve model="WTG4A" variable="WTG4A_injector_switchOffSignal3_value"/>
+    <curve model="WTG4A" variable="WTG4A_injector_running_value"/>
+
+    <curve model="WTG4A" variable="ibg_injector_PInjPu"/>
+    <curve model="WTG4A" variable="ibg_injector_PInjPuSn"/>
+    <curve model="WTG4A" variable="ibg_injector_iqPu"/>
+    <curve model="WTG4A" variable="ibg_injector_idPu"/>
+    <curve model="WTG4A" variable="ibg_PextPu"/>
+    <curve model="WTG4A" variable="ibg_iPLimiter_y"/>
+    <curve model="WTG4A" variable="ibg_integrator_y"/>
+    <curve model="WTG4A" variable="ibg_overfrequencySupport_deltaP"/>
+    <curve model="WTG4A" variable="ibg_overfrequencySupport_omegaPu"/>
+    <curve model="WTG4A" variable="ibg_iPLimiter_limit1"/>
+    <curve model="WTG4A" variable="ibg_firstOrder1_y"/>
+    <curve model="WTG4A" variable="ibg_limitUpdating_iPLim"/>
+    <curve model="WTG4A" variable="ibg_limitUpdating_iQlim"/>
+    <curve model="WTG4A" variable="ibg_limitUpdating_iPcmd"/>
+    <curve model="WTG4A" variable="ibg_limitUpdating_iQcmd"/>
+    <curve model="WTG4A" variable="ibg_limitUpdating_Pflag"/>
+    <curve model="WTG4A" variable="ibg_PLLFreeze_cosPhi"/>
+
+    <curve model="WTG4A" variable="ibg_iQrefPu"/>
+    <curve model="WTG4A" variable="ibg_injector_QInjPu"/>
+    <curve model="WTG4A" variable="ibg_injector_UPu"/>
+    <curve model="WTG4A" variable="ibg_PLLFreeze_omegaPLLPu"/>
+
+    <curve model="WTG4A" variable="ibg_injector_switchOffSignal3_value"/>
+    <curve model="WTG4A" variable="igb_injector_running_value"/>
 </curvesInput>

@@ -33,11 +33,7 @@ model CurrentReduction "This block measures the voltage, current, active power a
     Placement(visible = true, transformation(origin = {-120, 60}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-98, 58}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
 
 equation
-  if f >= 0.01 then
-    terminal1.i * f = - terminal2.i;
-  else // Complete disconnection
-    terminal1.i = Complex(0);
-  end if;
+  terminal1.i * f = - terminal2.i;
   terminal1.V = terminal2.V;
 
 
