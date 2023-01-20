@@ -14,7 +14,7 @@
 <dyn:dynamicModelsArchitecture xmlns:dyn="http://www.rte-france.com/dynawo">
   <dyn:blackBoxModel id="InfBus" lib="InfiniteBusWithVariations" parFile="WECCWTG4A.par" parId="1"/>
   <dyn:blackBoxModel id="Line" lib="Line" parFile="WECCWTG4A.par" parId="2"/>
-  <dyn:blackBoxModel id="WTG4A" lib="WindTurbine4AWeccCurrentSource" parFile="WECCWTG4A.par" parId="3"/>
+  <!--<dyn:blackBoxModel id="WTG4A" lib="WindTurbine4AWeccCurrentSourceAggregateLVRT" parFile="WECCWTG4A.par" parId="3"/>
   <dyn:blackBoxModel id="OmegaRefPu" lib="SetPoint" parFile="WECCWTG4A.par" parId="4"/>
   <dyn:blackBoxModel id="PRefPu" lib="SetPoint" parFile="WECCWTG4A.par" parId="5"/>
   <dyn:blackBoxModel id="QRefPu" lib="SetPoint" parFile="WECCWTG4A.par" parId="6"/>
@@ -22,5 +22,26 @@
   <dyn:connect id1="PRefPu" var1="setPoint_setPoint_value" id2="WTG4A" var2="WTG4A_PRefPu"/>
   <dyn:connect id1="QRefPu" var1="setPoint_setPoint_value" id2="WTG4A" var2="WTG4A_QRefPu"/>
   <dyn:connect id1="InfBus" var1="infiniteBus_terminal" id2="Line" var2="line_terminal1"/>
-  <dyn:connect id1="Line" var1="line_terminal2" id2="WTG4A" var2="WTG4A_terminal"/>
+  <dyn:connect id1="Line" var1="line_terminal2" id2="WTG4A" var2="WTG4A_terminal"/>-->
+
+  <dyn:blackBoxModel id="WTG4A" lib="GenericIBG" parFile="WECCWTG4A.par" parId="3"/>
+  <dyn:blackBoxModel id="OmegaRefPu" lib="SetPoint" parFile="WECCWTG4A.par" parId="4"/>
+  <dyn:blackBoxModel id="PRefPu" lib="SetPoint" parFile="WECCWTG4A.par" parId="5"/>
+  <dyn:blackBoxModel id="iQRefPu" lib="SetPoint" parFile="WECCWTG4A.par" parId="6"/>
+  <dyn:connect id1="OmegaRefPu" var1="setPoint_setPoint_value" id2="WTG4A" var2="ibg_omegaRefPu"/>
+  <dyn:connect id1="PRefPu" var1="setPoint_setPoint_value" id2="WTG4A" var2="ibg_PextPu"/>
+  <dyn:connect id1="iQRefPu" var1="setPoint_setPoint_value" id2="WTG4A" var2="ibg_iQrefPu"/>
+  <dyn:connect id1="InfBus" var1="infiniteBus_terminal" id2="Line" var2="line_terminal1"/>
+  <dyn:connect id1="Line" var1="line_terminal2" id2="WTG4A" var2="ibg_terminal"/>
+
+  <!--<dyn:blackBoxModel id="LVRTAggr" lib="LVRTAggr" parFile="WECCWTG4A.par" parId="7"/>
+  <dyn:connect id1="WTG4A" var1="WTG4A_injector_UPu" id2="LVRTAggr" var2="lvrtAggr_u"/>-->
+
+  <!--<dyn:blackBoxModel id="LVRT" lib="LVRT" parFile="WECCWTG4A.par" parId="3"/>
+  <dyn:connect id1="WTG4A" var1="WTG4A_injector_UPu" id2="LVRT" var2="lvrt_UMonitoredPu"/>
+  <dyn:connect id1="LVRT" var1="lvrt_switchOffSignal" id2="WTG4A" var2="WTG4A_injector_switchOffSignal3"/>-->
+
+  <!--<dyn:blackBoxModel id="UVA" lib="UnderVoltageAutomaton" parFile="WECCWTG4A.par" parId="UVA"/>
+  <dyn:connect id1="UVA" var1="underVoltageAutomaton_UMonitoredPu" id2="WTG4A" var2="WTG4A_injector_UPu"/>
+  <dyn:connect id1="UVA" var1="underVoltageAutomaton_switchOffSignal_value" id2="WTG4A" var2="WTG4A_injector_switchOffSignal3_value"/>-->
 </dyn:dynamicModelsArchitecture>

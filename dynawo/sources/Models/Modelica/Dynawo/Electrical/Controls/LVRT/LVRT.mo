@@ -15,12 +15,13 @@ within Dynawo.Electrical.Controls.LVRT;
 model LVRT "Low voltage ride through"
 
   import Modelica.Constants;
+  import Modelica;
 
   import Dynawo.Connectors;
   import Dynawo.NonElectrical.Logs.Timeline;
   import Dynawo.NonElectrical.Logs.TimelineKeys;
 
-  public
+
     parameter Types.VoltageModulePu URPu "Voltage threshold under which the automaton is activated after T2";
     parameter Types.VoltageModulePu UIntPu "Voltage threshold under which the automaton is activated after T1";
     parameter Types.VoltageModulePu UMinPu "Voltage threshold under which the automaton is activated instantaneously";
@@ -28,14 +29,17 @@ model LVRT "Low voltage ride through"
     parameter Types.Time TInt "Time delay of trip for medium voltage dips";
     parameter Types.Time T2 "Time delay of trip for small voltage dips";
 
-    Types.VoltageModulePu UMonitoredPu "Monitored voltage in pu (base UNom)";
+    Real temp "Temporary build to work around a bug";
 
     Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
+    Modelica.Blocks.Interfaces.RealInput UMonitoredPu "Monitored voltage in pu (base UNom)" annotation(
+    Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
 
   protected
     Types.Time tThresholdReached (start = Constants.inf) "Time when the threshold was reached";
 
   equation
+    temp = 1/(URPu-UMinPu);
 
     // Voltage comparison with the minimum accepted value
     when UMonitoredPu <= URPu and not(pre(switchOffSignal.value)) then
@@ -53,7 +57,7 @@ model LVRT "Low voltage ride through"
     elsewhen time - tThresholdReached >= T1 and UMonitoredPu < UIntPu then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
-    elsewhen UMonitoredPu >= UIntPu and  time - tThresholdReached >= T1 + (T2-T1) * (UMonitoredPu - UMinPu)/(URPu-UMinPu) then
+    elsewhen UMonitoredPu >= UIntPu and  time - tThresholdReached >= T1 + (T2-T1) * (UMonitoredPu - UMinPu)*temp then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
     end when;

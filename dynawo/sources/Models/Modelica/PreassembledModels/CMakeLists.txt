@@ -39,6 +39,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousFourWindingsHydroG_IEEET1VR.xml
   GeneratorSynchronousFourWindingsGovernorBPAGG_IEEET1VR.xml
   GenericAutomaton.xml
+  GenericIBG.xml
   GridFormingConverterDroopControl.xml
   GridFormingConverterMatchingControl.xml
   GridFormingConverterDispatchableVirtualOscillatorControl.xml
@@ -81,6 +82,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   LoadTwoTransformersTapChangers.xml
   LoadZIP.xml
   LVRT.xml
+  LVRTAggr.xml
   NodeFault.xml
   PhaseShifterBlockingI.xml
   PhaseShifterI.xml

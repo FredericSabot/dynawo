@@ -14,6 +14,8 @@ set(MODEL_FILES
   PLL.mo
   PLL.extvar
   PLL_INIT.mo
+  PLLFreeze.mo
+  PLLFreeze.extvar
   )
 
 #

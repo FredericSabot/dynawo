@@ -14,11 +14,11 @@
 <parametersSet xmlns="http://www.rte-france.com/dynawo">
   <set id="Solver">
     <par type="INT" name="order" value="2"/>
-    <par type="DOUBLE" name="initStep" value="1e-5"/>
-    <par type="DOUBLE" name="minStep" value="1e-5"/>
+    <par type="DOUBLE" name="initStep" value="1e-7"/>
+    <par type="DOUBLE" name="minStep" value="1e-7"/>
     <par type="DOUBLE" name="maxStep" value="10"/>
-    <par type="DOUBLE" name="absAccuracy" value="1e-4"/>
-    <par type="DOUBLE" name="relAccuracy" value="1e-4"/>
+    <par type="DOUBLE" name="absAccuracy" value="1e-2"/>
+    <par type="DOUBLE" name="relAccuracy" value="1e-2"/>
     <par type="DOUBLE" name="minimalAcceptableStep" value="1e-7"/>
   </set>
   <set id="1">
@@ -28,7 +28,7 @@
     <par type="DOUBLE" name="infiniteBus_omega0Pu" value="1"/>
     <par type="DOUBLE" name="infiniteBus_omegaEvtPu" value="1.01"/>
     <par type="DOUBLE" name="infiniteBus_tUEvtStart" value="1"/>
-    <par type="DOUBLE" name="infiniteBus_tUEvtEnd" value="2"/>
+    <par type="DOUBLE" name="infiniteBus_tUEvtEnd" value="5"/>
     <par type="DOUBLE" name="infiniteBus_tOmegaEvtStart" value="6"/>
     <par type="DOUBLE" name="infiniteBus_tOmegaEvtEnd" value="6.5"/>
   </set>
@@ -124,6 +124,58 @@
     <par type="DOUBLE" name="WTG4A_VDLIq12" value="1.1"/>
     <par type="DOUBLE" name="WTG4A_VDLIq21" value="1.5"/>
     <par type="DOUBLE" name="WTG4A_VDLIq22" value="1"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_T1" value="0.15"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_TInt" value="1"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_T2" value="3"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_UMinPu" value="0.3"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_UIntPu" value="0.5"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_URPu" value="0.8"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_c" value="0.5"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_d" value="0.1"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_e" value="0.5"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_f" value="0.1"/>
+    <par type="DOUBLE" name="WTG4A_lVRTAggr_u_" value="0.5"/>
+
+    <par type="DOUBLE" name="lvrt_T1" value="0.15"/>
+    <par type="DOUBLE" name="lvrt_TInt" value="1"/>
+    <par type="DOUBLE" name="lvrt_T2" value="3"/>
+    <par type="DOUBLE" name="lvrt_UMinPu" value="0.3"/>
+    <par type="DOUBLE" name="lvrt_UIntPu" value="0.5"/>
+    <par type="DOUBLE" name="lvrt_URPu" value="0.8"/>
+
+    <par type="DOUBLE" name="ibg_Inom" value="1.2"/>
+    <par type="DOUBLE" name="ibg_P0Pu" value="0.7"/>
+    <par type="DOUBLE" name="ibg_Q0Pu" value="-0.2"/>
+    <par type="DOUBLE" name="ibg_U0Pu" value="1"/>
+    <par type="DOUBLE" name="ibg_UPhase0" value="0.00000144621"/>
+    <par type="DOUBLE" name="ibg_SNom" value="100"/>
+    <par type="DOUBLE" name="ibg_VRCIPu" value="0.7"/>
+    <par type="DOUBLE" name="ibg_VPLLPu" value="0.01"/>
+    <par type="DOUBLE" name="ibg_VS1" value="0.9"/>
+    <par type="DOUBLE" name="ibg_VS2" value="1.1"/>
+    <par type="DOUBLE" name="ibg_kRCI" value="2.5"/>
+    <par type="DOUBLE" name="ibg_kRCA" value="2.5"/>
+    <par type="DOUBLE" name="ibg_m" value="0.1"/>
+    <par type="DOUBLE" name="ibg_n" value="0.1"/>
+    <par type="DOUBLE" name="ibg_Tfltr" value="0.1"/>
+    <par type="DOUBLE" name="ibg_Tg" value="0.1"/>
+    <par type="DOUBLE" name="ibg_Tm" value="0.1"/>
+    <par type="DOUBLE" name="ibg_iPSlewMaxPu" value="1"/>
+    <par type="DOUBLE" name="ibg_iQmaxPu" value="1.2"/>
+    <par type="DOUBLE" name="ibg_iQminPu" value="-1.2"/>
+    <par type="DOUBLE" name="ibg_lvrt_T1" value="0.15"/>
+    <par type="DOUBLE" name="ibg_lvrt_TInt" value="1"/>
+    <par type="DOUBLE" name="ibg_lvrt_T2" value="3"/>
+    <par type="DOUBLE" name="ibg_lvrt_UMinPu" value="0.3"/>
+    <par type="DOUBLE" name="ibg_lvrt_UIntPu" value="0.5"/>
+    <par type="DOUBLE" name="ibg_lvrt_URPu" value="0.8"/>
+    <par type="DOUBLE" name="ibg_omegaMaxPu" value="1.05"/>
+    <par type="DOUBLE" name="ibg_omegaMinPu" value="0.95"/>
+    <par type="DOUBLE" name="ibg_overVoltageProtection_VMax" value="1.2"/>
+    <par type="DOUBLE" name="ibg_overfrequencySupport_omega_sPu" value="1.01"/>
+    <par type="DOUBLE" name="ibg_PLLFreeze_Ki" value="20"/>
+    <par type="DOUBLE" name="ibg_PLLFreeze_Kp" value="3"/>
+    <par type="DOUBLE" name="ibg_PLLFreeze_" value="3"/>
   </set>
   <set id="4">
     <par type="DOUBLE" name="setPoint_Value0" value="1"/>
@@ -133,5 +185,22 @@
   </set>
   <set id="6">
     <par type="DOUBLE" name="setPoint_Value0" value="0.2"/>
+  </set>
+  <set id="7">
+    <par type="DOUBLE" name="lvrtAggr_T1" value="0.15"/>
+    <par type="DOUBLE" name="lvrtAggr_TInt" value="1"/>
+    <par type="DOUBLE" name="lvrtAggr_T2" value="3"/>
+    <par type="DOUBLE" name="lvrtAggr_UMinPu" value="0.3"/>
+    <par type="DOUBLE" name="lvrtAggr_UIntPu" value="0.5"/>
+    <par type="DOUBLE" name="lvrtAggr_URPu" value="0.8"/>
+    <par type="DOUBLE" name="lvrtAggr_c" value="0.5"/>
+    <par type="DOUBLE" name="lvrtAggr_d" value="0.1"/>
+    <par type="DOUBLE" name="lvrtAggr_e" value="0.5"/>
+    <par type="DOUBLE" name="lvrtAggr_f" value="0.1"/>
+    <par type="DOUBLE" name="lvrtAggr_u_" value="0.5"/>
+  </set>
+  <set id="UVA">
+    <par type="DOUBLE" name="underVoltageAutomaton_UMinPu" value="0.8"/>
+    <par type="DOUBLE" name="underVoltageAutomaton_tLagAction" value="0.7"/>
   </set>
 </parametersSet>
