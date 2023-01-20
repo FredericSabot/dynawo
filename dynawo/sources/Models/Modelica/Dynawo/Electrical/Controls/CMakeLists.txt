@@ -12,7 +12,7 @@ add_subdirectory(Basics B)
 add_subdirectory(Converters I)
 add_subdirectory(Current C)
 add_subdirectory(Frequency F)
-add_subdirectory(LVRT L)
+add_subdirectory(LVRT LVRT)
 add_subdirectory(Generic G)
 add_subdirectory(HVDC H)
 add_subdirectory(IEC WT)
@@ -23,7 +23,6 @@ add_subdirectory(Transformers T)
 add_subdirectory(Utilities U)
 add_subdirectory(Voltage V)
 add_subdirectory(WECC W)
-add_subdirectory(Protections Pr)
 
 set(MODEL_FILES
   package.mo

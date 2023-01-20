@@ -131,6 +131,25 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
 
   end VoltageSupport;
 
+  model FrequencyProtection
+
+    Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
+    Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
+      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+
+    parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency over which the unit is disconnected in pu (base omegaNom)";
+    parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency over which the unit is disconnected in pu (base omegaNom)";
+
+  equation
+
+    when omegaPu > OmegaMaxPu then
+      switchOffSignal.value = true;
+    elsewhen omegaPu < OmegaMinPu then
+      switchOffSignal.value = true;
+    end when;
+
+  end FrequencyProtection;
+
   Dynawo.Electrical.InverterBasedGeneration.GenericIBG.VoltageSupport voltageSupport(Inom = Inom, VS1 = VS1, VS2 = VS2, kRCA = kRCA, kRCI = kRCI, m = m, n = n)  annotation(
     Placement(visible = true, transformation(origin = {-90, -264}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput iQrefPu(start = iQref0Pu) annotation(
@@ -147,7 +166,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-90, -344}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput omegaRefPu(start = SystemBase.omegaRef0Pu) annotation(
     Placement(visible = true, transformation(origin = {8, -2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-  Dynawo.Electrical.Controls.Machines.Protections.SpeedProtection speedProtection(omegaMaxPu = omegaMaxPu, omegaMinPu = omegaMinPu, tLagAction = 0)  annotation(
+  Dynawo.Electrical.InverterBasedGeneration.GenericIBG.FrequencyProtection frequencyProtection(OmegaMaxPu = omegaMaxPu, OmegaMinPu = omegaMinPu)  annotation(
     Placement(visible = true, transformation(origin = {-48, -344}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
   model OverfrequencySupport
@@ -209,7 +228,7 @@ protected
   parameter Types.PerUnit iQref0Pu "Start value of the reference q-axis current at injector in pu (base UNom, SNom) (generator convention)";
 equation
   injector.switchOffSignal1.value = lvrt.switchOffSignal.value;
-  injector.switchOffSignal2.value = speedProtection.switchOffSignal.value;
+  injector.switchOffSignal2.value = frequencyProtection.switchOffSignal.value;
   injector.switchOffSignal3.value = overVoltageProtection.switchOffSignal.value;
   connect(injector.terminal, terminal) annotation(
     Line(points = {{251.5, 1.9}, {305.5, 1.9}}, color = {0, 0, 255}));
@@ -289,8 +308,6 @@ equation
     Line(points = {{234, -160}, {240, -160}, {240, -190}, {118, -190}, {118, -168}}, color = {0, 0, 127}));
   connect(Pext.y, overfrequencySupport.PextPu) annotation(
     Line(points = {{-79, -386}, {-60, -386}}, color = {0, 0, 127}));
-  connect(omegaFilter.y, speedProtection.omegaMonitoredPu) annotation(
-    Line(points = {{-78, -344}, {-60, -344}}, color = {0, 0, 127}));
   connect(omegaFilter.y, overfrequencySupport.omegaPu) annotation(
     Line(points = {{-78, -344}, {-70, -344}, {-70, -378}, {-60, -378}}, color = {0, 0, 127}));
   connect(omegaRefPu, PLLFreeze.omegaRefPu) annotation(
@@ -299,6 +316,8 @@ equation
     Line(points = {{202, -14}, {214, -14}, {214, -2}, {228, -2}}, color = {0, 0, 127}));
   connect(transformRItoDQ.udPu, injector.idPu) annotation(
     Line(points = {{202, -2}, {208, -2}, {208, -8}, {220, -8}, {220, -12}, {228, -12}}, color = {0, 0, 127}));
+  connect(omegaFilter.y, frequencyProtection.omegaPu) annotation(
+    Line(points = {{-78, -344}, {-60, -344}}, color = {0, 0, 127}));
   annotation(
     Documentation(preferredView = "diagram",
     info = "<html>
