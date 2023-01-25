@@ -13,10 +13,9 @@ set(MODEL_FILES
   package.mo
   package.order
   AggregatedIBG.mo
-  AggregatedIBG_INIT.mo
   AggregatedIBG.extvar
+  IBG_INIT.mo
   GenericIBG.mo
-  GenericIBG_INIT.mo
   GenericIBG.extvar
   )
 

@@ -12,7 +12,7 @@ within Dynawo.Electrical.InverterBasedGeneration;
 * This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 */
 
-model GenericIBG_INIT "Initialization model for genericIBG"
+model IBG_INIT "Initialization model for IBGs"
   import Modelica;
   import Modelica.ComplexMath;
   import Dynawo.Types;
@@ -66,4 +66,4 @@ equation
   Iq0Pu = IqRef0Pu + IqSup0Pu;
 
   annotation(Documentation(preferredView = "text"));
-end GenericIBG_INIT;
+end IBG_INIT;
