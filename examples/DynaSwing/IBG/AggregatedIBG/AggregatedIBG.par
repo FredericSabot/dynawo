@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2021, RTE (http://www.rte-france.com)
+    See AUTHORS.txt
+    All rights reserved.
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, you can obtain one at http://mozilla.org/MPL/2.0/.
+    SPDX-License-Identifier: MPL-2.0
+
+    This file is part of Dynawo, an hybrid C++/Modelica open source suite of
+    simulation tools for power systems.
+-->
+<parametersSet xmlns="http://www.rte-france.com/dynawo">
+  <set id="Solver">
+    <par type="INT" name="order" value="2"/>
+    <par type="DOUBLE" name="initStep" value="1e-8"/>
+    <par type="DOUBLE" name="minStep" value="1e-8"/>
+    <par type="DOUBLE" name="maxStep" value="0.5"/>
+    <par type="DOUBLE" name="absAccuracy" value="1e-4"/>
+    <par type="DOUBLE" name="relAccuracy" value="1e-4"/>
+    <par type="DOUBLE" name="minimalAcceptableStep" value="1e-8"/>
+  </set>
+  <set id="1">
+    <par type="DOUBLE" name="infiniteBus_U0Pu" value="1"/>
+    <par type="DOUBLE" name="infiniteBus_UEvtPu" value="0.3"/>
+    <par type="DOUBLE" name="infiniteBus_UPhase" value="0"/>
+    <par type="DOUBLE" name="infiniteBus_omega0Pu" value="1"/>
+    <par type="DOUBLE" name="infiniteBus_omegaEvtPu" value="0.945"/>
+    <par type="DOUBLE" name="infiniteBus_tUEvtStart" value="5"/>
+    <par type="DOUBLE" name="infiniteBus_tUEvtEnd" value="5.5"/>
+    <par type="DOUBLE" name="infiniteBus_tOmegaEvtStart" value="5.6"/>
+    <par type="DOUBLE" name="infiniteBus_tOmegaEvtEnd" value="5.8"/>
+  </set>
+  <set id="2">
+    <par type="DOUBLE" name="line_XPu" value="0.1"/>
+    <par type="DOUBLE" name="line_RPu" value="0.0"/>
+    <par type="DOUBLE" name="line_BPu" value="0.0"/>
+    <par type="DOUBLE" name="line_GPu" value="0.0"/>
+  </set>
+  <set id="3">
+    <par type="DOUBLE" name="ibg_IMaxPu" value="1.2"/>
+    <par type="DOUBLE" name="ibg_P0Pu" value="0.7"/>
+    <par type="DOUBLE" name="ibg_Q0Pu" value="0.2"/>
+    <par type="DOUBLE" name="ibg_U0Pu" value="1.0175"/>
+    <par type="DOUBLE" name="ibg_UPhase0" value="0"/>
+    <par type="DOUBLE" name="ibg_SNom" value="100"/>
+    <par type="DOUBLE" name="ibg_UQPrioPu" value="0.7"/>
+    <par type="DOUBLE" name="ibg_US1" value="0.9"/>
+    <par type="DOUBLE" name="ibg_US2" value="1.1"/>
+    <par type="DOUBLE" name="ibg_kRCI" value="2.5"/>
+    <par type="DOUBLE" name="ibg_kRCA" value="2.5"/>
+    <par type="DOUBLE" name="ibg_m" value="0.1"/>
+    <par type="DOUBLE" name="ibg_n" value="0.1"/>
+    <par type="DOUBLE" name="ibg_tG" value="0.1"/>
+    <par type="DOUBLE" name="ibg_Tm" value="0.1"/>
+    <par type="DOUBLE" name="ibg_IpSlewMaxPu" value="1"/>
+    <par type="DOUBLE" name="ibg_IqMaxPu" value="1.2"/>
+    <par type="DOUBLE" name="ibg_IqMinPu" value="-1.2"/>
+    <par type="DOUBLE" name="ibg_tLVRT1" value="0.2"/>
+    <par type="DOUBLE" name="ibg_tLVRT2" value="1.2"/>
+    <par type="DOUBLE" name="ibg_ULVRTMinPu" value="0.4"/>
+    <par type="DOUBLE" name="ibg_ULVRTIntermediatePu" value="0.5"/>
+    <par type="DOUBLE" name="ibg_ULVRTArmingPu" value="0.6"/>
+    <par type="DOUBLE" name="ibg_OmegaMaxPu" value="1.05"/>
+    <par type="DOUBLE" name="ibg_OmegaDeadBandPu" value="1.01"/>
+    <par type="DOUBLE" name="ibg_OmegaMinPu" value="0.95"/>
+    <par type="DOUBLE" name="ibg_pOmegaPu" value="0.01"/>
+    <par type="DOUBLE" name="ibg_tFilterOmega" value="0.02"/>
+    <par type="DOUBLE" name="ibg_tFilterU" value="0.01"/>
+    <par type="DOUBLE" name="ibg_UMaxPu" value="1.2"/>
+    <par type="DOUBLE" name="ibg_overfrequencySupport_omega_sPu" value="1.01"/>
+    <par type="DOUBLE" name="ibg_UPLLFreezePu" value="0.1"/>
+    <par type="DOUBLE" name="ibg_PLLFreeze_Ki" value="20"/>
+    <par type="DOUBLE" name="ibg_PLLFreeze_Kp" value="3"/>
+    <par type="DOUBLE" name="ibg_PLLFreeze_" value="3"/>
+    <par type="DOUBLE" name="ibg_LVRTc" value="0.5"/>
+    <par type="DOUBLE" name="ibg_LVRTd" value="0.1"/>
+    <par type="DOUBLE" name="ibg_LVRTe" value="0.5"/>
+    <par type="DOUBLE" name="ibg_LVRTf" value="0.1"/>
+    <par type="DOUBLE" name="ibg_LVRTu" value="0.8"/>
+  </set>
+  <set id="4">
+    <par type="DOUBLE" name="setPoint_Value0" value="1"/>
+  </set>
+  <set id="5">
+    <par type="DOUBLE" name="setPoint_Value0" value="0.7"/>
+  </set>
+  <set id="6">
+    <par type="DOUBLE" name="setPoint_Value0" value="0.2"/>
+  </set>
+ <!-- <set id="7">
+    <par type="DOUBLE" name="lvrtAggr_T1" value="0.15"/>
+    <par type="DOUBLE" name="lvrtAggr_TInt" value="1"/>
+    <par type="DOUBLE" name="lvrtAggr_T2" value="3"/>
+    <par type="DOUBLE" name="lvrtAggr_UMinPu" value="0.3"/>
+    <par type="DOUBLE" name="lvrtAggr_UIntPu" value="0.5"/>
+    <par type="DOUBLE" name="lvrtAggr_URPu" value="0.8"/>
+    <par type="DOUBLE" name="lvrtAggr_c" value="0.5"/>
+    <par type="DOUBLE" name="lvrtAggr_d" value="0.1"/>
+    <par type="DOUBLE" name="lvrtAggr_e" value="0.5"/>
+    <par type="DOUBLE" name="lvrtAggr_f" value="0.1"/>
+    <par type="DOUBLE" name="lvrtAggr_u_" value="0.5"/>
+  </set>
+  <set id="UVA">
+    <par type="DOUBLE" name="underVoltageAutomaton_UMinPu" value="0.8"/>
+    <par type="DOUBLE" name="underVoltageAutomaton_tLagAction" value="0.7"/>
+  </set>-->
+</parametersSet>

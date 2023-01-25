@@ -12,12 +12,12 @@
     simulation tools for power systems.
 -->
 <dyn:dynamicModelsArchitecture xmlns:dyn="http://www.rte-france.com/dynawo">
-  <dyn:blackBoxModel id="InfBus" lib="InfiniteBusWithVariations" parFile="IBG.par" parId="1"/>
-  <dyn:blackBoxModel id="Line" lib="Line" parFile="IBG.par" parId="2"/>
-  <dyn:blackBoxModel id="IBG" lib="GenericIBG" parFile="IBG.par" parId="3"/>
-  <dyn:blackBoxModel id="OmegaRefPu" lib="SetPoint" parFile="IBG.par" parId="4"/>
-  <dyn:blackBoxModel id="PRefPu" lib="SetPoint" parFile="IBG.par" parId="5"/>
-  <dyn:blackBoxModel id="iQRefPu" lib="SetPoint" parFile="IBG.par" parId="6"/>
+  <dyn:blackBoxModel id="InfBus" lib="InfiniteBusWithVariations" parFile="AggregatedIBG.par" parId="1"/>
+  <dyn:blackBoxModel id="Line" lib="Line" parFile="AggregatedIBG.par" parId="2"/>
+  <dyn:blackBoxModel id="IBG" lib="AggregatedIBG" parFile="AggregatedIBG.par" parId="3"/>
+  <dyn:blackBoxModel id="OmegaRefPu" lib="SetPoint" parFile="AggregatedIBG.par" parId="4"/>
+  <dyn:blackBoxModel id="PRefPu" lib="SetPoint" parFile="AggregatedIBG.par" parId="5"/>
+  <dyn:blackBoxModel id="iQRefPu" lib="SetPoint" parFile="AggregatedIBG.par" parId="6"/>
   <dyn:connect id1="OmegaRefPu" var1="setPoint_setPoint_value" id2="IBG" var2="ibg_omegaRefPu"/>
   <dyn:connect id1="PRefPu" var1="setPoint_setPoint_value" id2="IBG" var2="ibg_PextPu"/>
   <dyn:connect id1="iQRefPu" var1="setPoint_setPoint_value" id2="IBG" var2="ibg_iQrefPu"/>
