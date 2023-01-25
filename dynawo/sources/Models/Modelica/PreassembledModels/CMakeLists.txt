@@ -11,6 +11,7 @@
 # Preassembled models
 
 set(MODELICA_PREASSEMBLED_MODELS
+  AggregatedIBG.xml
   BooleanTable.xml
   Bus.xml
   CombiTimeTable.xml
