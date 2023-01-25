@@ -1,6 +1,6 @@
 within Dynawo.Electrical.InverterBasedGeneration;
 
-model GenericIBG "Generic model of inverter-based generation (IBG)"
+model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
   import Dynawo;
   import Modelica;
 
@@ -16,7 +16,8 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
 
   // Frequency support
   parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
-  parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before disconnection in pu (base omegaNom)";
+  parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before start of disconnections in pu (base omegaNom)";
+  parameter Types.AngularVelocityPu pOmegaPu "Additional frequency drop compared that leads to full trip of units in pu (base omegaNom)";
   parameter Types.AngularVelocityPu OmegaDeadBandPu "Deadband of the overfrequency contribution in pu (base omegaNom)";
 
   // Voltage support
@@ -34,26 +35,25 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Types.VoltageModulePu ULVRTMinPu "Voltage threshold under which the automaton is activated instantaneously in pu (base UNom)";
   parameter Types.Time tLVRT1 "Time delay of trip for severe voltage dips";
   parameter Types.Time tLVRT2 "Time delay of trip for small voltage dips";
-
   parameter Types.VoltageModulePu UPLLFreezePu "PLL freeze voltage threshold (in pu)";
   parameter Real IqMinPu = 0 "Minimum reactive current command in pu (base UNom, SNom)";
   parameter Types.VoltageModulePu UQPrioPu "Voltage under which priority is given to reactive current injection in pu (base UNom)";
   parameter Real IpSlewMaxPu "Active current slew limit (both up and down) in pu (base UNom, SNom)";
+
+  // Parameters of the partial tripping curves
+  parameter Types.PerUnit LVRTc;
+  parameter Types.PerUnit LVRTd;
+  parameter Types.PerUnit LVRTe;
+  parameter Types.PerUnit LVRTf;
+  parameter Types.PerUnit LVRTu;
 
   // Initial values
   parameter Types.PerUnit P0Pu "Start value of active power at terminal in pu (generator convention) (base SnRef)";
   parameter Types.PerUnit Q0Pu "Start value of reactive power at terminal in pu (generator convention) (base SnRef)";
   parameter Types.PerUnit U0Pu "Start value of voltage magnitude at terminal in pu (base UNom)";
   parameter Types.Angle UPhase0 "Start value of voltage phase angle at terminal in rad";
-protected
-  parameter Types.ComplexPerUnit u0Pu "Start value of complex voltage at terminal in pu (base UNom)";
-  parameter Types.ComplexPerUnit s0Pu "Start value of complex apparent power at terminal in pu (base SnRef) (generator convention)";
-  parameter Types.ComplexPerUnit i0Pu "Start value of complex current at terminal in pu (base UNom, SnRef) (generator convention)";
-  parameter Types.PerUnit Id0Pu "Start value of d-axs current at injector in pu (base UNom, SNom) (generator convention)";
-  parameter Types.PerUnit Iq0Pu "Start value of q-axis current at injector in pu (base UNom, SNom) (generator convention)";
-  parameter Types.PerUnit IqRef0Pu "Start value of the reference q-axis current at injector in pu (base UNom, SNom) (generator convention)";
 
-public
+  Types.PerUnit partialTrippingRatio(start = 1) "Coefficient for partial tripping of generators, equals 1 if no trips, 0 if all units are tripped";
   Dynawo.Electrical.Sources.InjectorIDQPLL injector(Id0Pu = Id0Pu, Iq0Pu = Iq0Pu, P0Pu = P0Pu, Q0Pu = Q0Pu, SNom = SNom, U0Pu = U0Pu, UPhase0 = UPhase0, i0Pu = i0Pu, s0Pu = s0Pu, u0Pu = u0Pu) annotation(
     Placement(visible = true, transformation(origin = {240, -6}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
   Dynawo.Connectors.ACPower terminal(V(re(start = u0Pu.re), im(start = u0Pu.im)), i(re(start = i0Pu.re), im(start = i0Pu.im))) annotation(
@@ -64,7 +64,7 @@ public
     Placement(visible = true, transformation(origin = {-130, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Logical.GreaterThreshold Vfreeze(threshold = UPLLFreezePu) annotation(
     Placement(visible = true, transformation(origin = {-50, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.Electrical.InverterBasedGeneration.GenericIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntermediatePu = ULVRTIntermediatePu, ULVRTMinPu = ULVRTMinPu, tLVRT1 = tLVRT1, tLVRT2 = tLVRT2) annotation(
+  Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntermediatePu = ULVRTIntermediatePu, ULVRTMinPu = ULVRTMinPu, tLVRT1 = tLVRT1, tLVRT2 = tLVRT2, c = LVRTc, d = LVRTd, e = LVRTe, f = LVRTf, u = LVRTu) annotation(
     Placement(visible = true, transformation(origin = {-50, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput PextPu(start = P0Pu*SystemBase.SnRef/SNom) "Available power from the DC source in pu (base SNom)" annotation(
     Placement(visible = true, transformation(origin = {-94, -140}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
@@ -98,7 +98,7 @@ public
     Placement(visible = true, transformation(origin = {-90, -344}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput omegaRefPu(start = SystemBase.omegaRef0Pu) annotation(
     Placement(visible = true, transformation(origin = {8, -2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-  Dynawo.Electrical.InverterBasedGeneration.GenericIBG.FrequencyProtection frequencyProtection(OmegaMaxPu = OmegaMaxPu, OmegaMinPu = OmegaMinPu) annotation(
+  Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.FrequencyProtection frequencyProtection(OmegaMaxPu = OmegaMaxPu, OmegaMinPu = OmegaMinPu, p = pOmegaPu) annotation(
     Placement(visible = true, transformation(origin = {-48, -344}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Dynawo.Electrical.InverterBasedGeneration.GenericIBG.OverfrequencySupport overfrequencySupport(OmegaDeadBandPu = OmegaDeadBandPu, OmegaMaxPu = OmegaMaxPu) annotation(
     Placement(visible = true, transformation(origin = {-48, -378}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -110,39 +110,14 @@ public
     Placement(visible = true, transformation(origin = {-90, -386}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder iPMaxFilter(T = 0.01, y_start = IMaxPu) annotation(
     Placement(visible = true, transformation(origin = {33, -193}, extent = {{-3, -3}, {3, 3}}, rotation = 90)));
-  Modelica.Blocks.Continuous.FirstOrder iQMaxFilter(T = 0.01, y_start = IMaxPu)  annotation(
+  Modelica.Blocks.Continuous.FirstOrder iQMaxFilter(T = 0.01, y_start = IMaxPu) annotation(
     Placement(visible = true, transformation(origin = {33, -249}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
   Dynawo.NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iPSlewLimit(DuMax = IpSlewMaxPu, DuMin = -IpSlewMaxPu, Y0 = Id0Pu, tS = tRateLim) annotation(
     Placement(visible = true, transformation(origin = {150, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder iPcmdFirstOrder(T = tG, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {110, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Math.Gain gain(k = -1)  annotation(
+  Modelica.Blocks.Math.Gain gain(k = -1) annotation(
     Placement(visible = true, transformation(origin = {150, -270}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-
-  model LimitUpdating
-    Types.CurrentModulePu IMaxPu "Maximum current of the injector in pu (base UNom, SNom)";
-    Modelica.Blocks.Interfaces.RealInput IpCmd "Active current command in pu (base UNom, SNom)" annotation(
-      Placement(visible = true, transformation(origin = {-120, 80}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-108, 80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.RealInput IqCmd "Reactive current command in pu (base UNom, SNom)" annotation(
-      Placement(visible = true, transformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-100, -74}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.BooleanInput Pflag "Priority to active power (true) or reactive power (false)" annotation(
-      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-102, 2}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.RealOutput IpLim annotation(
-      Placement(visible = true, transformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {108, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.RealOutput IqLim annotation(
-      Placement(visible = true, transformation(origin = {110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  protected
-    Types.PerUnit IpLimPu = min(IpCmd, IMaxPu);
-    Types.PerUnit IqLimPu = min(IpCmd, IMaxPu);
-  equation
-    if Pflag then
-      IpLim = IMaxPu;
-      IqLim = sqrt(IMaxPu^2 - IpLimPu^2);
-    else
-      IpLim = sqrt(IMaxPu^2 - IqLimPu^2);
-      IqLim = IMaxPu;
-    end if;
-  end LimitUpdating;
 
   model LVRT "Low voltage ride through"
     import Dynawo.NonElectrical.Logs.Timeline;
@@ -153,13 +128,30 @@ public
     parameter Types.VoltageModulePu ULVRTMinPu "Voltage threshold under which the automaton is activated instantaneously in pu (base UNom)";
     parameter Types.Time tLVRT1 "Time delay of trip for severe voltage dips in s";
     parameter Types.Time tLVRT2 "Time delay of trip for small voltage dips in s";
+    parameter Types.Time tFilter = 1e-3 "Filter time constant for computation of UMin1Pu, UMinIntPu, and tMaxRecovery in s";
+    // Parameters of the partial tripping curves
+    parameter Types.PerUnit c;
+    parameter Types.PerUnit d;
+    parameter Types.PerUnit e;
+    parameter Types.PerUnit f;
+    parameter Types.PerUnit u;
     Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput UMonitoredPu "Monitored voltage in pu (base UNom)" annotation(
     Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+    Types.PerUnit fLVRT (start = 1) "Global partial tripping coefficient, equals to 1 if no trip, 0 if fully tripped";
+    Types.PerUnit f1 (start = 1) "Partial tripping coefficient for trips in period [0, tLVRTInt], equals to 1 if no trip, 0 if fully tripped";
+    Types.PerUnit f2 (start = 1) "Partial tripping coefficient for trips in period [tLVRT1, tLVRTInt], equals to 1 if no trip, 0 if fully tripped";
+    Types.PerUnit f3 (start = 1) "Partial tripping coefficient for trips in period [tLVRTInt, tLVRT2], equals to 1 if no trip, 0 if fully tripped";
+    Types.VoltageModulePu UMin1Pu (start = 1) "Minimum voltage in period [0, tLVRT1] in pu (base UNom)";
+    Types.VoltageModulePu UMinIntPu (start = 1) "Minimum voltage in period [tLVRT1, tLVRTInt] in pu (base UNom)";
+    Types.Time tMaxRecovery (start = 0) "Maximum 'single-block' duration for which the protection has been armed in s";
   protected
+    parameter Types.Time tLVRTInt = tLVRT1 + (tLVRT2 - tLVRT1) * (ULVRTIntermediatePu - ULVRTMinPu) / (ULVRTArmingPu - ULVRTMinPu);
     Types.Time tThresholdReached (start = Constants.inf) "Time when the threshold was reached";
-
   equation
+    assert(u <= 1, "u <= 1");
+    assert(u > tLVRTInt/tLVRT2, "u > tLVRTInt/tLVRT2");
+
     // Voltage comparison with the minimum accepted value
     when UMonitoredPu <= ULVRTArmingPu and not(pre(switchOffSignal.value)) then
       tThresholdReached = time;
@@ -169,86 +161,109 @@ public
       Timeline.logEvent1(TimelineKeys.LVRTDisarming);
     end when;
 
-    // Delay before tripping the generator
-    when UMonitoredPu < ULVRTMinPu then // No delay
-      switchOffSignal.value = true;
-      Timeline.logEvent1(TimelineKeys.LVRTTripped);
-    elsewhen time - tThresholdReached >= tLVRT1 and UMonitoredPu < ULVRTIntermediatePu then
-      switchOffSignal.value = true;
-      Timeline.logEvent1(TimelineKeys.LVRTTripped);
-    elsewhen UMonitoredPu >= ULVRTIntermediatePu and  time - tThresholdReached >= tLVRT1 + (tLVRT2-tLVRT1) * (UMonitoredPu - ULVRTMinPu)/(ULVRTArmingPu-ULVRTMinPu) then
+    // Computation of minimum voltages
+    if switchOffSignal.value == true or tThresholdReached == Constants.inf then  // Not armed or tripped
+      der(UMin1Pu) = 0;
+      der(UMinIntPu) = 0;
+    elseif time - tThresholdReached < tLVRT1 then
+      UMin1Pu + tFilter * der(UMin1Pu) = if UMonitoredPu < UMin1Pu then UMonitoredPu else UMin1Pu;  // Relaxed version of UMin1Pu = min(UMin1Pu, UMonitoredPu)
+      der(UMinIntPu) = 0;
+    elseif time - tThresholdReached < tLVRTInt then
+      UMinIntPu + tFilter * der(UMinIntPu) = if UMonitoredPu < UMinIntPu then UMonitoredPu else UMinIntPu;  // Relaxed version of UMinIntPu = min(UMinIntPu, UMonitoredPu)
+      der(UMin1Pu) = 0;
+    else
+      der(UMin1Pu) = 0;
+      der(UMinIntPu) = 0;
+    end if;
+
+    // Computation of tMaxRecovery
+    if switchOffSignal.value == true or tThresholdReached == Constants.inf then  // Not armed or tripped
+      der(tMaxRecovery) = 0;
+    else
+      tMaxRecovery + tFilter * der(tMaxRecovery) = if (time - tThresholdReached) > tMaxRecovery then (time - tThresholdReached) else tMaxRecovery;
+    end if;
+
+    // Partial trips
+    if UMin1Pu > ULVRTMinPu then
+      f1 = 1;
+    elseif UMin1Pu > d*ULVRTMinPu then
+      f1 = c * (UMin1Pu - d*ULVRTMinPu)/(ULVRTMinPu - d*ULVRTMinPu);
+    else
+      f1 = 0;
+    end if;
+
+    if UMinIntPu > ULVRTMinPu then
+      f2 = 1;
+    elseif UMinIntPu > f*ULVRTMinPu then
+      f2 = e * (UMinIntPu - f*ULVRTIntermediatePu)/(ULVRTIntermediatePu - f*ULVRTIntermediatePu);
+    else
+      f2 = 0;
+    end if;
+
+    if tMaxRecovery < tLVRTInt then
+      f3 = 1;
+    elseif tMaxRecovery < u*tLVRT2 then
+      f3 = (u*tLVRT2 - tMaxRecovery)/(u*tLVRT2 - tLVRTInt);
+    else
+      f3 = 0;
+    end if;
+
+    fLVRT = f1 * f2 * f3;
+
+    when fLVRT < 0.001 then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
     end when;
   end LVRT;
 
-  model VoltageSupport
-    parameter Types.VoltageModulePu US1 "Lower voltage limit of deadband in pu (base UNom)";
-    parameter Types.VoltageModulePu US2 "Higher voltage limit of deadband in pu (base UNom)";
-    parameter Real kRCI "Slope of reactive current increase for low voltages";
-    parameter Real kRCA "Slope of reactive current decrease for high voltages";
-    parameter Real m "Current injection just outside of lower deadband in pu (base IMaxPu)";
-    parameter Real n "Current injection just outside of lower deadband in pu (base IMaxPu)";
-    parameter Types.CurrentModulePu IMaxPu "Maximum current of the injector in pu (base UNom, SNom)";
-    Modelica.Blocks.Interfaces.RealInput Um annotation(
-      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-110, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.RealOutput IqSupPu annotation(
-      Placement(visible = true, transformation(origin = {110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {108, -2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  equation
-    if Um < US1 then
-      IqSupPu = m*IMaxPu + kRCI*(US1 - Um);
-    elseif Um < US2 then
-      IqSupPu = 0;
-    else
-      IqSupPu = -n*IMaxPu + kRCA*(Um - US2);
-    end if;
-  end VoltageSupport;
-
   model FrequencyProtection
     parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
-    parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before disconnection in pu (base omegaNom)";
+    parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before start of disconnections in pu (base omegaNom)";
+    parameter Types.AngularVelocityPu p "Additional frequency drop compared that leads to full trip of units in pu (base omegaNom)";
+    parameter Types.Time tFilter = 1e-3 "Filter time constant for computation of MinOmegaPu in s";
     Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
       Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+    Types.AngularVelocityPu MinOmegaPu (start = 1) "Minimum measured frequency in pu (base omegaNom)";
+    Types.PerUnit fFrequency (start = 1) "Partial tripping coefficient, equals to 1 if no trip, 0 if fully tripped";
   equation
     when omegaPu > OmegaMaxPu then
       switchOffSignal.value = true;
-    elsewhen omegaPu < OmegaMinPu then
+    elsewhen omegaPu < OmegaMinPu - p then
       switchOffSignal.value = true;
     end when;
+    // MinOmegaPu + tFilter * der(MinOmegaPu) = if omegaPu < MinOmegaPu then omegaPu else MinOmegaPu;  // Does not compile for some reason
+    if omegaPu < MinOmegaPu then
+      MinOmegaPu + tFilter * der(MinOmegaPu) = omegaPu;
+    else
+      der(MinOmegaPu) = 0;
+    end if;
+    if MinOmegaPu > OmegaMinPu then
+      fFrequency = 1;
+    elseif MinOmegaPu > OmegaMinPu - p then
+      fFrequency = (OmegaMinPu - MinOmegaPu) / p;
+    else
+      fFrequency = 0;
+    end if;
   end FrequencyProtection;
 
-  model OverfrequencySupport
-    parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
-    parameter Types.AngularVelocityPu OmegaDeadBandPu "Deadband of the overfrequency contribution in pu (base omegaNom)";
-    Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
-      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.RealOutput deltaP annotation(
-      Placement(visible = true, transformation(origin = {110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-    Modelica.Blocks.Interfaces.RealInput PextPu annotation(
-      Placement(visible = true, transformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-  equation
-    if omegaPu < OmegaDeadBandPu then
-      deltaP = 0;
-    elseif omegaPu < OmegaMaxPu then
-      deltaP = PextPu*(OmegaMaxPu - omegaPu);
-    else
-      deltaP = PextPu;
-    end if;
-  end OverfrequencySupport;
-
-  model OverVoltageProtection
-    Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
-    Modelica.Blocks.Interfaces.RealInput Um annotation(
-      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-    parameter Types.VoltageModulePu UMaxPu "Maximum voltage over which the unit is disconnected in pu (base UNom)";
-  equation
-    when Um > UMaxPu then
-      switchOffSignal.value = true;
-    end when;
-  end OverVoltageProtection;
-
+  Modelica.Blocks.Math.Product IpPartialTripping annotation(
+    Placement(visible = true, transformation(origin = {190, -166}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Product IqPartialTripping annotation(
+    Placement(visible = true, transformation(origin = {190, -264}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.RealExpression PartialTripping1(y = partialTrippingRatio)  annotation(
+    Placement(visible = true, transformation(origin = {150, -190}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.RealExpression PartialTripping2(y = partialTrippingRatio)  annotation(
+    Placement(visible = true, transformation(origin = {150, -240}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+protected
+  parameter Types.ComplexPerUnit u0Pu "Start value of complex voltage at terminal in pu (base UNom)";
+  parameter Types.ComplexPerUnit s0Pu "Start value of complex apparent power at terminal in pu (base SnRef) (generator convention)";
+  parameter Types.ComplexPerUnit i0Pu "Start value of complex current at terminal in pu (base UNom, SnRef) (generator convention)";
+  parameter Types.PerUnit Id0Pu "Start value of d-axs current at injector in pu (base UNom, SNom) (generator convention)";
+  parameter Types.PerUnit Iq0Pu "Start value of q-axis current at injector in pu (base UNom, SNom) (generator convention)";
+  parameter Types.PerUnit IqRef0Pu "Start value of the reference q-axis current at injector in pu (base UNom, SNom) (generator convention)";
 equation
+  partialTrippingRatio = lvrt.fLVRT * frequencyProtection.fFrequency;
   injector.switchOffSignal1.value = lvrt.switchOffSignal.value;
   injector.switchOffSignal2.value = frequencyProtection.switchOffSignal.value;
   injector.switchOffSignal3.value = overVoltageProtection.switchOffSignal.value;
@@ -330,12 +345,20 @@ equation
     Line(points = {{62, -10}, {140, -10}, {140, -2}, {228, -2}}, color = {0, 0, 127}));
   connect(PLLFreeze.sinPhi, injector.sinPhi) annotation(
     Line(points = {{62, -14}, {142, -14}, {142, 2}, {228, 2}}, color = {0, 0, 127}));
-  connect(iPSlewLimit.y, injector.idPu) annotation(
-    Line(points = {{162, -160}, {200, -160}, {200, -14}, {228, -14}}, color = {0, 0, 127}));
-  connect(gain.y, injector.iqPu) annotation(
-    Line(points = {{162, -270}, {202, -270}, {202, -10}, {228, -10}}, color = {0, 0, 127}));
+  connect(iPSlewLimit.y, IpPartialTripping.u1) annotation(
+    Line(points = {{162, -160}, {178, -160}}, color = {0, 0, 127}));
+  connect(IpPartialTripping.y, injector.idPu) annotation(
+    Line(points = {{201, -166}, {220, -166}, {220, -14}, {228, -14}}, color = {0, 0, 127}));
+  connect(gain.y, IqPartialTripping.u2) annotation(
+    Line(points = {{162, -270}, {178, -270}}, color = {0, 0, 127}));
+  connect(IqPartialTripping.y, injector.iqPu) annotation(
+    Line(points = {{202, -264}, {222, -264}, {222, -10}, {228, -10}}, color = {0, 0, 127}));
+  connect(PartialTripping1.y, IpPartialTripping.u2) annotation(
+    Line(points = {{162, -190}, {170, -190}, {170, -172}, {178, -172}}, color = {0, 0, 127}));
+  connect(PartialTripping2.y, IqPartialTripping.u1) annotation(
+    Line(points = {{162, -240}, {170, -240}, {170, -258}, {178, -258}}, color = {0, 0, 127}));
   annotation(
     Documentation(preferredView = "diagram", info = "<html>
-    <p> Generic model of inverter-based generation as defined in p28 of Gilles Chaspierre's PhD thesis 'Reduced-order modelling of active distribution networks for large-disturbance simulations'. Available: https://orbi.uliege.be/handle/2268/251602 </p></html>"),
+    <p> Aggregated model of inverter-based generation as defined in p28,74-76 of Gilles Chaspierre's PhD thesis 'Reduced-order modelling of active distribution networks for large-disturbance simulations'. Available: https://orbi.uliege.be/handle/2268/251602 </p></html>"),
     Diagram(coordinateSystem(extent = {{-180, 40}, {320, -400}})));
-end GenericIBG;
+end AggregatedIBG;

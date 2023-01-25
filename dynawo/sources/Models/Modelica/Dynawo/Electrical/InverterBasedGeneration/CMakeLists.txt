@@ -12,6 +12,9 @@ set(MODEL_FILES
   # Electrical Lines models
   package.mo
   package.order
+  AggregatedIBG.mo
+  AggregatedIBG_INIT.mo
+  AggregatedIBG.extvar
   GenericIBG.mo
   GenericIBG_INIT.mo
   GenericIBG.extvar
