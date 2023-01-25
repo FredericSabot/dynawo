@@ -26,10 +26,7 @@ model LVRT "Low voltage ride through"
     parameter Types.VoltageModulePu UIntPu "Voltage threshold under which the automaton is activated after T1";
     parameter Types.VoltageModulePu UMinPu "Voltage threshold under which the automaton is activated instantaneously";
     parameter Types.Time T1 "Time delay of trip for severe voltage dips";
-    parameter Types.Time TInt "Time delay of trip for medium voltage dips";
     parameter Types.Time T2 "Time delay of trip for small voltage dips";
-
-    Real temp "Temporary build to work around a bug";
 
     Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput UMonitoredPu "Monitored voltage in pu (base UNom)" annotation(
@@ -39,8 +36,6 @@ model LVRT "Low voltage ride through"
     Types.Time tThresholdReached (start = Constants.inf) "Time when the threshold was reached";
 
   equation
-    temp = 1/(URPu-UMinPu);
-
     // Voltage comparison with the minimum accepted value
     when UMonitoredPu <= URPu and not(pre(switchOffSignal.value)) then
       tThresholdReached = time;
@@ -57,7 +52,7 @@ model LVRT "Low voltage ride through"
     elsewhen time - tThresholdReached >= T1 and UMonitoredPu < UIntPu then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
-    elsewhen UMonitoredPu >= UIntPu and  time - tThresholdReached >= T1 + (T2-T1) * (UMonitoredPu - UMinPu)*temp then
+    elsewhen UMonitoredPu >= UIntPu and  time - tThresholdReached >= T1 + (T2-T1) * (UMonitoredPu - UMinPu)/(URPu-UMinPu) then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
     end when;

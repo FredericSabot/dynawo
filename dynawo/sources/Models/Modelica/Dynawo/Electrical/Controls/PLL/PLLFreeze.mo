@@ -63,7 +63,7 @@ model PLLFreeze "Phase-Locked Loop that freezes when V < Vm"
     Placement(visible = true, transformation(origin = {50, -41}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.BooleanInput freeze annotation(
     Placement(visible = true, transformation(origin = {-150.5, -59.5}, extent = {{-10.5, -10.5}, {10.5, 10.5}}, rotation = 0), iconTransformation(origin = {-110, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-protected
+
   parameter Types.ComplexVoltagePu u0Pu "Start value of complex voltage at PCC in pu (base UNom)";
 equation
   connect(sinPhi1.y, sinPhi) annotation(
