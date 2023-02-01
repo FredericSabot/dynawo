@@ -24,9 +24,9 @@ model IBG_INIT "Initialization model for IBGs"
   parameter Types.ApparentPowerModule SNom "Nominal apparent power of the injector (in MVA)";
   parameter Types.CurrentModulePu IMaxPu "Maximum current of the injector in pu (base UNom, SNom)";
 
-  parameter Types.PerUnit P0Pu "Start value of active power at regulated bus in pu (generator convention) (base SnRef)";
-  parameter Types.PerUnit Q0Pu "Start value of reactive power at regulated bus in pu (generator convention) (base SnRef)";
-  parameter Types.PerUnit U0Pu "Start value of voltage magnitude at regulated bus in pu (bae UNom)";
+  parameter Types.PerUnit P0Pu "Start value of active power at regulated bus in pu (receptor convention) (base SnRef)";
+  parameter Types.PerUnit Q0Pu "Start value of reactive power at regulated bus in pu (receptor convention) (base SnRef)";
+  parameter Types.PerUnit U0Pu "Start value of voltage magnitude at regulated bus in pu (base UNom)";
   parameter Types.Angle UPhase0 "Start value of voltage phase angle at regulated bus in rad";
 
   // Voltage support
@@ -39,8 +39,8 @@ model IBG_INIT "Initialization model for IBGs"
 
 protected
   Types.ComplexPerUnit u0Pu "Start value of complex voltage at terminal in pu (base UNom)";
-  Types.ComplexPerUnit s0Pu "Start value of complex apparent power at terminal in pu (base SnRef) (generator convention)";
-  Types.ComplexPerUnit i0Pu "Start value of complex current at terminal in pu (base UNom, SnRef) (generator convention)";
+  Types.ComplexPerUnit s0Pu "Start value of complex apparent power at terminal in pu (base SnRef) (receptor convention)";
+  Types.ComplexPerUnit i0Pu "Start value of complex current at terminal in pu (base UNom, SnRef) (receptor convention)";
 
   Types.PerUnit Id0Pu "Start value of d-axis current at injector in pu (base UNom, SNom) (generator convention)";
   Types.PerUnit Iq0Pu "Start value of q-axis current at injector in pu (base UNom, SNom) (generator convention)";
@@ -53,8 +53,8 @@ equation
   u0Pu = ComplexMath.fromPolar(U0Pu, UPhase0);
   s0Pu = u0Pu * ComplexMath.conj(i0Pu);
 
-  Id0Pu = Modelica.Math.cos(UPhase0) * i0Pu.re + Modelica.Math.sin(UPhase0) * i0Pu.im;
-  Iq0Pu = Modelica.Math.sin(UPhase0) * i0Pu.re - Modelica.Math.cos(UPhase0) * i0Pu.im;
+  Id0Pu = -1 * (Modelica.Math.cos(UPhase0) * i0Pu.re + Modelica.Math.sin(UPhase0) * i0Pu.im);
+  Iq0Pu = -1 * (Modelica.Math.sin(UPhase0) * i0Pu.re - Modelica.Math.cos(UPhase0) * i0Pu.im);
 
   if U0Pu < US1 then
     IqSup0Pu = m * IMaxPu + kRCI * (US1 - U0Pu);

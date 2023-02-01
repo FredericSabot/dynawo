@@ -40,8 +40,8 @@
   </set>
   <set id="3">
     <par type="DOUBLE" name="ibg_IMaxPu" value="1.2"/>
-    <par type="DOUBLE" name="ibg_P0Pu" value="0.7"/>
-    <par type="DOUBLE" name="ibg_Q0Pu" value="0.2"/>
+    <par type="DOUBLE" name="ibg_P0Pu" value="-0.7"/>
+    <par type="DOUBLE" name="ibg_Q0Pu" value="-0.2"/>
     <par type="DOUBLE" name="ibg_U0Pu" value="1.0175"/>
     <par type="DOUBLE" name="ibg_UPhase0" value="0"/>
     <par type="DOUBLE" name="ibg_SNom" value="100"/>
@@ -82,12 +82,6 @@
   </set>
   <set id="4">
     <par type="DOUBLE" name="setPoint_Value0" value="1"/>
-  </set>
-  <set id="5">
-    <par type="DOUBLE" name="setPoint_Value0" value="0.7"/>
-  </set>
-  <set id="6">
-    <par type="DOUBLE" name="setPoint_Value0" value="0.2"/>
   </set>
  <!-- <set id="7">
     <par type="DOUBLE" name="lvrtAggr_T1" value="0.15"/>

@@ -48,8 +48,8 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
   parameter Types.PerUnit LVRTu;
 
   // Initial values
-  parameter Types.PerUnit P0Pu "Start value of active power at terminal in pu (generator convention) (base SnRef)";
-  parameter Types.PerUnit Q0Pu "Start value of reactive power at terminal in pu (generator convention) (base SnRef)";
+  parameter Types.PerUnit P0Pu "Start value of active power at terminal in pu (receptor convention) (base SnRef)";
+  parameter Types.PerUnit Q0Pu "Start value of reactive power at terminal in pu (receptor convention) (base SnRef)";
   parameter Types.PerUnit U0Pu "Start value of voltage magnitude at terminal in pu (base UNom)";
   parameter Types.Angle UPhase0 "Start value of voltage phase angle at terminal in rad";
 
@@ -66,7 +66,7 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-50, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntermediatePu = ULVRTIntermediatePu, ULVRTMinPu = ULVRTMinPu, tLVRT1 = tLVRT1, tLVRT2 = tLVRT2, c = LVRTc, d = LVRTd, e = LVRTe, f = LVRTf, u = LVRTu) annotation(
     Placement(visible = true, transformation(origin = {-50, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Interfaces.RealInput PextPu(start = P0Pu*SystemBase.SnRef/SNom) "Available power from the DC source in pu (base SNom)" annotation(
+  Modelica.Blocks.Interfaces.RealInput PextPu(start = -P0Pu*SystemBase.SnRef/SNom) "Available power from the DC source in pu (base SNom)" annotation(
     Placement(visible = true, transformation(origin = {-94, -140}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   Modelica.Blocks.Math.Division division annotation(
     Placement(visible = true, transformation(origin = {6, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
