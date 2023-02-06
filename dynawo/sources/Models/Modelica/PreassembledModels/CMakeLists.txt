@@ -59,8 +59,6 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousThreeWindingsProportionalRegulations.xml
   GeneratorSynchronousFourWindingsGoverPropVRPropInt.xml
   GeneratorSynchronousThreeWindingsGoverPropVRPropInt.xml
-  GeneratorSynchronousFourWindingsHydroG_IEEET1VR.xml
-  GeneratorSynchronousFourWindingsGovernorBPAGG_IEEET1VR.xml
   GeneratorSynchronousFourWindingsTGov1Sexs.xml
   GeneratorSynchronousFourWindingsTGov1SexsPss2A.xml
   GeneratorSynchronousFourWindingsVRKundur.xml
