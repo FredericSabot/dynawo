@@ -53,8 +53,8 @@ equation
   u0Pu = ComplexMath.fromPolar(U0Pu, UPhase0);
   s0Pu = u0Pu * ComplexMath.conj(i0Pu);
 
-  Id0Pu = -1 * (Modelica.Math.cos(UPhase0) * i0Pu.re + Modelica.Math.sin(UPhase0) * i0Pu.im);
-  Iq0Pu = -1 * (Modelica.Math.sin(UPhase0) * i0Pu.re - Modelica.Math.cos(UPhase0) * i0Pu.im);
+  Id0Pu = -1 * (Modelica.Math.cos(UPhase0) * i0Pu.re + Modelica.Math.sin(UPhase0) * i0Pu.im) * SystemBase.SnRef / SNom;
+  Iq0Pu = -1 * (Modelica.Math.sin(UPhase0) * i0Pu.re - Modelica.Math.cos(UPhase0) * i0Pu.im) * SystemBase.SnRef / SNom;
 
   if U0Pu < US1 then
     IqSup0Pu = m * IMaxPu + kRCI * (US1 - U0Pu);
