@@ -232,12 +232,7 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     elsewhen omegaPu < OmegaMinPu - p then
       switchOffSignal.value = true;
     end when;
-    // MinOmegaPu + tFilter * der(MinOmegaPu) = if omegaPu < MinOmegaPu then omegaPu else MinOmegaPu;  // Does not compile for some reason
-    if omegaPu < MinOmegaPu then
-      MinOmegaPu + tFilter * der(MinOmegaPu) = omegaPu;
-    else
-      der(MinOmegaPu) = 0;
-    end if;
+    MinOmegaPu + tFilter * der(MinOmegaPu) = if omegaPu < MinOmegaPu then omegaPu else MinOmegaPu;
     if MinOmegaPu > OmegaMinPu then
       fFrequency = 1;
     elseif MinOmegaPu > OmegaMinPu - p then
