@@ -29,7 +29,7 @@ imPu goes downwards through jXm
 
   Connectors.ImPin omegaRefPu(value(start = SystemBase.omegaRef0Pu)) "Network angular reference frequency in pu (base omegaNom)";
 
-  parameter Types.ApparentPowerModule SNom "Nominal apparent power of a single motor in MVA";
+  parameter Types.ApparentPowerModule SNom = ActiveMotorShare * s0Pu.re * SystemBase.SnRef "Nominal apparent power of a single motor in MVA";
   parameter Real ActiveMotorShare "Share of active power consumed by motors (between 0 and 1)";
   parameter Types.PerUnit RsPu "Stator resistance in pu (base UNom, SNom)";
   parameter Types.PerUnit RrPu "Rotor resistance in pu (base UNom, SNom)";
@@ -83,7 +83,7 @@ equation
   if (running.value) then
     // PQ load
     PLoadPu = (1-ActiveMotorShare) * PRefPu * (1 + deltaP) * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Alpha);
-    QLoadPu = QRefPu * (1 + deltaQ) - QMotor0Pu * (SNom/SystemBase.SnRef) * (PRefPu/s0Pu.re) * (1 + deltaP) * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Beta); // s0Pu.re = PRef0Pu (if PRefPu increases but QRefPu stays constant, the reactive power consumed by the motor increases, so the reactive power of the load is reduced to keep the total constant).
+    QLoadPu = (QRefPu * (1 + deltaQ) - QMotor0Pu * (SNom/SystemBase.SnRef) * (PRefPu/s0Pu.re) * (1 + deltaP)) * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Beta); // s0Pu.re = PRef0Pu (if PRefPu increases but QRefPu stays constant, the reactive power consumed by the motor increases, so the reactive power of the load is reduced to keep the total constant).
     Complex(PLoadPu,QLoadPu) = terminal.V*ComplexMath.conj(iLoadPu);
 
     // Asynchronous motor

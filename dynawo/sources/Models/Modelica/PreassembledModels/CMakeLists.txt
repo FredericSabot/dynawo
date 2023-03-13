@@ -14,10 +14,15 @@ set(MODELICA_PREASSEMBLED_MODELS
   AggregatedIBG.xml
   BooleanTable.xml
   Bus.xml
+  MotorD.xml
+  MotorFifthOrder.xml
+  SimplifiedMotor.xml
   CombiTimeTable.xml
+  CompositeLoadModel.xml
   CurrentLimitAutomaton.xml
   DiscretePI.xml
   DoubleStep.xml
+  ElectronicLoad.xml
   EventConnectedStatus.xml
   EventQuadripoleConnection.xml
   EventQuadripoleDisconnection.xml
@@ -116,6 +121,10 @@ set(MODELICA_PREASSEMBLED_MODELS
   LoadAlphaBetaRestorative.xml
   LoadAlphaBetaRestorativeLimitsRecalc.xml
   LoadAlphaBetaMotor.xml
+  LoadAlphaBetaMotorFifthOrder.xml
+  LoadAlphaBetaTwoMotorFifthOrder.xml
+  LoadAlphaBetaMotorSimplified.xml
+  LoadAlphaBetaTwoMotorSimplified.xml
   LoadOneTransformer.xml
   LoadOneTransformerTapChanger.xml
   LoadPQ.xml

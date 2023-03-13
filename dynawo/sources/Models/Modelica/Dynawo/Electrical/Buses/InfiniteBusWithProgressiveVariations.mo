@@ -12,7 +12,7 @@ within Dynawo.Electrical.Buses;
 * This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 */
 
-model InfiniteBusWithProgressiveVariations "Infinite bus with configurable variations on the voltage module and on the frequency. Variation of voltage returns to initial value with a ramp for numerical stability"
+model InfiniteBusWithProgressiveVariations "Infinite bus with configurable variations on the voltage module and on the frequency. Voltage variations has a slight ramp for numerical stability"
   import Dynawo.Connectors;
   import Dynawo.Types;
   import Dynawo.Electrical.SystemBase;
@@ -30,7 +30,7 @@ model InfiniteBusWithProgressiveVariations "Infinite bus with configurable varia
   parameter Types.Angle UPhase "Infinite bus voltage angle before event in rad";
   parameter Types.Time tUEvtStart "Start time of voltage event in s";
   parameter Types.Time tUEvtEnd "Ending time of voltage event in s";
-  parameter Types.Time tUEvtRamp = 1e-4 "Duration of the recovery ramp after the end of the voltage event in s";
+  parameter Types.Time tUEvtRamp = 1e-3 "Duration of the recovery ramp after the end of the voltage event in s";
   parameter Types.Time tOmegaEvtStart "Start time of frequency event in s";
   parameter Types.Time tOmegaEvtEnd "Ending time of frequency event in s";
 
@@ -48,6 +48,8 @@ equation
   // Voltage amplitude variation
   if time < tUEvtStart or time >= tUEvtEnd + tUEvtRamp then
     UPu = U0Pu;
+  elseif time < tUEvtStart + tUEvtRamp then
+    UPu = U0Pu + (UEvtPu-U0Pu) * (time - tUEvtStart)/tUEvtRamp;
   elseif time < tUEvtEnd then
     UPu = UEvtPu;
   else

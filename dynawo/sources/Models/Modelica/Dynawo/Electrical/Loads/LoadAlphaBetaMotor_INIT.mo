@@ -16,7 +16,7 @@ model LoadAlphaBetaMotor_INIT
   extends Load_INIT;
   import Modelica;
 
-  parameter Types.ApparentPowerModule SNom "Nominal apparent power of a single motor in MVA";
+  parameter Types.ApparentPowerModule SNom = ActiveMotorShare * P0Pu * SystemBase.SnRef "Nominal apparent power of a single motor in MVA";
   parameter Real ActiveMotorShare "Share of active power consumed by motors (between 0 and 1)";
   parameter Types.PerUnit RsPu "Stator resistance in pu (base UNom, SNom)";
   parameter Types.PerUnit RrPu "Rotor resistance in pu (base UNom, SNom)";

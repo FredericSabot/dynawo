@@ -149,6 +149,32 @@ equation
   annotation(preferredView = "text");
 end SwitchOffGenerator;
 
+partial model SwitchOffMotor "Switch-off model for a motor"
+  /* The three possible/expected switch-off signals for a motor are:
+     - a switch-off signal coming from the node in case of a node disconnection
+     - a switch-off signal coming from the user (event)
+     - a switch-off signal coming from an automaton in the motor (under-voltage protection for example)
+  */
+  import Dynawo.Electrical.Constants;
+
+  extends SwitchOffLogic(NbSwitchOffSignals = 3);
+
+  Constants.state state(start = State0) "Motor connection state";
+
+  parameter Constants.state State0 = Constants.state.Closed "Start value of connection state";
+
+equation
+  when not(running.value) then
+    // Timeline.logEvent1 (TimelineKeys.MotorDisconnected);
+    state = Constants.state.Open;
+  elsewhen running.value and not(pre(running.value)) then
+    // Timeline.logEvent1 (TimelineKeys.MotorConnected);
+    state = Constants.state.Closed;
+  end when;
+
+  annotation(preferredView = "text");
+end SwitchOffMotor;
+
 partial model SwitchOffInjector "Switch-off model for an injector"
   /* The three possible/expected switch-off signals for a generator are:
      - a switch-off signal coming from the node in case of a node disconnection

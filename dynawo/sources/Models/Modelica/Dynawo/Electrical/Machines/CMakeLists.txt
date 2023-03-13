@@ -13,6 +13,7 @@
 add_subdirectory(OmegaRef O)
 add_subdirectory(SignalN N)
 add_subdirectory(Simplified S)
+add_subdirectory(Motors M)
 
 set(MODEL_FILES
   package.mo

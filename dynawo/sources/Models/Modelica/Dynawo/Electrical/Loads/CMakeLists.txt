@@ -13,6 +13,12 @@ set(MODEL_FILES
   package.mo
   package.order
   BaseClasses.mo
+  BaseClasses_INIT.mo
+  CompositeLoadModel.mo
+  CompositeLoadModel.extvar
+  CompositeLoadModel_INIT.mo
+  ElectronicLoad.mo
+  ElectronicLoad.extvar
   LoadAlphaBeta.mo
   LoadAlphaBeta.extvar
   LoadAlphaBetaRestorative.mo
@@ -21,11 +27,24 @@ set(MODEL_FILES
   LoadAlphaBetaMotor.mo
   LoadAlphaBetaMotor.extvar
   LoadAlphaBetaMotor_INIT.mo
+  LoadAlphaBetaMotorFifthOrder.mo
+  LoadAlphaBetaMotorFifthOrder.extvar
+  LoadAlphaBetaMotorFifthOrder_INIT.mo
+  LoadAlphaBetaTwoMotorFifthOrder.mo
+  LoadAlphaBetaTwoMotorFifthOrder.extvar
+  LoadAlphaBetaTwoMotorFifthOrder_INIT.mo
+  LoadAlphaBetaMotorSimplified.mo
+  LoadAlphaBetaMotorSimplified.extvar
+  LoadAlphaBetaMotorSimplified_INIT.mo
+  LoadAlphaBetaTwoMotorSimplified.mo
+  LoadAlphaBetaTwoMotorSimplified.extvar
+  LoadAlphaBetaTwoMotorSimplified_INIT.mo
   LoadPQ.mo
   LoadPQ.extvar
   LoadZIP.mo
   LoadZIP.extvar
   Load_INIT.mo
+  LoadPF_INIT.mo
   LoadConnect_INIT.mo
   LoadAuxiliaries_INIT.mo
   SwitchOffLoad.extvar
