@@ -187,15 +187,15 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     if UMin1Pu > ULVRTMinPu then
       f1 = 1;
     elseif UMin1Pu > d*ULVRTMinPu then
-      f1 = c * (UMin1Pu - d*ULVRTMinPu)/(ULVRTMinPu - d*ULVRTMinPu);
+      f1 = c * (UMin1Pu - d*ULVRTMinPu) / (ULVRTMinPu - d*ULVRTMinPu);
     else
       f1 = 0;
     end if;
 
-    if UMinIntPu > ULVRTMinPu then
+    if UMinIntPu > ULVRTIntermediatePu then
       f2 = 1;
-    elseif UMinIntPu > f*ULVRTMinPu then
-      f2 = e * (UMinIntPu - f*ULVRTIntermediatePu)/(ULVRTIntermediatePu - f*ULVRTIntermediatePu);
+    elseif UMinIntPu > f*ULVRTIntermediatePu then
+      f2 = e * (UMinIntPu - f*ULVRTIntermediatePu) / (ULVRTIntermediatePu - f*ULVRTIntermediatePu);
     else
       f2 = 0;
     end if;
