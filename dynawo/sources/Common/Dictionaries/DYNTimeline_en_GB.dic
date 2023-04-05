@@ -81,6 +81,8 @@ DCLineClosed              =             DC line closed
 LVRTTripped                =              LVRT generator trip
 LVRTArming                 =              LVRT automaton for generator arming
 LVRTDisarming              =              LVRT automaton for generator disarming
+// --> Aggregated IBG
+PartialTripping           =             Partial tripping ongoing
 //-------------  C++ models ----------------------------------------------
 // --> BUS
 NodeOff                   =             BUS : switch off
