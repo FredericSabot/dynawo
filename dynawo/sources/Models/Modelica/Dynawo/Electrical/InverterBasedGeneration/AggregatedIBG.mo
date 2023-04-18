@@ -48,7 +48,8 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
   parameter Types.PerUnit LVRTd;
   parameter Types.PerUnit LVRTe;
   parameter Types.PerUnit LVRTf;
-  parameter Types.Time tLVRTMaxSlowRecovery;
+  parameter Types.PerUnit LVRTg;
+  parameter Types.PerUnit LVRTh;
 
   // Initial values
   parameter Types.PerUnit P0Pu "Start value of active power at terminal in pu (receptor convention) (base SnRef)";
@@ -67,7 +68,7 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-130, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Logical.GreaterThreshold Vfreeze(threshold = UPLLFreezePu) annotation(
     Placement(visible = true, transformation(origin = {-50, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntPu = ULVRTIntPu, ULVRTMinPu = ULVRTMinPu, tLVRTMin = tLVRTMin, tLVRTInt=tLVRTInt, tLVRTMax = tLVRTMax, c = LVRTc, d = LVRTd, e = LVRTe, f = LVRTf, tMaxSlowRecovery = tLVRTMaxSlowRecovery) annotation(
+  Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntPu = ULVRTIntPu, ULVRTMinPu = ULVRTMinPu, tLVRTMin = tLVRTMin, tLVRTInt=tLVRTInt, tLVRTMax = tLVRTMax, c = LVRTc, d = LVRTd, e = LVRTe, f = LVRTf, g = LVRTg, h = LVRTh) annotation(
     Placement(visible = true, transformation(origin = {-50, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput PextPu(start = -P0Pu*SystemBase.SnRef/SNom) "Available power from the DC source in pu (base SNom)" annotation(
     Placement(visible = true, transformation(origin = {-94, -140}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
@@ -130,16 +131,22 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     parameter Types.PerUnit d;
     parameter Types.PerUnit e;
     parameter Types.PerUnit f;
-    parameter Types.Time tMaxSlowRecovery "Maximum time during which the voltage can stay below the LVRT curve during [tLVRTInt, tLVRTMax] before all IBGs are disconnected in s. (Replace parameter u in original model)";
+    parameter Types.PerUnit g;
+    parameter Types.PerUnit h;
+
     Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput UMonitoredPu "Monitored voltage in pu (base UNom)" annotation(
     Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
     Types.PerUnit fLVRT (start = 1) "Global partial tripping coefficient, equals to 1 if no trip, 0 if fully tripped";
+
     Types.PerUnit f1 (start = 1) "Partial tripping coefficient for trips in period [0, tLVRTInt], equals to 1 if no trip, 0 if fully tripped";
     Types.PerUnit f2 (start = 1) "Partial tripping coefficient for trips in period [tLVRTMin, tLVRTInt], equals to 1 if no trip, 0 if fully tripped";
     Types.PerUnit f3 (start = 1) "Partial tripping coefficient for trips in period [tLVRTInt, tLVRTMax], equals to 1 if no trip, 0 if fully tripped";
+    Types.PerUnit f4 (start = 1) "Partial tripping coefficient for trips in period [tLVRTMax, inf], equals to 1 if no trip, 0 if fully tripped";
+    Types.PerUnit aux3 (start = 1) "Auxiliary variable used to compute f3";
     Types.VoltageModulePu UMin1Pu (start = 1) "Minimum voltage in period [0, tLVRTMin] in pu (base UNom)";
     Types.VoltageModulePu UMinIntPu (start = 1) "Minimum voltage in period [tLVRTMin, tLVRTInt] in pu (base UNom)";
+    Types.VoltageModulePu UMinMaxPu (start = 1) "Minimum voltage in period [tLVRTMax, inf] in pu (base UNom)";
     Types.Time tMaxRecovery (start = 0) "Maximum 'single-block' duration for which the protection has been armed in s";
   protected
     Types.Time tThresholdReached (start = Constants.inf) "Time when the threshold was reached";
@@ -157,15 +164,23 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     if switchOffSignal.value == true or tThresholdReached == Constants.inf then  // Not armed or tripped
       der(UMin1Pu) = 0;
       der(UMinIntPu) = 0;
+      der(UMinMaxPu) = 0;
     elseif time - tThresholdReached < tLVRTMin then
       UMin1Pu + tFilter * der(UMin1Pu) = if UMonitoredPu < UMin1Pu then UMonitoredPu else UMin1Pu;  // Relaxed version of UMin1Pu = min(UMin1Pu, UMonitoredPu)
       der(UMinIntPu) = 0;
+      der(UMinMaxPu) = 0;
     elseif time - tThresholdReached < tLVRTInt then
-      UMinIntPu + tFilter * der(UMinIntPu) = if UMonitoredPu < UMinIntPu then UMonitoredPu else UMinIntPu;  // Relaxed version of UMinIntPu = min(UMinIntPu, UMonitoredPu)
+      UMinIntPu + tFilter * der(UMinIntPu) = if UMonitoredPu < UMinIntPu then UMonitoredPu else UMinIntPu;
       der(UMin1Pu) = 0;
+      der(UMinMaxPu) = 0;
+    elseif time - tThresholdReached > tLVRTMax then
+      UMinMaxPu + tFilter * der(UMinMaxPu) = if UMonitoredPu < UMinMaxPu then UMonitoredPu else UMinMaxPu;
+      der(UMin1Pu) = 0;
+      der(UMinIntPu) = 0;
     else
       der(UMin1Pu) = 0;
       der(UMinIntPu) = 0;
+      der(UMinMaxPu) = 0;
     end if;
 
     // Computation of tMaxRecovery
@@ -192,15 +207,33 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
       f2 = 0;
     end if;
 
+    /*
+    // Original model
     if tMaxRecovery < tLVRTInt then
       f3 = 1;
     elseif tMaxRecovery < tLVRTInt + tMaxSlowRecovery and time < tLVRTMax then
       f3 = (tLVRTInt + tMaxSlowRecovery - tMaxRecovery) / tMaxSlowRecovery;
     else
       f3 = 0;
+    end if;*/
+    // Modified model
+    if time - tThresholdReached < tLVRTMax and time - tThresholdReached > tLVRTInt and switchOffSignal.value == false and tThresholdReached <> Constants.inf then
+      aux3 = g * (UMonitoredPu - (f*ULVRTIntPu + (h*ULVRTArmingPu - f*ULVRTIntPu) * (time - tLVRTMax) / (tLVRTInt - tLVRTMax)));
+      f3 + der(f3) * tFilter = if aux3 < f3 then aux3 else f3;
+    else
+      aux3 = 1;
+      der(f3) = 0;
     end if;
 
-    fLVRT = f1 * f2 * f3;
+    if UMinMaxPu > ULVRTArmingPu then
+      f4 = 1;
+    elseif UMinMaxPu > h*ULVRTArmingPu then
+      f4 = (UMinMaxPu - h*ULVRTArmingPu) / (ULVRTArmingPu - h*ULVRTArmingPu);
+    else
+      f4 = 0;
+    end if;
+
+    fLVRT = f1 * f2 * f3 * f4;
 
     when fLVRT < 0.001 then
       switchOffSignal.value = true;
