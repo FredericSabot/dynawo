@@ -21,6 +21,7 @@
 #define MODELS_CPP_MODELNETWORK_DYNMODELSHUNTCOMPENSATOR_H_
 
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include "DYNNetworkComponent.h"
 
 namespace DYN {
@@ -82,9 +83,7 @@ class ModelShuntCompensator : public NetworkComponent {
    *
    * @param model model of the bus
    */
-  void setModelBus(const boost::shared_ptr<ModelBus>& model) {
-    modelBus_ = model;
-  }
+  void setModelBus(const boost::shared_ptr<ModelBus>& model);
 
   /**
    * @brief evaluate node injection
@@ -333,7 +332,8 @@ class ModelShuntCompensator : public NetworkComponent {
    */
   bool isAvailable() const;
 
-  const boost::shared_ptr<ShuntCompensatorInterface> shunt_;  ///< reference to the shunt interface object
+ private:
+  boost::weak_ptr<ShuntCompensatorInterface> shunt_;  ///< reference to the shunt interface object
 
   int currentSection_;  ///< The current number of connected section of the shunt compensator
   int maximumSection_;  ///< The maximum number of sections of the shunt compensator
@@ -356,6 +356,7 @@ class ModelShuntCompensator : public NetworkComponent {
   double ir0_;  ///< initial real part of the current
   double ii0_;  ///< initial imaginary part of the current
   startingPointMode_t startingPointMode_;  ///< type of starting point for the model (FLAT,WARM)
+  bool cannotBeDisconnected_;  ///< true if this shunt cannot be disconnected (due to closed not retained switches in node breaker)
 };  ///< Generic model for Shunt compensator in network
 }  // namespace DYN
 

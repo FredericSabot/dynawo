@@ -24,6 +24,10 @@ CurrentLimitAutomatonDisarming =        CLA : disarming by under-current constra
 GeneratorPVMaxQ           =             PV Generator : max reactive power limit reached
 GeneratorPVMinQ           =             PV Generator : min reactive power limit reached
 GeneratorPVBackRegulation =             PV Generator : back to voltage regulation
+// --> ReactivePowerControlLoop
+RPCLLimitationUsRefMin    =             Reactive Power Control Loop : min voltage reference limit reached (UStatorRefMin)
+RPCLLimitationUsRefMax    =             Reactive Power Control Loop : max voltage reference limit reached (UStatorRefMax)
+RPCLStandard              =             Reactive Power Control Loop : voltage reference within limits range (UStatorRefMin < UStatorRef < UStatorRefMax)
 // --> BaseTapChangerPhaseShifter
 TapUp                     =             Tap +1
 TapDown                   =             Tap -1
@@ -60,10 +64,23 @@ VRLimitationEfdMin        =             Voltage regulator : lower limit reached 
 VRLimitationEfdMax        =             Voltage regulator : upper limit reached (Efd)
 VRLimitationUsRefMin      =             Voltage regulator : lower limit reached (UsRef)
 VRLimitationUsRefMax      =             Voltage regulator : upper limit reached (UsRef)
+// --> Protection
+ProtectionDisconnected    =              Protection disconnected
+ProtectionConnected       =              Protection connected
 // --> Under-voltage automaton
-UVATripped                =              Under-voltage generator trip
+UVATripped                =              Under-voltage generator tripped
 UVAArming                 =              Under-voltage automaton for generator arming
 UVADisarming              =              Under-voltage automaton for generator disarming
+// --> Loss of synchronism protection
+LossOfSynchronismArming   =              Loss of synchronism protection arming
+LossOfSynchronismTripped  =              Loss of synchronism protection tripped
+// --> Speed protection
+OverspeedArming           =              Overspeed protection arming
+OverspeedDisarming        =              Overspeed protection disarming
+OverspeedTripped          =              Overspeed protection tripped
+UnderspeedArming          =              Underspeed protection arming
+UnderspeedDisarming       =              Underspeed protection disarming
+UnderspeedTripped         =              Underspeed protection tripped
 // --> CurrentLimit
 OverloadUp                =             Overload %1% : activation
 OverloadDown              =             Overload %1% : deactivation
@@ -83,6 +100,40 @@ LVRTArming                 =              LVRT automaton for generator arming
 LVRTDisarming              =              LVRT automaton for generator disarming
 // --> Aggregated IBG
 PartialTripping           =             Partial tripping ongoing
+// --> Distance protection
+DistanceTrippedZone1       =              Distance protection tripped zone 1
+DistanceTrippedZone2       =              Distance protection tripped zone 2
+DistanceTrippedZone3       =              Distance protection tripped zone 3
+DistanceTrippedZone4       =              Distance protection tripped zone 4
+Zone1Arming                =              Distance protection zone 1 arming
+Zone2Arming                =              Distance protection zone 2 arming
+Zone3Arming                =              Distance protection zone 3 arming
+Zone4Arming                =              Distance protection zone 4 arming
+Zone1Disarming             =              Distance protection zone 1 disarming
+Zone2Disarming             =              Distance protection zone 2 disarming
+Zone3Disarming             =              Distance protection zone 3 disarming
+Zone4Disarming             =              Distance protection zone 4 disarming
+// --> Under-frequency load shedding
+UFLS1Arming                =              UFLS step 1 arming
+UFLS2Arming                =              UFLS step 2 arming
+UFLS3Arming                =              UFLS step 3 arming
+UFLS4Arming                =              UFLS step 4 arming
+UFLS5Arming                =              UFLS step 5 arming
+UFLS6Arming                =              UFLS step 6 arming
+UFLS7Arming                =              UFLS step 7 arming
+UFLS8Arming                =              UFLS step 8 arming
+UFLS9Arming                =              UFLS step 9 arming
+UFLS10Arming               =              UFLS step 10 arming
+UFLS1Activated             =              UFLS step 1 activated
+UFLS2Activated             =              UFLS step 2 activated
+UFLS3Activated             =              UFLS step 3 activated
+UFLS4Activated             =              UFLS step 4 activated
+UFLS5Activated             =              UFLS step 5 activated
+UFLS6Activated             =              UFLS step 6 activated
+UFLS7Activated             =              UFLS step 7 activated
+UFLS8Activated             =              UFLS step 8 activated
+UFLS9Activated             =              UFLS step 9 activated
+UFLS10Activated            =              UFLS step 10 activated
 //-------------  C++ models ----------------------------------------------
 // --> BUS
 NodeOff                   =             BUS : switch off
@@ -146,8 +197,8 @@ SignalReceived            =             Simulation stopped : one interrupt signa
 //-------------  Criteria not checked  --------------------------------------
 BusUnderVoltage             =           node: %1% has a voltage %2% kV (%3% pu) < %4% kV (%5% pu) (criteria id: %6%)
 BusAboveVoltage             =           node: %1% has a voltage %2% kV (%3% pu) > %4% kV (%5% pu) (criteria id: %6%)
-SourceUnderPower            =           node: %1% has a load power %2%MW < %3%MW (criteria id: %4%)
-SourceAbovePower            =           node: %1% has a load power %2%MW > %3%MW (criteria id: %4%)
+SourceUnderPower            =           node: %1% has a power %2%MW < %3%MW (criteria id: %4%)
+SourceAbovePower            =           node: %1% has a power %2%MW > %3%MW (criteria id: %4%)
 SourcePowerTakenIntoAccount =           power of %1% %2% was added into the total power sum (criteria id: %3%, power=%4%, V=%5%)
 SourcePowerAboveMax         =           total load power = %1%MW > %2%MW (criteria id: %3%)
 SourcePowerBelowMin         =           total load power = %1%MW < %2%MW (criteria id: %3%)

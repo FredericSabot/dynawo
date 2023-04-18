@@ -22,7 +22,7 @@
   </set>
   <macroParameterSet id="macro_generator">
     <par type="DOUBLE" name="generator_QMin" value="-200"/>
-    <par type="DOUBLE" name="generator_QMax" value="200"/>
+    <par type="DOUBLE" name="generator_QMax" value="62"/>
     <par type="DOUBLE" name="generator_P0Pu" value="-1.5"/>
     <par type="DOUBLE" name="generator_Q0Pu" value="-0.5"/>
     <par type="DOUBLE" name="generator_U0Pu" value="1.05"/>
@@ -58,15 +58,15 @@
     <par type="DOUBLE" name="generator_QNomAlt" value="200"/>
   </macroParameterSet>
   <macroParameterSet id="macro_tfo">
-    <par type="DOUBLE" name="generator_RTfoPu" value="0"/>
     <par type="DOUBLE" name="generator_XTfoPu" value="0.1"/>
     <par type="DOUBLE" name="generator_SNom" value="200"/>
-    <par type="DOUBLE" name="generator_rTfoPu" value="1"/>
   </macroParameterSet>
   <macroParameterSet id="macro_rpcl">
     <par type="DOUBLE" name="reactivePowerControlLoop_DerURefMaxPu" value="0.0002"/>
     <par type="DOUBLE" name="reactivePowerControlLoop_QrPu" value="1.4"/>
     <par type="DOUBLE" name="reactivePowerControlLoop_TiQ" value="150"/>
+    <par type="DOUBLE" name="reactivePowerControlLoop_UStatorRefMaxPu" value="1.15"/>
+    <par type="DOUBLE" name="reactivePowerControlLoop_UStatorRefMinPu" value="0.85"/>
   </macroParameterSet>
   <macroParameterSet id="macro_rpcl2">
     <par type="DOUBLE" name="reactivePowerControlLoop_DeltaURefMaxPu" value="0.002"/>
@@ -74,6 +74,8 @@
     <par name="reactivePowerControlLoop_CqMaxPu" type="DOUBLE" value="15"/>
     <par name="reactivePowerControlLoop_Tech" type="DOUBLE" value="10"/>
     <par name="reactivePowerControlLoop_Ti" type="DOUBLE" value="60"/>
+    <par type="DOUBLE" name="reactivePowerControlLoop_UStatorRefMaxPu" value="1.15"/>
+    <par type="DOUBLE" name="reactivePowerControlLoop_UStatorRefMinPu" value="0.85"/>
   </macroParameterSet>
   <macroParameterSet id="macro_pqprop">
     <par type="DOUBLE" name="generator_QPercent" value="1"/>
@@ -171,6 +173,7 @@
   <set id="SVC">
     <macroParSet id="macro_svc"/>
     <macroParSet id="macro_svc_tfo"/>
+    <par type="BOOL" name="secondaryVoltageControl_FreezingActivated" value="true"/>
   </set>
   <set id="SVC1">
     <macroParSet id="macro_svc"/>

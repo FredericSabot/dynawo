@@ -27,7 +27,7 @@ Criteria::~Criteria() {}
 void
 Criteria::printAllFailingCriteriaIntoLog(std::multimap<double, std::shared_ptr<FailingCriteria> >& distanceToFailingCriteriaMap,
                                           const boost::shared_ptr<timeline::Timeline>& timeline,
-                                          double currentTime) const {
+                                          double currentTime) {
   // print all failing nodes into logs
   for (std::multimap<double, std::shared_ptr<FailingCriteria> >::const_reverse_iterator failingCriteriaIt = distanceToFailingCriteriaMap.crbegin();
         failingCriteriaIt != distanceToFailingCriteriaMap.crend();
@@ -36,16 +36,14 @@ Criteria::printAllFailingCriteriaIntoLog(std::multimap<double, std::shared_ptr<F
   }
 
   // print the 5 worst nodes in the timeline
-  if (timeline != nullptr) {
-    constexpr size_t failingCriteriaNumber = 5;
-    const size_t maxFailingCritArraySize = std::min(failingCriteriaNumber, distanceToFailingCriteriaMap.size());
-    std::multimap<double, std::shared_ptr<FailingCriteria> >::const_reverse_iterator worstFailingCriteriaBound = distanceToFailingCriteriaMap.crbegin();
-    std::advance(worstFailingCriteriaBound, maxFailingCritArraySize);
-    for (std::multimap<double, std::shared_ptr<FailingCriteria> >::const_reverse_iterator failingCriteriaIt = distanceToFailingCriteriaMap.crbegin();
-          failingCriteriaIt != worstFailingCriteriaBound;
-          ++failingCriteriaIt) {
-      failingCriteriaIt->second->printOneFailingCriteriaIntoTimeline(timeline, currentTime);
-    }
+  constexpr size_t failingCriteriaNumber = 5;
+  const size_t maxFailingCritArraySize = std::min(failingCriteriaNumber, distanceToFailingCriteriaMap.size());
+  std::multimap<double, std::shared_ptr<FailingCriteria> >::const_reverse_iterator worstFailingCriteriaBound = distanceToFailingCriteriaMap.crbegin();
+  std::advance(worstFailingCriteriaBound, maxFailingCritArraySize);
+  for (std::multimap<double, std::shared_ptr<FailingCriteria> >::const_reverse_iterator failingCriteriaIt = distanceToFailingCriteriaMap.crbegin();
+        failingCriteriaIt != worstFailingCriteriaBound;
+        ++failingCriteriaIt) {
+    failingCriteriaIt->second->printOneFailingCriteriaIntoTimeline(timeline, failingCriteria_, currentTime);
   }
 }
 
@@ -83,8 +81,6 @@ BusCriteria::checkCriteria(double t, bool finalStep, const boost::shared_ptr<tim
                                                                                   vl.getUMaxPu(),
                                                                                   params_->getId()));
       distanceToBusFailingCriteriaMap.insert({busFailingCriteria->getDistance(), busFailingCriteria});
-      Message mess = DYNLog(BusAboveVoltage, (*it)->getID(), v, v/vNom, vl.getUMaxPu()*vNom, vl.getUMaxPu(), params_->getId());
-      failingCriteria_.push_back(std::make_pair(t, mess.str()));
     }
     if (vl.hasUMinPu() && v < vl.getUMinPu()*vNom) {
       std::shared_ptr<FailingCriteria> busFailingCriteria(new BusFailingCriteria(Bound::MIN,
@@ -95,8 +91,6 @@ BusCriteria::checkCriteria(double t, bool finalStep, const boost::shared_ptr<tim
                                                                                   vl.getUMinPu(),
                                                                                   params_->getId()));
       distanceToBusFailingCriteriaMap.insert({busFailingCriteria->getDistance(), busFailingCriteria});
-      Message mess = DYNLog(BusUnderVoltage, (*it)->getID(), v, v/vNom, vl.getUMinPu()*vNom, vl.getUMinPu(), params_->getId());
-      failingCriteria_.push_back(std::make_pair(t, mess.str()));
     }
   }
   if (!distanceToBusFailingCriteriaMap.empty()) {
@@ -134,7 +128,7 @@ BusCriteria::addBus(const boost::shared_ptr<BusInterface>& bus) {
       bus->getVNom() < vl.getUNomMin()) return;
   if (vl.hasUNomMax() &&
       bus->getVNom() > vl.getUNomMax()) return;
-  if (doubleEquals(bus->getV0(), defaultV0) || bus->getV0() <  defaultV0) return;
+  if (doubleIsZero(bus->getV0())) return;
   buses_.push_back(bus);
 }
 
@@ -154,13 +148,11 @@ BusCriteria::BusFailingCriteria::BusFailingCriteria(Bound bound,
 void
 BusCriteria::BusFailingCriteria::printOneFailingCriteriaIntoLog() const {
   switch (bound_) {
-    case DYN::Criteria::Bound::MAX:
-      {
+    case DYN::Criteria::Bound::MAX: {
         Trace::debug() << DYNLog(BusAboveVoltage, nodeId_, v_, vPu_, vBound_, vBoundPu_, criteriaId_) << Trace::endline;
       }
       break;
-    case DYN::Criteria::Bound::MIN:
-      {
+    case DYN::Criteria::Bound::MIN: {
         Trace::debug() << DYNLog(BusUnderVoltage, nodeId_, v_, vPu_, vBound_, vBoundPu_, criteriaId_) << Trace::endline;
       }
       break;
@@ -169,23 +161,28 @@ BusCriteria::BusFailingCriteria::printOneFailingCriteriaIntoLog() const {
 
 void
 BusCriteria::BusFailingCriteria::printOneFailingCriteriaIntoTimeline(const boost::shared_ptr<timeline::Timeline>& timeline,
+                                                                      std::vector<std::pair<double, std::string> >& failingCriteria,
                                                                       double currentTime) const {
-  if (timeline != nullptr) {
-    const std::string name = "Simulation";
-    switch (bound_) {
-    case DYN::Criteria::Bound::MAX:
-      {
+  const std::string name = "Simulation";
+  switch (bound_) {
+  case DYN::Criteria::Bound::MAX: {
+      if (timeline != nullptr) {
         MessageTimeline messageTimeline = DYNTimeline(BusAboveVoltage, nodeId_, v_, vPu_, vBound_, vBoundPu_, criteriaId_);
         timeline->addEvent(currentTime, name, messageTimeline.str(), messageTimeline.priority(), messageTimeline.getKey());
       }
-      break;
-    case DYN::Criteria::Bound::MIN:
-      {
+      Message failingCriteriaMessage = DYNLog(BusAboveVoltage, nodeId_, v_, vPu_, vBound_, vBoundPu_, criteriaId_);
+      failingCriteria.push_back(std::make_pair(currentTime, failingCriteriaMessage.str()));
+    }
+    break;
+  case DYN::Criteria::Bound::MIN: {
+      if (timeline != nullptr) {
         MessageTimeline messageTimeline = DYNTimeline(BusUnderVoltage, nodeId_, v_, vPu_, vBound_, vBoundPu_, criteriaId_);
         timeline->addEvent(currentTime, name, messageTimeline.str(), messageTimeline.priority(), messageTimeline.getKey());
       }
-      break;
+      Message failingCriteriaMessage = DYNLog(BusUnderVoltage, nodeId_, v_, vPu_, vBound_, vBoundPu_, criteriaId_);
+      failingCriteria.push_back(std::make_pair(currentTime, failingCriteriaMessage.str()));
     }
+    break;
   }
 }
 
@@ -208,6 +205,8 @@ LoadCriteria::checkCriteria(double t, bool finalStep, const boost::shared_ptr<ti
   for (std::vector<boost::shared_ptr<LoadInterface> >::const_iterator loadIt = loads_.begin(), loadItEnd = loads_.end();
       loadIt != loadItEnd; ++loadIt) {
     boost::shared_ptr<DYN::LoadInterface> load = *loadIt;
+    if (load->isFictitious())
+      continue;
     double p = load->getP();
     if (!params_->getVoltageLevels().empty()) {
       if (alreadyChecked.find(load->getID()) != alreadyChecked.end()) continue;
@@ -221,8 +220,7 @@ LoadCriteria::checkCriteria(double t, bool finalStep, const boost::shared_ptr<ti
           if (vl.hasUMaxPu() && v > vl.getUMaxPu()*vNom) continue;
           if (vl.hasUMinPu() && v < vl.getUMinPu()*vNom) continue;
         }
-        checkCriteriaInLocalValueOrSumType(t,
-                                            load,
+        checkCriteriaInLocalValueOrSumType(load,
                                             p,
                                             loadToSourcesAddedIntoSumMap,
                                             distanceToLoadFailingCriteriaMap,
@@ -233,8 +231,7 @@ LoadCriteria::checkCriteria(double t, bool finalStep, const boost::shared_ptr<ti
         break;
       }
     } else {
-      checkCriteriaInLocalValueOrSumType(t,
-                                          load,
+      checkCriteriaInLocalValueOrSumType(load,
                                           p,
                                           loadToSourcesAddedIntoSumMap,
                                           distanceToLoadFailingCriteriaMap,
@@ -290,8 +287,7 @@ LoadCriteria::checkCriteria(double t, bool finalStep, const boost::shared_ptr<ti
 }
 
 void
-LoadCriteria::checkCriteriaInLocalValueOrSumType(double t,
-                                                  boost::shared_ptr<DYN::LoadInterface> load,
+LoadCriteria::checkCriteriaInLocalValueOrSumType(boost::shared_ptr<DYN::LoadInterface> load,
                                                   double loadActivePower,
                                                   std::multimap<double, boost::shared_ptr<LoadInterface> >& loadToSourcesAddedIntoSumMap,
                                                   std::multimap<double, std::shared_ptr<FailingCriteria> >& distanceToLoadFailingCriteriaMap,
@@ -307,8 +303,6 @@ LoadCriteria::checkCriteriaInLocalValueOrSumType(double t,
                                                             params_->getPMax(),
                                                             params_->getId()));
       distanceToLoadFailingCriteriaMap.insert({loadFailingCriteria->getDistance(), loadFailingCriteria});
-      Message mess = DYNLog(SourceAbovePower, load->getID(), loadActivePower, params_->getPMax(), params_->getId());
-      failingCriteria_.push_back(std::make_pair(t, mess.str()));
       isCriteriaOk &= false;
       alreadyChecked.insert(load->getID());
     }
@@ -319,8 +313,6 @@ LoadCriteria::checkCriteriaInLocalValueOrSumType(double t,
                                                             params_->getPMin(),
                                                             params_->getId()));
       distanceToLoadFailingCriteriaMap.insert({loadFailingCriteria->getDistance(), loadFailingCriteria});
-      Message mess = DYNLog(SourceUnderPower, load->getID(), loadActivePower, params_->getPMin(), params_->getId());
-      failingCriteria_.push_back(std::make_pair(t, mess.str()));
       isCriteriaOk &= false;
       alreadyChecked.insert(load->getID());
     }
@@ -343,7 +335,7 @@ LoadCriteria::criteriaEligibleForLoad(const boost::shared_ptr<criteria::Criteria
 void
 LoadCriteria::addLoad(const boost::shared_ptr<LoadInterface>& load) {
   if (load->getBusInterface() &&
-        (doubleEquals(load->getBusInterface()->getV0(), defaultV0) || load->getBusInterface()->getV0() <  defaultV0)) return;
+        (doubleIsZero(load->getBusInterface()->getV0()))) return;
   if (params_->getVoltageLevels().empty()) {
     loads_.push_back(load);
   } else {
@@ -375,13 +367,11 @@ LoadCriteria::LoadFailingCriteria::LoadFailingCriteria(Bound bound,
 void
 LoadCriteria::LoadFailingCriteria::printOneFailingCriteriaIntoLog() const {
   switch (bound_) {
-    case DYN::Criteria::Bound::MAX:
-      {
+    case DYN::Criteria::Bound::MAX: {
         Trace::debug() << DYNTimeline(SourceAbovePower, nodeId_, p_, pBound_, criteriaId_) << Trace::endline;
       }
       break;
-    case DYN::Criteria::Bound::MIN:
-      {
+    case DYN::Criteria::Bound::MIN: {
         Trace::debug() << DYNTimeline(SourceUnderPower, nodeId_, p_, pBound_, criteriaId_) << Trace::endline;
       }
       break;
@@ -390,23 +380,28 @@ LoadCriteria::LoadFailingCriteria::printOneFailingCriteriaIntoLog() const {
 
 void
 LoadCriteria::LoadFailingCriteria::printOneFailingCriteriaIntoTimeline(const boost::shared_ptr<timeline::Timeline>& timeline,
+                                                                      std::vector<std::pair<double, std::string> >& failingCriteria,
                                                                       double currentTime) const {
-  if (timeline != nullptr) {
-    const std::string name = "Simulation";
-    switch (bound_) {
-    case DYN::Criteria::Bound::MAX:
-      {
+  const std::string name = "Simulation";
+  switch (bound_) {
+  case DYN::Criteria::Bound::MAX: {
+      if (timeline != nullptr) {
         MessageTimeline messageTimeline = DYNTimeline(SourceAbovePower, nodeId_, p_, pBound_, criteriaId_);
         timeline->addEvent(currentTime, name, messageTimeline.str(), messageTimeline.priority(), messageTimeline.getKey());
       }
-      break;
-    case DYN::Criteria::Bound::MIN:
-      {
+      Message failingCriteriaMessage = DYNLog(SourceAbovePower, nodeId_, p_, pBound_, criteriaId_);
+      failingCriteria.push_back(std::make_pair(currentTime, failingCriteriaMessage.str()));
+    }
+    break;
+  case DYN::Criteria::Bound::MIN: {
+      if (timeline != nullptr) {
         MessageTimeline messageTimeline = DYNTimeline(SourceUnderPower, nodeId_, p_, pBound_, criteriaId_);
         timeline->addEvent(currentTime, name, messageTimeline.str(), messageTimeline.priority(), messageTimeline.getKey());
       }
-      break;
+      Message failingCriteriaMessage = DYNLog(SourceUnderPower, nodeId_, p_, pBound_, criteriaId_);
+      failingCriteria.push_back(std::make_pair(currentTime, failingCriteriaMessage.str()));
     }
+    break;
   }
 }
 
@@ -443,8 +438,7 @@ GeneratorCriteria::checkCriteria(double t, bool finalStep, const boost::shared_p
           if (vl.hasUMaxPu() && v > vl.getUMaxPu()*vNom) continue;
           if (vl.hasUMinPu() && v < vl.getUMinPu()*vNom) continue;
         }
-        checkCriteriaInLocalValueOrSumType(t,
-                                            generator,
+        checkCriteriaInLocalValueOrSumType(generator,
                                             p,
                                             generatorToSourcesAddedIntoSumMap,
                                             distanceToGeneratorFailingCriteriaMap,
@@ -455,8 +449,7 @@ GeneratorCriteria::checkCriteria(double t, bool finalStep, const boost::shared_p
         break;
       }
     } else {
-      checkCriteriaInLocalValueOrSumType(t,
-                                          generator,
+      checkCriteriaInLocalValueOrSumType(generator,
                                           p,
                                           generatorToSourcesAddedIntoSumMap,
                                           distanceToGeneratorFailingCriteriaMap,
@@ -512,8 +505,7 @@ GeneratorCriteria::checkCriteria(double t, bool finalStep, const boost::shared_p
 }
 
 void
-GeneratorCriteria::checkCriteriaInLocalValueOrSumType(double t,
-                                                      boost::shared_ptr<DYN::GeneratorInterface> generator,
+GeneratorCriteria::checkCriteriaInLocalValueOrSumType(boost::shared_ptr<DYN::GeneratorInterface> generator,
                                                       double generatorActivePower,
                                                       std::multimap<double, boost::shared_ptr<GeneratorInterface> >& generatorToSourcesAddedIntoSumMap,
                                                       std::multimap<double, std::shared_ptr<FailingCriteria> >& distanceToGeneratorFailingCriteriaMap,
@@ -529,8 +521,6 @@ GeneratorCriteria::checkCriteriaInLocalValueOrSumType(double t,
                                                                 params_->getPMax(),
                                                                 params_->getId()));
       distanceToGeneratorFailingCriteriaMap.insert({generatorFailingCriteria->getDistance(), generatorFailingCriteria});
-      Message mess = DYNLog(SourceAbovePower, generator->getID(), generatorActivePower, params_->getPMax(), params_->getId());
-      failingCriteria_.push_back(std::make_pair(t, mess.str()));
       isCriteriaOk &= false;
       alreadyChecked.insert(generator->getID());
     }
@@ -541,8 +531,6 @@ GeneratorCriteria::checkCriteriaInLocalValueOrSumType(double t,
                                                                 params_->getPMin(),
                                                                 params_->getId()));
       distanceToGeneratorFailingCriteriaMap.insert({generatorFailingCriteria->getDistance(), generatorFailingCriteria});
-      Message mess = DYNLog(SourceUnderPower, generator->getID(), generatorActivePower, params_->getPMin(), params_->getId());
-      failingCriteria_.push_back(std::make_pair(t, mess.str()));
       isCriteriaOk &= false;
       alreadyChecked.insert(generator->getID());
     }
@@ -565,7 +553,7 @@ GeneratorCriteria::criteriaEligibleForGenerator(const boost::shared_ptr<criteria
 void
 GeneratorCriteria::addGenerator(const boost::shared_ptr<GeneratorInterface>& generator) {
   if (generator->getBusInterface() &&
-        (doubleEquals(generator->getBusInterface()->getV0(), defaultV0) || generator->getBusInterface()->getV0() <  defaultV0)) return;
+        (doubleIsZero(generator->getBusInterface()->getV0()))) return;
   if (params_->getVoltageLevels().empty()) {
     generators_.push_back(generator);
   } else {

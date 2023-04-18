@@ -124,6 +124,16 @@ job_file = os.path.join(os.path.dirname(__file__), "GeneratorPVTfo", "GeneratorP
 
 test_cases.append((case_name, case_description, job_file, 1, standardReturnCodeType, standardReturnCode))
 
+################################################################################################################################
+#  Small System with generators with tfo and a secondary voltage control : focus on the reactive power control loop            #
+################################################################################################################################
+
+case_name = "DynaFlow - Generator PV with transformer and a secondary voltage control : focus on the reactive power control loop"
+case_description = "Small System with generators with transformers and a secondary voltage control : focus on the reactive power control loop"
+job_file = os.path.join(os.path.dirname(__file__), "GeneratorPVTfoRpclTimeline", "GeneratorPVTfoRpclTimeline.jobs")
+
+test_cases.append((case_name, case_description, job_file, 1, standardReturnCodeType, standardReturnCode))
+
 #################################################################
 #      Small System with generators regulating the same bus      #
 #################################################################
@@ -164,16 +174,26 @@ job_file = os.path.join(os.path.dirname(__file__), "PhaseShifterBlocking", "Phas
 
 test_cases.append((case_name, case_description, job_file, 1, standardReturnCodeType, standardReturnCode))
 
+#############################################################
+#  Small System with PST and a change of active power sign  #
+#############################################################
+
+case_name = "DynaFlow - Phase Shifter Sign"
+case_description = "Small System with PST and a change of active power sign"
+job_file = os.path.join(os.path.dirname(__file__), "PhaseShifterSign", "PhaseShifterSign.jobs")
+
+test_cases.append((case_name, case_description, job_file, 1, standardReturnCodeType, standardReturnCode))
+
+
 ######################################################################################################
 #  Small System with two HVDC links with AC Emulation, a centralized voltage control and PQ diagrams #
 ######################################################################################################
 
-if os.environ.get("DYNAWO_USE_LEGACY_IIDM", "NO") != "YES":
-    case_name = "DynaFlow - HVDC links with AC Emulation, a centralized voltage control and PQ diagrams"
-    case_description = "Small System with two HVDC links with AC Emulation, a centralized voltage control and PQ diagrams"
-    job_file = os.path.join(os.path.dirname(__file__), "HvdcPQPropDiagramPQ", "HvdcPQPropDiagramPQ.jobs")
+case_name = "DynaFlow - HVDC links with AC Emulation, a centralized voltage control and PQ diagrams"
+case_description = "Small System with two HVDC links with AC Emulation, a centralized voltage control and PQ diagrams"
+job_file = os.path.join(os.path.dirname(__file__), "HvdcPQPropDiagramPQ", "HvdcPQPropDiagramPQ.jobs")
 
-    test_cases.append((case_name, case_description, job_file, 1, standardReturnCodeType, standardReturnCode))
+test_cases.append((case_name, case_description, job_file, 1, standardReturnCodeType, standardReturnCode))
 
 ##################################################################
 # Small System with PV Static Var Compensator and Load variation #

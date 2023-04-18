@@ -24,6 +24,7 @@ package BaseClasses
 
     type PStatus = enumeration(Standard "Active power is modulated by the frequency deviation", LimitPMin "Active power is fixed to its minimum value", LimitPMax "Active power is fixed to its maximum value");
 
+    Connectors.ImPin deltaPmRefPu(value(start = 0)) "Additional active power reference in pu (base PNom)";
     Connectors.ImPin omegaRefPu "Network angular reference frequency in pu (base OmegaNom)";
 
     parameter Types.ActivePower PMin "Minimum active power in MW";
@@ -54,7 +55,7 @@ package BaseClasses
       Timeline.logEvent1(TimelineKeys.DeactivatePMAX);
     end when;
     if running.value then
-      PGenRawPu = PGen0Pu + AlphaPu * (1 - omegaRefPu.value);
+      PGenRawPu = PGen0Pu + deltaPmRefPu.value * PNom / SystemBase.SnRef + AlphaPu * (1 - omegaRefPu.value);
       PGenPu = if pStatus == PStatus.LimitPMax then PMaxPu else if pStatus == PStatus.LimitPMin then PMinPu else PGenRawPu;
     else
       PGenRawPu = 0;
@@ -65,7 +66,7 @@ package BaseClasses
   end BaseGeneratorSimplifiedPFBehavior;
 
   record GeneratorSynchronousParameters "Synchronous machine record: Common parameters to the init and the dynamic models"
-    type ExcitationPuType = enumeration(NominalStatorVoltageNoLoad "1 pu gives nominal air-gap stator voltage at no load", Kundur "Base voltage as per Kundur, Power System Stability and Control", UserBase "User defined base for the excitation voltage", Nominal "Base for excitation voltage in nominal conditions (PNomAlt, QNom, UNom)");
+    type ExcitationPuType = enumeration(NoLoad "1 pu gives nominal air-gap stator voltage at no load", NoLoadSaturated "1 pu gives nominal air-gap stator voltage at no load, accounting for saturation", UserBase "User defined base for the excitation voltage", Nominal "Base for excitation voltage in nominal conditions (PNomAlt, QNom, UNom)", Kundur "Base voltage as per Kundur, Power System Stability and Control");
 
     // General parameters of the synchronous machine
     parameter Types.VoltageModule UNom "Nominal voltage in kV";
@@ -141,7 +142,7 @@ package BaseClasses
     // pu factor for excitation voltage
     parameter Types.PerUnit MdPPuEfd "Direct axis mutual inductance used to determine the excitation voltage in pu";
     parameter Types.PerUnit MdPPuEfdNom "Direct axis mutual inductance used to determine the excitation voltage in nominal conditions in pu";
-    final parameter Types.PerUnit Kuf = if ExcitationPu == ExcitationPuType.Kundur then 1 elseif ExcitationPu == ExcitationPuType.UserBase then RfPPu / MdPPuEfd elseif ExcitationPu == ExcitationPuType.NominalStatorVoltageNoLoad then RfPPu / MdPPu else RfPPu / MdPPuEfdNom "Scaling factor for excitation pu voltage";
+    final parameter Types.PerUnit Kuf = if ExcitationPu == ExcitationPuType.Kundur then 1 elseif ExcitationPu == ExcitationPuType.UserBase then RfPPu / MdPPuEfd elseif ExcitationPu == ExcitationPuType.NoLoad then RfPPu / MdPPu elseif ExcitationPu == ExcitationPuType.NoLoadSaturated then RfPPu * (1 + md) / MdPPu else RfPPu / MdPPuEfdNom "Scaling factor for excitation pu voltage";
 
     // Start values given as inputs of the initialization process
     parameter Types.VoltageModulePu U0Pu "Start value of voltage amplitude in pu (base UNom)";

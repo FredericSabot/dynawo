@@ -10,6 +10,8 @@
 // for power systems.
 ActivatePMIN = DeactivatePMIN
 ActivatePMAX = DeactivatePMAX
+RPCLLimitationUsRefMin = RPCLStandard
+RPCLLimitationUsRefMax = RPCLStandard
 GeneratorPVMaxQ = GeneratorPVBackRegulation
 GeneratorPVMinQ = GeneratorPVBackRegulation
 PhaseShifterAboveMax = PhaseShifterBelowMax
@@ -17,8 +19,17 @@ UVAArming = UVADisarming
 NodeOn = NodeOff
 TapChangersArming = TapChangersUnarming
 TransformerSwitchOff = TransformerSwitchOn
+ProtectionDisconnected = ProtectionConnected
+UVAArming = UVADisarming
+OverspeedArming = OverspeedDisarming
+UnderspeedArming = UnderspeedDisarming
 IdealSwitchSwitchOff = IdealSwitchSwitchOn
 DCLineOpen = DCLineClosed
+LVRTArming = LVRTDisarming
+Zone1Arming = Zone1Disarming
+Zone2Arming = Zone2Disarming
+Zone3Arming = Zone3Disarming
+Zone4Arming = Zone4Disarming
 LineCloseSide1 = LineOpenSide1
 LineCloseSide2 = LineOpenSide2
 LineOpen = LineClosed

@@ -53,14 +53,15 @@ ir0_(0.),
 ii0_(0.),
 startingPointMode_(WARM) {
   // init data
-  currentSection_ = shunt_->getCurrentSection();
-  maximumSection_ = shunt_->getMaximumSection();
-  suscepAtMaximumSec_ = shunt_->getB(maximumSection_);
-  vNom_ = shunt_->getVNom();
-  suscepPu_ = shunt_->getB(currentSection_) * vNom_ * vNom_ / SNREF;
+  currentSection_ = shunt->getCurrentSection();
+  maximumSection_ = shunt->getMaximumSection();
+  suscepAtMaximumSec_ = shunt->getB(maximumSection_);
+  vNom_ = shunt->getVNom();
+  suscepPu_ = shunt->getB(currentSection_) * vNom_ * vNom_ / SNREF;
   tLastOpening_ = VALDEF;
   type_ = (suscepAtMaximumSec_ > 0) ? CAPACITOR : REACTANCE;
-  connectionState_ = shunt_->getInitialConnected() ? CLOSED : OPEN;
+  connectionState_ = shunt->getInitialConnected() ? CLOSED : OPEN;
+  cannotBeDisconnected_ = false;
 }
 
 void
@@ -127,6 +128,12 @@ ModelShuntCompensator::ii_dUr() const {
 double
 ModelShuntCompensator::ii_dUi() const {
   return 0.;
+}
+
+void
+ModelShuntCompensator::setModelBus(const boost::shared_ptr<ModelBus>& model) {
+  modelBus_ = model;
+  cannotBeDisconnected_ = connectionState_ == CLOSED && !modelBus_->getVoltageLevel()->canBeDisconnected(modelBus_->getBusIndex());
 }
 
 void
@@ -248,7 +255,9 @@ ModelShuntCompensator::isAvailable() const {
   if (!zConnected_[isAvailableNum_]) {
     return true;
   }
-  if (modelBus_->getVoltageLevel()->isClosestBBSSwitchedOff(modelBus_)) {
+  if (getConnected() == CLOSED && cannotBeDisconnected_) {
+    return false;
+  } else if (getConnected() == OPEN && modelBus_->getVoltageLevel()->isClosestBBSSwitchedOff(modelBus_)) {
     return false;
   } else {
     if (g_[0] == ROOT_UP)
@@ -373,16 +382,17 @@ void
 ModelShuntCompensator::init(int& /*yNum*/) {
   double Q = 0.;
   double uNode = 0.;
-  double thetaNode = shunt_->getBusInterface()->getAngle0();
-  double unomNode = shunt_->getBusInterface()->getVNom();
+  boost::shared_ptr<ShuntCompensatorInterface> shunt = shunt_.lock();
+  double thetaNode = shunt->getBusInterface()->getAngle0();
+  double unomNode = shunt->getBusInterface()->getVNom();
   switch (startingPointMode_) {
   case FLAT:
-    uNode = shunt_->getBusInterface()->getVNom();
-    Q = shunt_->getB(currentSection_) * vNom_ * vNom_ / SNREF;
+    uNode = shunt->getBusInterface()->getVNom();
+    Q = shunt->getB(currentSection_) * vNom_ * vNom_ / SNREF;
     break;
   case WARM:
-    Q = shunt_->getQ() / SNREF;
-    uNode = shunt_->getBusInterface()->getV0();
+    Q = shunt->getQ() / SNREF;
+    uNode = shunt->getBusInterface()->getV0();
     break;
   }
   double ur0 = uNode / unomNode * cos(thetaNode * DEG_TO_RAD);
