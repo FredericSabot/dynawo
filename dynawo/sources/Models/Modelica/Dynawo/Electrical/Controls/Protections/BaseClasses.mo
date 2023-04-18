@@ -135,13 +135,13 @@ package BaseClasses "Base models for protections"
     Real deltaPQfiltered(start = 0) "Smoothed out version of deltaPQ for better numerical stability";
 
     Types.Time[NbSteps] tThresholdReached(each start = Constants.inf) "Time when reaches the ith UFLS threshold (for each step of the UFLS scheme)";
-    Boolean[NbSteps] stepActivated(each start = false) "true if the ith step of UFLS has been activated (for each step of the UFLS scheme)";
+    Integer[NbSteps] stepActivated(each start = 0) "1 if the ith step of UFLS has been activated (for each step of the UFLS scheme)";
 
   equation
     der(deltaPQfiltered) * tFilter = deltaPQ - deltaPQfiltered;
 
     for i in 1:NbSteps loop
-      when omegaMonitoredPu <= omegaThresholdPu[i] and not pre(stepActivated[i]) then
+      when omegaMonitoredPu <= omegaThresholdPu[i] and not pre(stepActivated[i]) == 1 then
         tThresholdReached[i] = time;
         if i == 1 then
           Timeline.logEvent1(TimelineKeys.UFLS1Arming);
@@ -170,7 +170,7 @@ package BaseClasses "Base models for protections"
     // Trips
     for i in 1:NbSteps loop
       when time - tThresholdReached[i] >= tLagAction then
-        stepActivated[i] = true;
+        stepActivated[i] = 1;
         if i == 1 then
           Timeline.logEvent1(TimelineKeys.UFLS1Activated);
         elseif i == 2 then
@@ -195,7 +195,7 @@ package BaseClasses "Base models for protections"
       end when;
     end for;
 
-    deltaPQ = -sum(UFLSStep[index(stepActivated)]);  // Sum of the step sizes of the UFLS steps that are activated
+    deltaPQ = -sum(stepActivated .* UFLSStep);  // Sum of the step sizes of the UFLS steps that are activated
 
     annotation(
       preferredView = "text",
