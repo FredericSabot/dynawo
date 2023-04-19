@@ -1601,7 +1601,7 @@ class Factory:
                 index = 0
                 index_relation = 0
                 for line in eq_body:
-                    if (("Greater" in line or "Less" in line) and "RELATIONHYSTERESIS" not in line and not no_event_nodes[index_if]):
+                    if (("Greater" in line or "Less" in line) and not "RELATIONHYSTERESIS" in line and not no_event_nodes[index_if]):
                         index_relations = self.modes.find_index_relation(eq.get_src_fct_name())
                         assert(len(index_relations) > 0 and index_relation < len(index_relations))
                         eq_body[index] = self.transform_in_relation(line, index_relations[index_relation])
@@ -2590,7 +2590,7 @@ class Factory:
                             if not is_adept_func(func, self.list_adept_structs) : continue
                             used_functions.append(func)
                     line = self.replace_adept_functions_in_line(line)
-                    if self.create_additional_relations() and (("Greater" in line or "Less" in line) and "RELATIONHYSTERESIS" not in line and not no_event_nodes[index_if]):
+                    if self.create_additional_relations() and (("Greater" in line or "Less" in line) and not "RELATIONHYSTERESIS" in line and not no_event_nodes[index_if]):
                         index_relations = self.modes.find_index_relation(eq.get_src_fct_name())
                         assert(len(index_relations) > 0 and index_relation < len(index_relations))
                         line = self.transform_in_relation(line, index_relations[index_relation])
