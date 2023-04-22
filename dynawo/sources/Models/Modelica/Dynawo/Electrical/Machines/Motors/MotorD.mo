@@ -224,14 +224,14 @@ model MotorD "Single-phase air conditioner performance-based model from WECC"
   end UVRelay;
 
 equation
-  motorA.UPu.value = ComplexMath.'abs'(terminal.V);
-  motorB.UPu.value = ComplexMath.'abs'(terminal.V);
+  motorA.UPu.value = ComplexMath.'abs'(V);
+  motorB.UPu.value = ComplexMath.'abs'(V);
   connect(omegaRefPu, motorA.omegaRefPu);
   connect(omegaRefPu, motorB.omegaRefPu);
   connect(running, motorA.running);
   connect(running, motorB.running);
 
-  uvRelay.UMonitoredPu = ComplexMath.'abs'(terminal.V);
+  uvRelay.UMonitoredPu = ComplexMath.'abs'(V);
 
   thermalRelayA.heatingPowerPu = motorA.heatingPowerPu;
   thermalRelayB.heatingPowerPu = motorB.heatingPowerPu;

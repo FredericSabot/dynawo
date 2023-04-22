@@ -64,8 +64,8 @@ equation
   QPu = (UqPu * idPu - UdPu * iqPu) * (SNom / SystemBase.SnRef);
 
   // dq reference frame rotating at synchronous speed
-  UdPu = terminal.V.re;
-  UqPu = terminal.V.im;
+  UdPu = V.re;
+  UqPu = V.im;
 
   s = (omegaRefPu.value - omegaRPu) / omegaRefPu.value;
   cePu = EdPPPu * idPu + EqPPPu * iqPu;

@@ -96,18 +96,24 @@ package BaseClasses
 
   equation
     for i in 1:NbMotors loop
-      motors[i].terminal.V = terminal.V;
+      motors[i].V = terminal.V;
       connect(motors[i].omegaRefPu, omegaRefPu);
 
       switchOffSignal1.value = motors[i].switchOffSignal1.value;
       switchOffSignal2.value = motors[i].switchOffSignal2.value;
     end for;
 
-    PLoadCmdPu = (1-sum(ActiveMotorShare)) * PRefPu * (1 + deltaP);
-    QLoadCmdPu = QRefPu * (1 + deltaQ) - sum(motors.s0Pu.im) * (PRefPu/s0Pu.re) * (1 + deltaP); // s0Pu.re = PRef0Pu (if PRefPu increases but QRefPu stays constant, the reactive power consumed by the motor increases, so the reactive power of the load is reduced to keep the total constant).
-
-    PPu = PLoadPu + sum(motors.PPu);
-    QPu = QLoadPu + sum(motors.QPu);
+    if running.value then
+      PLoadCmdPu = (1-sum(ActiveMotorShare)) * PRefPu * (1 + deltaP);
+      QLoadCmdPu = QRefPu * (1 + deltaQ) - sum(motors.s0Pu.im) * (PRefPu/s0Pu.re) * (1 + deltaP); // s0Pu.re = PRef0Pu (if PRefPu increases but QRefPu stays constant, the reactive power consumed by the motor increases, so the reactive power of the load is reduced to keep the total constant).
+      PPu = PLoadPu + sum(motors.PPu);
+      QPu = QLoadPu + sum(motors.QPu);
+    else
+      PLoadCmdPu = 0;
+      QLoadCmdPu = 0;
+      PPu = 0;
+      QPu = 0;
+    end if;
 
   end BaseLoadMotorSimplified;
 
@@ -155,18 +161,24 @@ package BaseClasses
 
   equation
     for i in 1:NbMotors loop
-      motors[i].terminal.V = terminal.V;
+      motors[i].V = terminal.V;
       connect(motors[i].omegaRefPu, omegaRefPu);
 
       switchOffSignal1.value = motors[i].switchOffSignal1.value;
       switchOffSignal2.value = motors[i].switchOffSignal2.value;
     end for;
 
-    PLoadCmdPu = (1-sum(ActiveMotorShare)) * PRefPu * (1 + deltaP);
-    QLoadCmdPu = QRefPu * (1 + deltaQ) - sum(motors.s0Pu.im) * (PRefPu/s0Pu.re) * (1 + deltaP); // s0Pu.re = PRef0Pu (if PRefPu increases but QRefPu stays constant, the reactive power consumed by the motor increases, so the reactive power of the load is reduced to keep the total constant).
-
-    PPu = PLoadPu + sum(motors.PPu);
-    QPu = QLoadPu + sum(motors.QPu);
+    if running.value then
+      PLoadCmdPu = (1-sum(ActiveMotorShare)) * PRefPu * (1 + deltaP);
+      QLoadCmdPu = QRefPu * (1 + deltaQ) - sum(motors.s0Pu.im) * (PRefPu/s0Pu.re) * (1 + deltaP); // s0Pu.re = PRef0Pu (if PRefPu increases but QRefPu stays constant, the reactive power consumed by the motor increases, so the reactive power of the load is reduced to keep the total constant).
+      PPu = PLoadPu + sum(motors.PPu);
+      QPu = QLoadPu + sum(motors.QPu);
+    else
+      PLoadCmdPu = 0;
+      QLoadCmdPu = 0;
+      PPu = 0;
+      QPu = 0;
+    end if;
 
   end BaseLoadMotorFifthOrder;
 end BaseClasses;

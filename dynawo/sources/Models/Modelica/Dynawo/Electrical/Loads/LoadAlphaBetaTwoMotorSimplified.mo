@@ -19,8 +19,13 @@ model LoadAlphaBetaTwoMotorSimplified
   parameter Real Beta "Reactive load sensitivity to voltage";
 
 equation
-  PLoadPu = PLoadCmdPu * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Alpha);
-  QLoadPu = QLoadCmdPu * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Beta);
+  if running.value then
+    PLoadPu = PLoadCmdPu * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Alpha);
+    QLoadPu = QLoadCmdPu * ((ComplexMath.'abs' (terminal.V) / ComplexMath.'abs' (u0Pu)) ^ Beta);
+  else
+    PLoadPu = 0;
+    QLoadPu = 0;
+  end if;
 
   annotation(preferredView = "text");
 end LoadAlphaBetaTwoMotorSimplified;

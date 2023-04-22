@@ -58,10 +58,10 @@ public
 
 equation
   if (running.value) then
-    terminal.V = ZmPu * imPu + ZsPu * isPu;  // Kirchhoff’s voltage law in the first loop
-    isPu = terminal.V / (ZsPu + 1 / (1 / ZmPu + s / Complex(RrPu, XrPu * s)));  // Avoid numerical issues when s = 0
+    V = ZmPu * imPu + ZsPu * isPu;  // Kirchhoff’s voltage law in the first loop
+    isPu = V / (ZsPu + 1 / (1 / ZmPu + s / Complex(RrPu, XrPu * s)));  // Avoid numerical issues when s = 0
     isPu = imPu + irPu;
-    SPu = terminal.V * ComplexMath.conj(isPu) * (SNom / SystemBase.SnRef);
+    SPu = V * ComplexMath.conj(isPu) * (SNom / SystemBase.SnRef);
 
     s = (omegaRefPu.value - omegaRPu) / omegaRefPu.value;
     cePu = RrPu * ComplexMath.'abs'(irPu^2) / (omegaRefPu.value * s);
