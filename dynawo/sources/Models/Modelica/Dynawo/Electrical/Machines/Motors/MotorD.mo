@@ -240,7 +240,8 @@ equation
     PPu = (motorA.PPu * thermalRelayA.shareConnected + motorB.PPu * thermalRelayB.shareConnected) * uvRelay.shareConnected * (SNom/SystemBase.SnRef);
     QPu = (motorA.QPu * thermalRelayA.shareConnected + motorB.QPu * thermalRelayB.shareConnected) * uvRelay.shareConnected * (SNom/SystemBase.SnRef);
   else
-    terminal.i = Complex(0);
+    PPu = 0;
+    QPu = 0;
   end if;
 
 annotation(preferredView = "text");

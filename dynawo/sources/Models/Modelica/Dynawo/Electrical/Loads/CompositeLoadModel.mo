@@ -228,12 +228,8 @@ equation
     Line(points = {{90, -50}, {68, -50}, {68, -8}, {60, -8}, {60, 0}}, color = {0, 0, 255}));
   connect(electronicLoad.terminal, loadBus.terminal) annotation(
     Line(points = {{90, -30}, {70, -30}, {70, -6}, {60, -6}, {60, 0}}, color = {0, 0, 255}));
-  connect(motorC.terminal, loadBus.terminal) annotation(
-    Line(points = {{90, 10}, {72, 10}, {72, 2}, {60, 2}, {60, 0}}, color = {0, 0, 255}));
-  connect(motorB.terminal, loadBus.terminal) annotation(
-    Line(points = {{90, 30}, {70, 30}, {70, 4}, {60, 4}, {60, 0}}, color = {0, 0, 255}));
-  connect(motorA.terminal, loadBus.terminal) annotation(
-    Line(points = {{92, 50}, {68, 50}, {68, 6}, {60, 6}, {60, 0}}, color = {0, 0, 255}));
-  connect(motorD.terminal, loadBus.terminal) annotation(
-    Line(points = {{90, -10}, {72, -10}, {72, -4}, {60, -4}, {60, 0}}, color = {0, 0, 255}));
+  motorA.V = loadBus.terminal.V;
+  motorB.V = loadBus.terminal.V;
+  motorC.V = loadBus.terminal.V;
+  motorD.V = loadBus.terminal.V;
 end CompositeLoadModel;
