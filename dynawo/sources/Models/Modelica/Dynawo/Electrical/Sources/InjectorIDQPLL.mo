@@ -59,20 +59,26 @@ model InjectorIDQPLL "Injector controlled by d and q current components idPu and
   parameter Types.CurrentModulePu Id0Pu "Start value of idPu in pu (base SNom, UNom)";
   parameter Types.CurrentModulePu Iq0Pu "Start value of iqPu in pu (base SNom, UNom)";
 equation
-  UPu = ComplexMath.'abs'(terminal.V);
-  uPu = terminal.V;
-  // Active and reactive power in generator convention and SNom base from terminal in receptor base in SnRef
-  QInjPuSn = -1 * ComplexMath.imag(terminal.V * ComplexMath.conj(terminal.i))*SystemBase.SnRef/SNom;
-  PInjPuSn = -1 * ComplexMath.real(terminal.V * ComplexMath.conj(terminal.i))*SystemBase.SnRef/SNom;
-  QInjPu = -1 * ComplexMath.imag(terminal.V * ComplexMath.conj(terminal.i));
-  PInjPu = -1 * ComplexMath.real(terminal.V * ComplexMath.conj(terminal.i));
-
   if running.value then
     // Park's transformations dq-currents in generator convention, -> receptor convention for terminal
     terminal.i.re = -1 * (cosPhi * idPu - sinPhi * iqPu) * (SNom/SystemBase.SnRef);
     terminal.i.im = -1 * (sinPhi * idPu + cosPhi * iqPu) * (SNom/SystemBase.SnRef);
+    UPu = ComplexMath.'abs'(terminal.V);
+    uPu = terminal.V;
+    // Active and reactive power in generator convention and SNom base from terminal in receptor base in SnRef
+    QInjPuSn = -1 * ComplexMath.imag(terminal.V * ComplexMath.conj(terminal.i))*SystemBase.SnRef/SNom;
+    PInjPuSn = -1 * ComplexMath.real(terminal.V * ComplexMath.conj(terminal.i))*SystemBase.SnRef/SNom;
+    QInjPu = -1 * ComplexMath.imag(terminal.V * ComplexMath.conj(terminal.i));
+    PInjPu = -1 * ComplexMath.real(terminal.V * ComplexMath.conj(terminal.i));
   else
     terminal.i = Complex(0);
+    der(UPu) = 0;
+    der(uPu.re) = 0;
+    der(uPu.im) = 0;
+    QInjPuSn = 0;
+    PInjPuSn = 0;
+    QInjPu = 0;
+    PInjPu = 0;
   end if;
 
   annotation(preferredView = "text",
