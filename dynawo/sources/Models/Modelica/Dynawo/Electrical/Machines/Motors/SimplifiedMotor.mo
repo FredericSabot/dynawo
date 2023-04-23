@@ -68,7 +68,7 @@ equation
     clPu = ce0Pu * (omegaRPu / omegaR0Pu)^torqueExponent;
     2*H*der(omegaRPu) = cePu - clPu;
   else
-    omegaRPu = 0;
+    der(omegaRPu) = 0;
     isPu = Complex(0);
     imPu = Complex(0);
     irPu = Complex(0);

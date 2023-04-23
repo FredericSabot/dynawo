@@ -111,8 +111,7 @@ package BaseClasses
     else
       PLoadCmdPu = 0;
       QLoadCmdPu = 0;
-      PPu = 0;
-      QPu = 0;
+      terminal.i = Complex(0);
     end if;
 
   end BaseLoadMotorSimplified;

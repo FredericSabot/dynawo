@@ -99,7 +99,7 @@ equation
     // Total load
     terminal.i = iLoadPu + (SNom/SystemBase.SnRef)*isPu * (PRefPu/s0Pu.re) * (1 + deltaP);
   else
-    omegaRPu = 0;
+    der(omegaRPu) = 0;
     PLoadPu = 0;
     QLoadPu = 0;
     iLoadPu = Complex(0);
