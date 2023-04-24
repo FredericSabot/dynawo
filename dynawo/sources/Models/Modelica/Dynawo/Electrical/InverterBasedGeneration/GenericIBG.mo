@@ -250,9 +250,9 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   Modelica.Blocks.Continuous.FirstOrder iDLimitFilter(T = 0.01, y_start = Id0Pu)  annotation(
     Placement(visible = true, transformation(origin = {77, -189}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
 equation
-  injector.switchOffSignal1.value = lvrt.switchOffSignal.value;
-  injector.switchOffSignal2.value = frequencyProtection.switchOffSignal.value;
-  injector.switchOffSignal3.value = overVoltageProtection.switchOffSignal.value;
+  when lvrt.switchOffSignal.value or frequencyProtection.switchOffSignal.value or overVoltageProtection.switchOffSignal.value and not pre(injector.switchOffSignal3.value) then
+    injector.switchOffSignal3.value = true;
+  end when;
   connect(injector.terminal, terminal) annotation(
     Line(points = {{251.5, 1.9}, {305.5, 1.9}}, color = {0, 0, 255}));
   connect(injector.UPu, UFilter.u) annotation(

@@ -296,9 +296,9 @@ equation
   when partialTrippingRatio < 0.99 then
     Timeline.logEvent1(TimelineKeys.PartialTripping);
   end when;
-  injector.switchOffSignal1.value = lvrt.switchOffSignal.value;
-  injector.switchOffSignal2.value = frequencyProtection.switchOffSignal.value;
-  injector.switchOffSignal3.value = overVoltageProtection.switchOffSignal.value;
+  when lvrt.switchOffSignal.value or frequencyProtection.switchOffSignal.value or overVoltageProtection.switchOffSignal.value and not pre(injector.switchOffSignal3.value) then
+    injector.switchOffSignal3.value = true;
+  end when;
   connect(injector.terminal, terminal) annotation(
     Line(points = {{251.5, 1.9}, {305.5, 1.9}}, color = {0, 0, 255}));
   connect(injector.UPu, UFilter.u) annotation(
