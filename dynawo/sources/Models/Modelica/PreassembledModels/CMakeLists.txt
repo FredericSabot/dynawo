@@ -14,9 +14,6 @@ set(MODELICA_PREASSEMBLED_MODELS
   AggregatedIBG.xml
   BooleanTable.xml
   Bus.xml
-  MotorD.xml
-  MotorFifthOrder.xml
-  SimplifiedMotor.xml
   CombiTimeTable.xml
   CompositeLoadModel.xml
   CurrentLimitAutomaton.xml

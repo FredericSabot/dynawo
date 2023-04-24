@@ -18,13 +18,10 @@ set(MODEL_FILES
   BaseClasses_INIT.mo
   MotorD.mo
   MotorD_INIT.mo
-  MotorD.extvar
   MotorFifthOrder.mo
   MotorFifthOrder_INIT.mo
-  MotorFifthOrder.extvar
   SimplifiedMotor.mo
   SimplifiedMotor_INIT.mo
-  SimplifiedMotor.extvar
   )
 
 #
