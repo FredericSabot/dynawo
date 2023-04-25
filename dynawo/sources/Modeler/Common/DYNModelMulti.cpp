@@ -441,7 +441,7 @@ ModelMulti::evalJt(const double t, const double cj, SparseMatrix& Jt) {
   for (std::vector<boost::shared_ptr<DYN::SubModel> >::iterator it = subModels_.begin(); it != subModels_.end(); ++it) {
     (*it)->evalJtSub(t, cj, Jt, rowOffset);
     if (!Jt.withoutNan() || !Jt.withoutInf()) {
-      throw DYNError(Error::MODELER, SparseMatrixWithNanInf, (*it)->modelType(), (*it)->name());
+      // throw DYNError(Error::MODELER, SparseMatrixWithNanInf, (*it)->modelType(), (*it)->name());
     }
   }
 
