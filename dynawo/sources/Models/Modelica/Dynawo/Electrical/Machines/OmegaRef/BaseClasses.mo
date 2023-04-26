@@ -14,6 +14,7 @@ within Dynawo.Electrical.Machines.OmegaRef;
 package BaseClasses
 
   extends Icons.BasesPackage;
+  import Modelica.Constants;
 
   partial model BaseGeneratorSimplifiedPFBehavior "Base model for generator active power / frequency modulation"
     import Dynawo.Electrical.Machines;
@@ -223,6 +224,7 @@ package BaseClasses
 
   equation
     assert(SNom <> PNomAlt, "The alternator nominal active power should be different from the nominal apparent power");
+    assert(not (theta > Constants.pi and time > 0.1), "theta > PI");
     if running.value then
       // Park's transformations
       terminal.V.re = sin(theta) * udPu + cos(theta) * uqPu;
