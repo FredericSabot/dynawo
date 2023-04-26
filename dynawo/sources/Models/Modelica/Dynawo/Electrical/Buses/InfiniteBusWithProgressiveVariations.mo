@@ -30,7 +30,7 @@ model InfiniteBusWithProgressiveVariations "Infinite bus with configurable varia
   parameter Types.Angle UPhase "Infinite bus voltage angle before event in rad";
   parameter Types.Time tUEvtStart "Start time of voltage event in s";
   parameter Types.Time tUEvtEnd "Ending time of voltage event in s";
-  parameter Types.Time tUEvtRamp = 1e-3 "Duration of the recovery ramp after the end of the voltage event in s";
+  parameter Types.Time tEvtRamp = 1e-3 "Duration of variation ramps in s";
   parameter Types.Time tOmegaEvtStart "Start time of frequency event in s";
   parameter Types.Time tOmegaEvtEnd "Ending time of frequency event in s";
 
@@ -46,26 +46,26 @@ equation
   terminal.V = UPu * ComplexMath.exp(ComplexMath.j * (UPhase - UPhaseOffs));
 
   // Voltage amplitude variation
-  if time < tUEvtStart or time >= tUEvtEnd + tUEvtRamp then
+  if time < tUEvtStart or time >= tUEvtEnd + tEvtRamp then
     UPu = U0Pu;
-  elseif time < tUEvtStart + tUEvtRamp then
-    UPu = U0Pu + (UEvtPu-U0Pu) * (time - tUEvtStart)/tUEvtRamp;
+  elseif time < tUEvtStart + tEvtRamp then
+    UPu = U0Pu + (UEvtPu-U0Pu) * (time - tUEvtStart)/tEvtRamp;
   elseif time < tUEvtEnd then
     UPu = UEvtPu;
   else
-    UPu = UEvtPu + (U0Pu-UEvtPu) * (time - tUEvtEnd)/tUEvtRamp;
+    UPu = UEvtPu + (U0Pu-UEvtPu) * (time - tUEvtEnd)/tEvtRamp;
   end if;
 
   // Frequency variation
-  if time < tOmegaEvtStart then
+  UPhaseOffs = 0;
+  if time < tOmegaEvtStart or time >= tOmegaEvtEnd + tEvtRamp then
     omegaPu = omega0Pu;
-    UPhaseOffs = 0;
-  elseif time >= tOmegaEvtEnd then
-    omegaPu = omega0Pu;
-    UPhaseOffs = (omega0Pu - omegaEvtPu) * (tOmegaEvtEnd - tOmegaEvtStart) * SystemBase.omegaNom;
-  else
+  elseif time < tOmegaEvtStart + tEvtRamp then
+    omegaPu = omega0Pu + (omegaEvtPu - omega0Pu) * (time - tOmegaEvtStart) / tEvtRamp;
+  elseif time < tOmegaEvtEnd then
     omegaPu = omegaEvtPu;
-    UPhaseOffs = (omega0Pu - omegaPu) * (time - tOmegaEvtStart) * SystemBase.omegaNom;
+  else
+    omegaPu = omegaEvtPu + (omega0Pu - omegaEvtPu) * (time - tOmegaEvtEnd) / tEvtRamp;
   end if;
 
   // Outputs signals
