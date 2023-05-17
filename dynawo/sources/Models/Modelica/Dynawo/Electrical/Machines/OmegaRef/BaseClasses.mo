@@ -224,7 +224,6 @@ package BaseClasses
 
   equation
     assert(SNom <> PNomAlt, "The alternator nominal active power should be different from the nominal apparent power");
-    assert(not (theta > 2 * Constants.pi and time > 0.1), "theta > PI");
     if running.value then
       // Park's transformations
       terminal.V.re = sin(theta) * udPu + cos(theta) * uqPu;
