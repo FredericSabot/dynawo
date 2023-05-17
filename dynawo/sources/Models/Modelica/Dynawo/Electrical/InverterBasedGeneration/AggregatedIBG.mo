@@ -242,6 +242,9 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
   end LVRT;
 
   model FrequencyProtection
+    import Dynawo.NonElectrical.Logs.Timeline;
+    import Dynawo.NonElectrical.Logs.TimelineKeys;
+
     parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
     parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before start of disconnections in pu (base omegaNom)";
     parameter Types.AngularVelocityPu p "Additional frequency drop compared that leads to full trip of units in pu (base omegaNom)";
@@ -252,11 +255,14 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     Types.AngularVelocityPu MinOmegaPu (start = 1) "Minimum measured frequency in pu (base omegaNom)";
     Types.PerUnit fFrequency (start = 1) "Partial tripping coefficient, equals to 1 if no trip, 0 if fully tripped";
   equation
-    when omegaPu > OmegaMaxPu then
+    when omegaPu > OmegaMaxPu and not(pre(switchOffSignal.value)) then
       switchOffSignal.value = true;
-    elsewhen omegaPu < OmegaMinPu - p then
+      Timeline.logEvent1(TimelineKeys.OverspeedArming);
+    elsewhen omegaPu < OmegaMinPu - p and not(pre(switchOffSignal.value)) then
       switchOffSignal.value = true;
+      Timeline.logEvent1(TimelineKeys.UnderspeedArming);
     end when;
+
     MinOmegaPu + tFilter * der(MinOmegaPu) = if omegaPu < MinOmegaPu then omegaPu else MinOmegaPu;
     if MinOmegaPu > OmegaMinPu then
       fFrequency = 1;

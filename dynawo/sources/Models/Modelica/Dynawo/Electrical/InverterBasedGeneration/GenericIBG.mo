@@ -203,16 +203,21 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   end VoltageSupport;
 
   model FrequencyProtection
+    import Dynawo.NonElectrical.Logs.Timeline;
+    import Dynawo.NonElectrical.Logs.TimelineKeys;
+
     parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
     parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before disconnection in pu (base omegaNom)";
     Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
       Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   equation
-    when omegaPu > OmegaMaxPu then
+    when omegaPu > OmegaMaxPu and not(pre(switchOffSignal.value)) then
       switchOffSignal.value = true;
-    elsewhen omegaPu < OmegaMinPu then
+      Timeline.logEvent1(TimelineKeys.OverspeedArming);
+    elsewhen omegaPu < OmegaMinPu and not(pre(switchOffSignal.value)) then
       switchOffSignal.value = true;
+      Timeline.logEvent1(TimelineKeys.UnderspeedArming);
     end when;
   end FrequencyProtection;
 
