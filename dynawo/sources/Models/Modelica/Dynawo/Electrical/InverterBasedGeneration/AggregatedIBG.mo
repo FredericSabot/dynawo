@@ -20,6 +20,8 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
   parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
   parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before start of disconnections in pu (base omegaNom)";
   parameter Types.AngularVelocityPu pOmegaPu "Additional frequency drop compared that leads to full trip of units in pu (base omegaNom)";
+  parameter Types.PerUnit rOmega(min=0, max=1) "Share of units that trip at OmegaMinPu";
+  parameter Types.PerUnit sOmega(min=0, max=1) "Share of units that trip at OmegaDeadBandPu";
   parameter Types.AngularVelocityPu OmegaDeadBandPu "Deadband of the overfrequency contribution in pu (base omegaNom)";
 
   // Voltage support
@@ -98,9 +100,9 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-90, -344}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput omegaRefPu(start = SystemBase.omegaRef0Pu) annotation(
     Placement(visible = true, transformation(origin = {8, -2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-  Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.FrequencyProtection frequencyProtection(OmegaMaxPu = OmegaMaxPu, OmegaMinPu = OmegaMinPu, p = pOmegaPu) annotation(
+  Dynawo.Electrical.InverterBasedGeneration.AggregatedIBG.FrequencyProtection frequencyProtection(OmegaMaxPu = OmegaMaxPu, OmegaMinPu = OmegaMinPu, p = pOmegaPu, r = rOmega) annotation(
     Placement(visible = true, transformation(origin = {-48, -344}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.Electrical.InverterBasedGeneration.GenericIBG.OverfrequencySupport overfrequencySupport(OmegaDeadBandPu = OmegaDeadBandPu, OmegaMaxPu = OmegaMaxPu) annotation(
+  OverfrequencySupport overfrequencySupport(OmegaDeadBandPu = OmegaDeadBandPu, OmegaMaxPu = OmegaMaxPu, s = sOmega) annotation(
     Placement(visible = true, transformation(origin = {-48, -378}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Math.Add add2(k2 = -1) annotation(
     Placement(visible = true, transformation(origin = {-26, -146}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -248,6 +250,7 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
     parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before start of disconnections in pu (base omegaNom)";
     parameter Types.AngularVelocityPu p "Additional frequency drop compared that leads to full trip of units in pu (base omegaNom)";
+    parameter Types.PerUnit r(min=0, max=1) "Share of units that trip at OmegaMinPu";
     parameter Types.Time tFilter = 1e-2 "Filter time constant for computation of MinOmegaPu in s";
     Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
@@ -267,11 +270,31 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     if MinOmegaPu > OmegaMinPu then
       fFrequency = 1;
     elseif MinOmegaPu > OmegaMinPu - p then
-      fFrequency = (OmegaMinPu - MinOmegaPu) / p;
+      fFrequency = r * (OmegaMinPu - MinOmegaPu) / p;
     else
       fFrequency = 0;
     end if;
   end FrequencyProtection;
+
+  model OverfrequencySupport
+    parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
+    parameter Types.PerUnit s(min=0, max=1) "Share of units that trip at OmegaDeadBandPu";
+    parameter Types.AngularVelocityPu OmegaDeadBandPu "Deadband of the overfrequency contribution in pu (base omegaNom)";
+    Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
+      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+    Modelica.Blocks.Interfaces.RealOutput deltaP annotation(
+      Placement(visible = true, transformation(origin = {110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Modelica.Blocks.Interfaces.RealInput PextPu annotation(
+      Placement(visible = true, transformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+  equation
+    if omegaPu < OmegaDeadBandPu then
+      deltaP = 0;
+    elseif omegaPu < OmegaMaxPu then
+      deltaP = s * PextPu*(OmegaMaxPu - omegaPu);
+    else
+      deltaP = PextPu;
+    end if;
+  end OverfrequencySupport;
 
   Modelica.Blocks.Math.Product IpPartialTripping annotation(
     Placement(visible = true, transformation(origin = {190, -166}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
