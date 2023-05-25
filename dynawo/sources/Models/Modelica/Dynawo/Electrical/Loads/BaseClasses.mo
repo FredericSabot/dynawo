@@ -59,7 +59,7 @@ package BaseClasses
       preferredView = "text");
   end BaseLoad;
 
-  partial model BaseLoadMotorSimplified
+  partial model BaseLoadMotorSimplified "Base model for loads in parallel to simplified motor model(s)"
     import Dynawo;
     extends BaseLoad;
 
@@ -116,7 +116,7 @@ package BaseClasses
 
   end BaseLoadMotorSimplified;
 
-  partial model BaseLoadMotorFifthOrder
+  partial model BaseLoadMotorFifthOrder "Base model for loads in parallel to fifth order motor model(s)"
     import Dynawo;
     extends BaseLoad;
 
@@ -139,8 +139,6 @@ package BaseClasses
     parameter Types.PerUnit EqP0Pu[NbMotors];
     parameter Types.PerUnit EdPP0Pu[NbMotors];
     parameter Types.PerUnit EqPP0Pu[NbMotors];
-    parameter Types.PerUnit Ud0Pu[NbMotors] "Start value of voltage of direct axis in pu";
-    parameter Types.PerUnit Uq0Pu[NbMotors] "Start value of voltage of quadrature axis in pu";
     parameter Types.PerUnit id0Pu[NbMotors] "Start value of current of direct axis in pu";
     parameter Types.PerUnit iq0Pu[NbMotors] "Start value of current of quadrature axis in pu";
     parameter Types.PerUnit ce0Pu[NbMotors] "Start value of the electrical torque in pu (SNom base)";
@@ -154,7 +152,7 @@ package BaseClasses
     Types.ActivePowerPu PLoadPu (start = PLoad0Pu) "Active power consumed by the load in pu (base SnRef) (receptor convention)";
     Types.ReactivePowerPu QLoadPu (start = QLoad0Pu) "Reactive power consumed by the load in pu (base SnRef) (receptor convention)";
 
-    Dynawo.Electrical.Machines.Motors.MotorFifthOrder motors[NbMotors](SNom=SNom, RsPu=RsPu, LsPu=LsPu, LPPu=LPPu, LPPPu=LPPPu, tP0=tP0, tPP0=tPP0, H=H, torqueExponent=torqueExponent, each NbSwitchOffSignals = 2, EdP0Pu=EdP0Pu, EqP0Pu=EqP0Pu, EdPP0Pu=EdPP0Pu, EqPP0Pu=EqPP0Pu, Ud0Pu=Ud0Pu, Uq0Pu=Uq0Pu, id0Pu=id0Pu, iq0Pu=iq0Pu, ce0Pu=ce0Pu, s0=s0, omegaR0Pu=omegaR0Pu, i0Pu=motori0Pu, s0Pu=motors0Pu, each u0Pu=u0Pu);
+    Dynawo.Electrical.Machines.Motors.MotorFifthOrder motors[NbMotors](SNom=SNom, RsPu=RsPu, LsPu=LsPu, LPPu=LPPu, LPPPu=LPPPu, tP0=tP0, tPP0=tPP0, H=H, torqueExponent=torqueExponent, each NbSwitchOffSignals = 2, EdP0Pu=EdP0Pu, EqP0Pu=EqP0Pu, EdPP0Pu=EdPP0Pu, EqPP0Pu=EqPP0Pu,  id0Pu=id0Pu, iq0Pu=iq0Pu, ce0Pu=ce0Pu, s0=s0, omegaR0Pu=omegaR0Pu, i0Pu=motori0Pu, s0Pu=motors0Pu, each u0Pu=u0Pu);
     Types.ActivePowerPu PLoadCmdPu (start = PLoad0Pu) "Active power reference for the load in pu (base SnRef) (receptor convention)";
     Types.ReactivePowerPu QLoadCmdPu (start = QLoad0Pu) "Reactive power reference for in pu (base SnRef) (receptor convention)";
 
@@ -175,8 +173,7 @@ package BaseClasses
     else
       PLoadCmdPu = 0;
       QLoadCmdPu = 0;
-      PPu = 0;
-      QPu = 0;
+      terminal.i = Complex(0);
     end if;
 
   end BaseLoadMotorFifthOrder;

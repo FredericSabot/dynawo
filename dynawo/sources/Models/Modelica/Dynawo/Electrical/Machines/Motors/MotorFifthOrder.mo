@@ -12,7 +12,7 @@ within Dynawo.Electrical.Machines.Motors;
 * This file is part of Dynawo, an hybrid C++/Modelica open source suite of simulation tools for power systems.
 */
 
-model MotorFifthOrder
+model MotorFifthOrder "Two-cage (or one-cage if Lpp = Lp) induction motor model, based on https://www.powerworld.com/WebHelp/Content/TransientModels_HTML/Load%20Characteristic%20MOTORW.htm, must be incorporated in a load model."
   extends BaseClasses.BaseMotor;
   extends AdditionalIcons.Machine;
 
@@ -26,12 +26,10 @@ model MotorFifthOrder
   parameter Real torqueExponent "Exponent of the torsque speed dependancy";
   parameter Types.Time H "Kinetic constant = kinetic energy / rated power";
 
-  parameter Types.PerUnit EdP0Pu;
+  parameter Types.PerUnit EdP0Pu "Name?";
   parameter Types.PerUnit EqP0Pu;
   parameter Types.PerUnit EdPP0Pu;
   parameter Types.PerUnit EqPP0Pu;
-  parameter Types.PerUnit Ud0Pu "Start value of voltage of direct axis in pu";
-  parameter Types.PerUnit Uq0Pu "Start value of voltage of quadrature axis in pu";
   parameter Types.PerUnit id0Pu "Start value of current of direct axis in pu";
   parameter Types.PerUnit iq0Pu "Start value of current of quadrature axis in pu";
   parameter Types.AngularVelocity omegaR0Pu "Start value of the angular velocity of the motor";
@@ -43,8 +41,6 @@ model MotorFifthOrder
   Types.PerUnit EqPPu(start = EqP0Pu);
   Types.PerUnit EdPPPu(start = EdPP0Pu);
   Types.PerUnit EqPPPu(start = EqPP0Pu);
-  Types.PerUnit UdPu(start = Ud0Pu) "Voltage of direct axis in pu";
-  Types.PerUnit UqPu(start = Uq0Pu) "Voltage of quadrature axis in pu";
   Types.PerUnit idPu(start = id0Pu) "Current of direct axis in pu";
   Types.PerUnit iqPu(start = iq0Pu) "Current of quadrature axis in pu";
   Real s(start = s0) "Slip of the motor";
@@ -52,25 +48,32 @@ model MotorFifthOrder
   Types.PerUnit clPu(start = ce0Pu) "Load torque in pu (base SNom, omegaNom)";
 
 equation
-  der(EqPPu) * tP0 = -EqPPu - idPu * (LsPu - LPPu) - EdPPu * omegaRefPu.value * s * tP0;
-  der(EdPPu) * tP0 = -EdPPu + iqPu * (LsPu - LPPu) + EqPPu * omegaRefPu.value * s * tP0;
-  der(EqPPPu) = (tP0 - tPP0) / (tP0 * tPP0) * EqPPu - (tPP0 * (LsPu - LPPu) + tP0 * (LPPu - LPPPu)) / (tP0 * tPP0) * idPu - EqPPPu / tPP0 - omegaRefPu.value * s * EdPPPu;
-  der(EdPPPu) = (tP0 - tPP0) / (tP0 * tPP0) * EdPPu + (tPP0 * (LsPu - LPPu) + tP0 * (LPPu - LPPPu)) / (tP0 * tPP0) * iqPu - EdPPPu / tPP0 + omegaRefPu.value * s * EqPPPu;
+  if (running.value) then
+    der(EqPPu) * tP0 = -EqPPu + idPu * (LsPu - LPPu) - EdPPu * SystemBase.omegaNom * omegaRefPu.value * s * tP0;
+    der(EdPPu) * tP0 = -EdPPu - iqPu * (LsPu - LPPu) + EqPPu * SystemBase.omegaNom * omegaRefPu.value * s * tP0;
+    der(EqPPPu) = der(EqPPu) + 1/tPP0 * (EqPPu - EqPPPu + (LPPu - LPPPu) * idPu) + SystemBase.omegaNom * omegaRefPu.value * s * (EdPPu - EdPPPu);
+    der(EdPPPu) = der(EdPPu) + 1/tPP0 * (EdPPu - EdPPPu - (LPPu - LPPPu) * iqPu) - SystemBase.omegaNom * omegaRefPu.value * s * (EqPPu - EqPPPu);
 
-  idPu = RsPu / (RsPu^2 + LPPPu^2) * (UdPu + EdPPPu) + LPPPu / (RsPu^2 + LPPPu^2) * (UqPu + EqPPPu);
-  iqPu = RsPu / (RsPu^2 + LPPPu^2) * (UqPu + EqPPPu) - LPPPu / (RsPu^2 + LPPPu^2) * (UdPu + EdPPPu);
+    V = Complex(EdPPPu, EqPPPu) + Complex(RsPu, LPPPu) * Complex(idPu, iqPu);
+    Complex(PPu, QPu) = V * Complex(idPu, -iqPu) * (SNom / SystemBase.SnRef);
 
-  PPu = (UdPu * idPu + UqPu * iqPu) * (SNom / SystemBase.SnRef);
-  QPu = (UqPu * idPu - UdPu * iqPu) * (SNom / SystemBase.SnRef);
-
-  // dq reference frame rotating at synchronous speed
-  UdPu = V.re;
-  UqPu = V.im;
-
-  s = (omegaRefPu.value - omegaRPu) / omegaRefPu.value;
-  cePu = EdPPPu * idPu + EqPPPu * iqPu;
-  clPu = ce0Pu * (omegaRPu / omegaR0Pu)^torqueExponent;
-  2*H*der(omegaRPu) = cePu - clPu;
+    s = (omegaRefPu.value - omegaRPu) / omegaRefPu.value;
+    cePu = EdPPPu * idPu + EqPPPu * iqPu;
+    clPu = ce0Pu * (omegaRPu / omegaR0Pu)^torqueExponent;
+    2*H*der(omegaRPu) = cePu - clPu;
+  else
+    der(EqPPu) = 0;
+    der(EdPPu) = 0;
+    der(EqPPPu) = 0;
+    der(EdPPPu) = 0;
+    idPu = 0;
+    iqPu = 0;
+    SPu = Complex(0);
+    s = 0;
+    cePu = 0;
+    clPu = 0;
+    der(omegaRPu) = 0;
+  end if;
 
   annotation(preferredView = "text");
 end MotorFifthOrder;

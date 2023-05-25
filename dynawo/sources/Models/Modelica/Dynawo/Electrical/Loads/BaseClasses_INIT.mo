@@ -15,7 +15,7 @@ within Dynawo.Electrical.Loads;
 package BaseClasses_INIT
   extends Icons.BasesPackage;
 
-  model BaseLoadMotorSimplified_INIT
+  model BaseLoadMotorSimplified_INIT "Base initialisation model for loads in parallel to simplified motor model(s)"
     extends AdditionalIcons.Init;
     extends Load_INIT;
     import Dynawo;
@@ -57,7 +57,7 @@ package BaseClasses_INIT
 
   end BaseLoadMotorSimplified_INIT;
 
-  model BaseLoadMotorFifthOrder_INIT
+  model BaseLoadMotorFifthOrder_INIT "Base initialisation model for loads in parallel to fifth order motor model(s)"
     extends AdditionalIcons.Init;
     extends Load_INIT;
     import Dynawo;
@@ -79,8 +79,6 @@ package BaseClasses_INIT
     Types.PerUnit EqP0Pu[NbMotors];
     Types.PerUnit EdPP0Pu[NbMotors];
     Types.PerUnit EqPP0Pu[NbMotors];
-    Types.PerUnit Ud0Pu[NbMotors] "Start value of voltage of direct axis in pu";
-    Types.PerUnit Uq0Pu[NbMotors] "Start value of voltage of quadrature axis in pu";
     Types.PerUnit id0Pu[NbMotors] "Start value of current of direct axis in pu";
     Types.PerUnit iq0Pu[NbMotors] "Start value of current of quadrature axis in pu";
     Types.PerUnit ce0Pu[NbMotors] "Start value of the electrical torque in pu (SNom base)";
@@ -89,7 +87,7 @@ package BaseClasses_INIT
     Types.ComplexCurrentPu motori0Pu[NbMotors] "Start value of complex current at load terminal in pu (base UNom, SnRef) (receptor convention)";
     Types.ComplexApparentPowerPu motors0Pu[NbMotors] "Start value of complex apparent power in pu (base SnRef) (receptor convention)";
 
-    Dynawo.Electrical.Machines.Motors.MotorFifthOrder_INIT motors_INIT[NbMotors](SNom=SNom, RsPu=RsPu, LsPu=LsPu, LPPu=LPPu, LPPPu=LPPPu, tP0=tP0, tPP0=tPP0, P0Pu=ActiveMotorShare*P0Pu, each U0Pu=U0Pu);
+    Dynawo.Electrical.Machines.Motors.MotorFifthOrder_INIT motors_INIT[NbMotors](SNom=SNom, RsPu=RsPu, LsPu=LsPu, LPPu=LPPu, LPPPu=LPPPu, tP0=tP0, tPP0=tPP0, P0Pu=ActiveMotorShare*P0Pu, each U0Pu=U0Pu, each UPhase0=UPhase0);
 
   equation
     PLoad0Pu = (1-sum(ActiveMotorShare)) * P0Pu;
@@ -99,8 +97,6 @@ package BaseClasses_INIT
     EqP0Pu = motors_INIT.EqP0Pu;
     EdPP0Pu = motors_INIT.EdPP0Pu;
     EqPP0Pu = motors_INIT.EqPP0Pu;
-    Ud0Pu = motors_INIT.Ud0Pu;
-    Uq0Pu = motors_INIT.Uq0Pu;
     id0Pu = motors_INIT.id0Pu;
     iq0Pu = motors_INIT.iq0Pu;
     ce0Pu = motors_INIT.ce0Pu;
