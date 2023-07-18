@@ -108,7 +108,7 @@ DCLineClosed              =             DC line closed
 // --> Low voltage ride-through automaton
 LVRTTripped                =            LVRT generator tripped
 LVRTArming                 =            LVRT automaton for generator arming
-LVRTDisarming              =            LVRT automaton for generator disarmin
+LVRTDisarming              =            LVRT automaton for generator disarming
 // --> Aggregated IBG
 PartialTripping           =             Partial tripping ongoing
 //-------------  C++ models ----------------------------------------------
