@@ -30,6 +30,7 @@ TapChangersArming = TapChangersUnarming
 TransformerSwitchOff = TransformerSwitchOn
 IdealSwitchSwitchOff = IdealSwitchSwitchOn
 DCLineOpen = DCLineClosed
+LVRTArming = LVRTDisarming
 LineCloseSide1 = LineOpenSide1
 LineCloseSide2 = LineOpenSide2
 LineOpen = LineClosed

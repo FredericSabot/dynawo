@@ -85,6 +85,13 @@ VRLimitationUsRefMax      =             Voltage regulator : upper limit reached 
 UVATripped                =              Under-voltage generator trip
 UVAArming                 =              Under-voltage automaton for generator arming
 UVADisarming              =              Under-voltage automaton for generator disarming
+// --> Speed protection
+OverspeedArming           =              Overspeed protection arming
+OverspeedDisarming        =              Overspeed protection disarming
+OverspeedTripped          =              Overspeed protection tripped
+UnderspeedArming          =              Underspeed protection arming
+UnderspeedDisarming       =              Underspeed protection disarming
+UnderspeedTripped         =              Underspeed protection tripped
 // --> CurrentLimit
 OverloadUp                =             Overload %1% : activation
 OverloadDown              =             Overload %1% : deactivation
@@ -98,6 +105,12 @@ IdealSwitchSwitchOn       =             Ideal switch closed
 // --> HVDC Line
 DCLineOpen                =             DC line open
 DCLineClosed              =             DC line closed
+// --> Low voltage ride-through automaton
+LVRTTripped                =            LVRT generator tripped
+LVRTArming                 =            LVRT automaton for generator arming
+LVRTDisarming              =            LVRT automaton for generator disarmin
+// --> Aggregated IBG
+PartialTripping           =             Partial tripping ongoing
 //-------------  C++ models ----------------------------------------------
 // --> BUS
 NodeOff                   =             BUS : switch off

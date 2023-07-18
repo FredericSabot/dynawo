@@ -11,6 +11,7 @@
 # Preassembled models
 
 set(MODELICA_PREASSEMBLED_MODELS
+  AggregatedIBG.xml
   BooleanTable.xml
   Bus.xml
   CombiTimeTable.xml
@@ -85,6 +86,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousThreeWindingsPmConstScrx.xml
   GeneratorSynchronousThreeWindingsPmConstScrxTfo.xml
   GenericAutomaton.xml
+  GenericIBG.xml
   GridFormingConverterDroopControl.xml
   GridFormingConverterMatchingControl.xml
   GridFormingConverterDispatchableVirtualOscillatorControl.xml
