@@ -200,6 +200,9 @@ set(MODELICA_PREASSEMBLED_MODELS
   WT4BWeccCurrentSource.xml
   WTG4AWeccCurrentSource.xml
   WTG4BWeccCurrentSource.xml
+  GeneratorSynchronousFourWindingsRtsThermal.xml
+  GeneratorSynchronousThreeWindingsRtsHydro.xml
+  GeneratorSynchronousThreeWindingsRtsSyncon.xml
   )
 
 # PYTHON scripts preassembled models
