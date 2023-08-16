@@ -71,12 +71,23 @@ SolverCommon::copySparseToKINSOL(const SparseMatrix& smj, SUNMatrix& JJ, const i
 }
 
 void SolverCommon::propagateMatrixStructureChangeToKINSOL(const SparseMatrix& smj, SUNMatrix& JJ, const int& size, sunindextype** lastRowVals,
-                                                          SUNLinearSolver& LS, const std::string& linearSolverName, bool log) {
+                                                          SUNLinearSolver& LS, const std::string& linearSolverName, bool log, bool caller) {
   bool matrixStructChange = copySparseToKINSOL(smj, JJ, size, *lastRowVals);
 
+  Timer *timer;
   if (matrixStructChange) {
     if (linearSolverName == "KLU") {
-      SUNLinSol_KLUReInit(LS, JJ, SM_NNZ_S(JJ), 2);  // reinit symbolic factorisation
+#if defined(_DEBUG_) || defined(PRINT_TIMERS)
+      if (caller) {
+        timer = new Timer("SolverCommon::propagateMatrixStructureChangeToKINSOL");
+        SUNLinSol_KLUReInit(LS, JJ, SM_NNZ_S(JJ), 2);  // reinit symbolic factorisation
+        delete timer;
+      } else {
+#endif
+        SUNLinSol_KLUReInit(LS, JJ, SM_NNZ_S(JJ), 2);  // reinit symbolic factorisation
+#if defined(_DEBUG_) || defined(PRINT_TIMERS)
+      }
+#endif
 #ifdef WITH_NICSLU
     } else if (linearSolverName == "NICSLU") {
       SUNLinSol_NICSLUReInit(LS, JJ, SM_NNZ_S(JJ), 2);  // reinit symbolic factorisation

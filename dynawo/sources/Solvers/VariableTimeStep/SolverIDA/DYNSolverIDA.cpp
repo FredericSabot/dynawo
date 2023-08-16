@@ -578,7 +578,7 @@ SolverIDA::evalJ(realtype tt, realtype cj,
         SUNMatrix JJ, void* data,
         N_Vector /*tmp1*/, N_Vector /*tmp2*/, N_Vector /*tmp3*/) {
 #if defined(_DEBUG_) || defined(PRINT_TIMERS)
-  Timer timer("SolverIDA::evalJ");
+  Timer *timer = new Timer("SolverIDA::evalJ");
 #endif
   SolverIDA* solver = reinterpret_cast<SolverIDA*> (data);
   Model& model = solver->getModel();
@@ -591,7 +591,15 @@ SolverIDA::evalJ(realtype tt, realtype cj,
   smj.init(size, size);
   model.copyContinuousVariables(iyy, iyp);
   model.evalJt(tt, cj, smj);
-  SolverCommon::propagateMatrixStructureChangeToKINSOL(smj, JJ, size, &solver->lastRowVals_, solver->linearSolver_, "KLU", true);
+#if defined(_DEBUG_) || defined(PRINT_TIMERS)
+  delete timer;
+#endif
+  // std::cout << "EvalJ" << std::endl;
+  // smj.printToFile(true);
+#if defined(_DEBUG_) || defined(PRINT_TIMERS)
+  Timer timer2("SolverIDA::propagateMatrixStructureChangeToKINSOL");  // Only instances called from evalJ
+#endif
+  SolverCommon::propagateMatrixStructureChangeToKINSOL(smj, JJ, size, &solver->lastRowVals_, solver->linearSolver_, "KLU", true, true);
 
   return 0;
 }

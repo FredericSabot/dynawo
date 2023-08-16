@@ -59,14 +59,8 @@ function listenCheckbox(button,yAxis)
               break;
           }
       }
-      if(dataId.length > 5) {
-          alert("Unable to plot more than 6 curves");
-          button.checked = false;
-      }
-      else {
-          serie=datasRead[index].data;
-          addData(serie,instanceId,yAxis);
-      }
+      serie=datasRead[index].data;
+      addData(serie,instanceId,yAxis);
     }
     if( checked == false ) { // remove serie
       removeData(instanceId);

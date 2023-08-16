@@ -231,7 +231,7 @@ def main():
     parser.add_option("--withoutOffset", action="store_true", dest="withoutOffset",
                       help=u"Remove time offset", default=False)
     parser.add_option("--showpoints", action="store_true", dest="showpoints",
-                      help=u"Show simulation points", default=True)
+                      help=u"Show simulation points", default=False)
     (options, args) = parser.parse_args()
 
     if options.csvFile == None:

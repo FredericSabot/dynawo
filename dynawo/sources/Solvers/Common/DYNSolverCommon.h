@@ -24,6 +24,7 @@
 #include <sunmatrix/sunmatrix_band.h>
 #include <sunmatrix/sunmatrix_sparse.h>
 #include <cmath>
+#include <DYNTimer.h>
 
 namespace DYN {
 class SparseMatrix;
@@ -59,7 +60,8 @@ class SolverCommon {
    * @param log @b true if a log should be added if a complete re-initialization is done
    */
   static void propagateMatrixStructureChangeToKINSOL(const SparseMatrix& smj, SUNMatrix& JJ, const int& size,
-                                                     sunindextype** lastRowVals, SUNLinearSolver& LS, const std::string& linearSolverName, bool log);
+                                                     sunindextype** lastRowVals, SUNLinearSolver& LS, const std::string& linearSolverName,
+                                                     bool log, bool caller = false);
 
   /**
    * @brief Print the largest residuals errors

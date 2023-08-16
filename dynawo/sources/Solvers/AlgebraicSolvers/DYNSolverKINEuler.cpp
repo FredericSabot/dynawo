@@ -143,6 +143,10 @@ SolverKINEuler::evalJ_KIN(N_Vector /*yy*/, N_Vector /*rr*/,
   const int size = model.sizeY();
   smj.init(size, size);
   model.evalJt(solver->t0_ + h0, cj, smj);
+  // smj.printToFile(true);
+#if defined(_DEBUG_) || defined(PRINT_TIMERS)
+  Timer timer2("DYNSolverCommon::propagateMatrixStructureChangeToKINSOL");
+#endif
   SolverCommon::propagateMatrixStructureChangeToKINSOL(smj, JJ, size, &solver->lastRowVals_, solver->linearSolver_, solver->linearSolverName_, true);
 
   return 0;

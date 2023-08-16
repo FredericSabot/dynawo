@@ -984,6 +984,7 @@ Simulation::simulate() {
       bool isCheckCriteriaIter = data_ && activateCriteria_ && currentIterNb % criteriaStep_ == 0;
 
       solver_->solve(tStop_, tCurrent_);
+      // std::cout << "Simulation::" << solver_->getTimeStep() << std::endl;
       solver_->printSolve();
       if (currentIterNb == 0)
         printHighestDerivativesValues();

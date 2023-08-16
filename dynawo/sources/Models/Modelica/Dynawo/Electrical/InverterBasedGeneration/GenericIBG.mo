@@ -53,7 +53,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Real IqMinPu = 0 "Minimum reactive current command in pu (base UNom, SNom)";
   parameter Types.VoltageModulePu UQPrioPu "Voltage under which priority is given to reactive current injection in pu (base UNom)";
   parameter Real IpSlewMaxPu "Active current slew limit (both up and down) in pu (base UNom, SNom)";
-
+  parameter Real IqSlewMaxPu "Reactive current slew limit (both up and down) in pu (base UNom, SNom) (not in the original model, can use arbitrarily large value to bypass it)";
   // Initial values
   parameter Types.PerUnit P0Pu "Start value of active power at terminal in pu (receptor convention) (base SnRef)";
   parameter Types.PerUnit Q0Pu "Start value of reactive power at terminal in pu (receptor convention) (base SnRef)";
@@ -75,7 +75,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-130, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Logical.GreaterThreshold Vfreeze(threshold = UPLLFreezePu) annotation(
     Placement(visible = true, transformation(origin = {-50, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.Electrical.InverterBasedGeneration.GenericIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntPu = ULVRTIntPu, ULVRTMinPu = ULVRTMinPu, tLVRTMin = tLVRTMin, tLVRTInt=tLVRTInt, tLVRTMax = tLVRTMax) annotation(
+  Dynawo.Electrical.InverterBasedGeneration.GenericIBG.LVRT lvrt(ULVRTArmingPu = ULVRTArmingPu, ULVRTIntPu = ULVRTIntPu, ULVRTMinPu = ULVRTMinPu, tLVRTMin = tLVRTMin, tLVRTInt = tLVRTInt, tLVRTMax = tLVRTMax) annotation(
     Placement(visible = true, transformation(origin = {-50, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealInput PextPu(start = -P0Pu*SystemBase.SnRef/SNom) "Available power from the DC source in pu (base SNom)" annotation(
     Placement(visible = true, transformation(origin = {-94, -140}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-110, -102}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
@@ -101,8 +101,6 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-50, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Nonlinear.VariableLimiter iQLimiter annotation(
     Placement(visible = true, transformation(origin = {60, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Sources.Constant constant2(k = IqMinPu) annotation(
-    Placement(visible = true, transformation(origin = {36, -288}, extent = {{-4, -4}, {4, 4}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder iQcmdFirstOrder(T = tG, y_start = Iq0Pu) annotation(
     Placement(visible = true, transformation(origin = {110, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder omegaFilter(T = tFilterOmega, y_start = SystemBase.omegaRef0Pu) annotation(
@@ -119,11 +117,11 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-50, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.RealExpression Pext(y = PextPu) annotation(
     Placement(visible = true, transformation(origin = {-90, -386}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iPSlewLimit(DuMax = IpSlewMaxPu, DuMin = -IpSlewMaxPu, Y0 = Id0Pu, tS = tRateLim) annotation(
+  Dynawo.NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iPSlewLimit(DuMax = IpSlewMaxPu, Y0 = Id0Pu, tS = tRateLim) annotation(
     Placement(visible = true, transformation(origin = {150, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder iPcmdFirstOrder(T = tG, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {110, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Math.Gain gain(k = -1)  annotation(
+  Modelica.Blocks.Math.Gain gain(k = -1) annotation(
     Placement(visible = true, transformation(origin = {150, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
   model LimitUpdating
@@ -139,7 +137,10 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Modelica.Blocks.Interfaces.RealOutput IpMaxPu annotation(
       Placement(visible = true, transformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
     Modelica.Blocks.Interfaces.RealOutput IqMaxPu annotation(
-      Placement(visible = true, transformation(origin = {110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Placement(visible = true, transformation(origin = {110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Modelica.Blocks.Interfaces.RealOutput IqMinPu annotation(
+      Placement(visible = true, transformation(origin = {110, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+
   protected
     Types.PerUnit IpLimPu = max(min(abs(IpCmdPu), IMaxPu), 0);
     Types.PerUnit IqLimPu = max(min(abs(IqCmdPu), IMaxPu), - IMaxPu);
@@ -148,9 +149,11 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     if PPriority then
       IpMaxPu = IMaxPu;
       IqMaxPu = noEvent(if(abs(IMaxPu) > abs(IpLimPu)) then sqrt(IMaxPu ^ 2 - IpLimPu ^ 2) else 0);
+      IqMinPu = -IqMaxPu;
     else
       IpMaxPu = noEvent(if(abs(IMaxPu) > abs(IqLimPu)) then sqrt(IMaxPu ^ 2 - IqLimPu ^ 2) else 0);
       IqMaxPu = IMaxPu;
+      IqMinPu = -IqMaxPu;
     end if;
   end LimitUpdating;
 
@@ -164,30 +167,29 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     parameter Types.Time tLVRTMin "Time delay of trip for severe voltage dips in s";
     parameter Types.Time tLVRTInt "Time delay of trip for intermediate voltage dips in s";
     parameter Types.Time tLVRTMax "Time delay of trip for small voltage dips in s";
-    Connectors.BPin switchOffSignal (value (start = false)) "Switch off message for the generator";
+    Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput UMonitoredPu "Monitored voltage in pu (base UNom)" annotation(
-    Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+      Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   protected
-    Types.Time tThresholdReached (start = Constants.inf) "Time when the threshold was reached";
-
+    Types.Time tThresholdReached(start = Constants.inf) "Time when the threshold was reached";
   equation
-    // Arming
-    when UMonitoredPu <= ULVRTArmingPu and not(pre(switchOffSignal.value)) then
+// Arming
+    when UMonitoredPu <= ULVRTArmingPu and not (pre(switchOffSignal.value)) then
       tThresholdReached = time;
       Timeline.logEvent1(TimelineKeys.LVRTArming);
-    elsewhen UMonitoredPu > ULVRTArmingPu and pre(tThresholdReached) <> Constants.inf and not(pre(switchOffSignal.value)) then
+    elsewhen UMonitoredPu > ULVRTArmingPu and pre(tThresholdReached) <> Constants.inf and not (pre(switchOffSignal.value)) then
       tThresholdReached = Constants.inf;
       Timeline.logEvent1(TimelineKeys.LVRTDisarming);
     end when;
-
-    // Tripping
-    when UMonitoredPu < ULVRTMinPu and not pre(switchOffSignal.value) then  // No delay
+// Tripping
+    when UMonitoredPu < ULVRTMinPu and not pre(switchOffSignal.value) then
+// No delay
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
     elsewhen time - tThresholdReached >= tLVRTMin and UMonitoredPu < ULVRTIntPu and not pre(switchOffSignal.value) then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
-    elsewhen UMonitoredPu >= ULVRTIntPu and  time - tThresholdReached >= tLVRTInt + (tLVRTMax - tLVRTInt) * (UMonitoredPu - ULVRTIntPu) / (ULVRTArmingPu - ULVRTIntPu) and not pre(switchOffSignal.value) then
+    elsewhen UMonitoredPu >= ULVRTIntPu and time - tThresholdReached >= tLVRTInt + (tLVRTMax - tLVRTInt)*(UMonitoredPu - ULVRTIntPu)/(ULVRTArmingPu - ULVRTIntPu) and not pre(switchOffSignal.value) then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.LVRTTripped);
     end when;
@@ -218,17 +220,16 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   model FrequencyProtection
     import Dynawo.NonElectrical.Logs.Timeline;
     import Dynawo.NonElectrical.Logs.TimelineKeys;
-
     parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
     parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before disconnection in pu (base omegaNom)";
     Connectors.BPin switchOffSignal(value(start = false)) "Switch off message for the generator";
     Modelica.Blocks.Interfaces.RealInput omegaPu annotation(
       Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   equation
-    when omegaPu > OmegaMaxPu and not(pre(switchOffSignal.value)) then
+    when omegaPu > OmegaMaxPu and not (pre(switchOffSignal.value)) then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.OverspeedTripped);
-    elsewhen omegaPu < OmegaMinPu and not(pre(switchOffSignal.value)) then
+    elsewhen omegaPu < OmegaMinPu and not (pre(switchOffSignal.value)) then
       switchOffSignal.value = true;
       Timeline.logEvent1(TimelineKeys.UnderspeedTripped);
     end when;
@@ -247,7 +248,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     if omegaPu < OmegaDeadBandPu then
       deltaP = 0;
     elseif omegaPu < OmegaMaxPu then
-      deltaP = PextPu*(OmegaMaxPu - omegaPu);
+      deltaP = PextPu * (omegaPu - OmegaDeadBandPu) / (OmegaMaxPu - OmegaDeadBandPu);
     else
       deltaP = PextPu;
     end if;
@@ -263,14 +264,18 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
       switchOffSignal.value = true;
     end when;
   end OverVoltageProtection;
-  Modelica.Blocks.Continuous.FirstOrder iQLimitFilter(T = 0.01, y_start = Iq0Pu)  annotation(
+
+  Modelica.Blocks.Continuous.FirstOrder iQLimitFilter(T = 0.01, y_start = Iq0Pu) annotation(
     Placement(visible = true, transformation(origin = {79, -259}, extent = {{-3, -3}, {3, 3}}, rotation = 90)));
-  Modelica.Blocks.Continuous.FirstOrder iDLimitFilter(T = 0.01, y_start = Id0Pu)  annotation(
+  Modelica.Blocks.Continuous.FirstOrder iDLimitFilter(T = 0.01, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {77, -189}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
+  NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = Iq0Pu, tS = tRateLim)  annotation(
+    Placement(visible = true, transformation(origin = {190, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   when lvrt.switchOffSignal.value or frequencyProtection.switchOffSignal.value or overVoltageProtection.switchOffSignal.value and not pre(injector.switchOffSignal3.value) then
     injector.switchOffSignal3.value = true;
   end when;
+
   connect(injector.terminal, terminal) annotation(
     Line(points = {{251.5, 1.9}, {305.5, 1.9}}, color = {0, 0, 255}));
   connect(injector.UPu, UFilter.u) annotation(
@@ -301,8 +306,6 @@ equation
     Line(points = {{-94, -304}, {-70, -304}, {-70, -286}, {-62, -286}}, color = {0, 0, 127}));
   connect(add.y, iQLimiter.u) annotation(
     Line(points = {{-39, -280}, {48, -280}}, color = {0, 0, 127}));
-  connect(constant2.y, iQLimiter.limit2) annotation(
-    Line(points = {{40.4, -288}, {48.4, -288}}, color = {0, 0, 127}));
   connect(iQLimiter.y, iQcmdFirstOrder.u) annotation(
     Line(points = {{71, -280}, {98, -280}}, color = {0, 0, 127}));
   connect(PLLFreeze.omegaPLLPu, omegaFilter.u) annotation(
@@ -339,18 +342,22 @@ equation
     Line(points = {{77, -192}, {77, -200}, {-12, -200}, {-12, -212}, {-2, -212}}, color = {0, 0, 127}));
   connect(limitUpdating.IpMaxPu, iPLimiter.limit1) annotation(
     Line(points = {{22, -214}, {32, -214}, {32, -152}, {48, -152}}, color = {0, 0, 127}));
-  connect(limitUpdating.IqMaxPu, iQLimiter.limit1) annotation(
-    Line(points = {{22, -226}, {32, -226}, {32, -272}, {48, -272}}, color = {0, 0, 127}));
   connect(Vfreeze.y, PLLFreeze.freeze) annotation(
     Line(points = {{-38, -10}, {40, -10}}, color = {255, 0, 255}));
   connect(omegaRefPu, PLLFreeze.omegaRefPu) annotation(
     Line(points = {{8, 0}, {20, 0}, {20, -14}, {40, -14}}, color = {0, 0, 127}));
   connect(iPSlewLimit.y, injector.idPu) annotation(
     Line(points = {{162, -160}, {200, -160}, {200, -12}, {228, -12}}, color = {0, 0, 127}));
-  connect(gain.y, injector.iqPu) annotation(
-    Line(points = {{162, -280}, {202, -280}, {202, -2}, {228, -2}}, color = {0, 0, 127}));
   connect(PLLFreeze.phi, injector.UPhase) annotation(
     Line(points = {{62, -6}, {140, -6}, {140, -40}, {240, -40}, {240, -18}}, color = {0, 0, 127}));
+  connect(limitUpdating.IqMaxPu, iQLimiter.limit1) annotation(
+    Line(points = {{22, -224}, {32, -224}, {32, -272}, {48, -272}}, color = {0, 0, 127}));
+  connect(limitUpdating.IqMinPu, iQLimiter.limit2) annotation(
+    Line(points = {{22, -228}, {30, -228}, {30, -288}, {48, -288}}, color = {0, 0, 127}));
+  connect(gain.y, iQSlewLimit.u) annotation(
+    Line(points = {{162, -280}, {178, -280}}, color = {0, 0, 127}));
+  connect(iQSlewLimit.y, injector.iqPu) annotation(
+    Line(points = {{202, -280}, {204, -280}, {204, -2}, {228, -2}}, color = {0, 0, 127}));
   annotation(
     Documentation(preferredView = "diagram", info = "<html>
     <p> Generic model of inverter-based generation as defined in p28 of Gilles Chaspierre's PhD thesis 'Reduced-order modelling of active distribution networks for large-disturbance simulations'. Available: https://orbi.uliege.be/handle/2268/251602 </p></html>"),

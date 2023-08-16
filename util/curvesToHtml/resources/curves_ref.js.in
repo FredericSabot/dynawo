@@ -62,16 +62,10 @@ function listenCheckbox(button,yAxis)
               index_ref = i;
           }
       }
-      if(dataId.length > 5) {
-          alert("Unable to plot more than 6 curves");
-          button.checked = false;
-      }
-      else {
-          serie=datasRead[index].data;
-          addData(serie,instanceId,yAxis);
-          serie=datasRead[index_ref].data;
-          addData(serie,'REF_' + instanceId,yAxis);
-      }
+      serie=datasRead[index].data;
+      addData(serie,instanceId,yAxis);
+      serie=datasRead[index_ref].data;
+      addData(serie,'REF_' + instanceId,yAxis);
     }
     if( checked == false ) { // remove serie
       removeData(instanceId);
