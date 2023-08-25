@@ -67,6 +67,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousFourWindingsPmConstVRNordic.xml
   GeneratorSynchronousFourWindingsPmConstVRNordicTfo.xml
   GeneratorSynchronousFourWindingsProportionalRegulations.xml
+  GeneratorSynchronousFourWindingsRtsThermal.xml
   GeneratorSynchronousFourWindingsTGov1Sexs.xml
   GeneratorSynchronousFourWindingsTGov1SexsPss2A.xml
   GeneratorSynchronousFourWindingsVRKundur.xml
@@ -89,6 +90,8 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousThreeWindingsPmConstExcIeeeAc1aTfo.xml
   GeneratorSynchronousThreeWindingsPmConstScrx.xml
   GeneratorSynchronousThreeWindingsPmConstScrxTfo.xml
+  GeneratorSynchronousThreeWindingsRtsHydro.xml
+  GeneratorSynchronousThreeWindingsRtsSyncon.xml
   GenericAutomaton.xml
   GenericIBG.xml
   GridFormingConverterDroopControl.xml
@@ -200,9 +203,6 @@ set(MODELICA_PREASSEMBLED_MODELS
   WT4BWeccCurrentSource.xml
   WTG4AWeccCurrentSource.xml
   WTG4BWeccCurrentSource.xml
-  GeneratorSynchronousFourWindingsRtsThermal.xml
-  GeneratorSynchronousThreeWindingsRtsHydro.xml
-  GeneratorSynchronousThreeWindingsRtsSyncon.xml
   )
 
 # PYTHON scripts preassembled models

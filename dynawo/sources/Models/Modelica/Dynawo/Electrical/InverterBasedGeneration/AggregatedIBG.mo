@@ -286,7 +286,7 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     if omegaPu < OmegaDeadBandPu then
       deltaP = 0;
     elseif omegaPu < OmegaMaxPu then
-      deltaP = s*PextPu*(omegaPu - OmegaDeadBandPu)/(OmegaMaxPu - OmegaDeadBandPu);
+      deltaP = PextPu * (s + (1-s) * (omegaPu - OmegaDeadBandPu)/(OmegaMaxPu - OmegaDeadBandPu));
     else
       deltaP = PextPu;
     end if;
@@ -308,7 +308,7 @@ model AggregatedIBG "Aggregated model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {79, -257}, extent = {{-3, -3}, {3, 3}}, rotation = 90)));
   Modelica.Blocks.Continuous.FirstOrder iDLimitFilter(T = 0.01, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {79, -183}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
-  NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = Iq0Pu, tS = tRateLim)  annotation(
+  NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = -Iq0Pu, tS = tRateLim)  annotation(
     Placement(visible = true, transformation(origin = {180, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 protected
   parameter Types.ComplexPerUnit u0Pu "Start value of complex voltage at terminal in pu (base UNom)";

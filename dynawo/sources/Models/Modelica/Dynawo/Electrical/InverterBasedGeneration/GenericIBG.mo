@@ -1,37 +1,32 @@
 within Dynawo.Electrical.InverterBasedGeneration;
 
-/*
-* Copyright (c) 2023, RTE (http://www.rte-france.com)
-* See AUTHORS.txt
-* All rights reserved.
-* This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this
-* file, you can obtain one at http://mozilla.org/MPL/2.0/.
-* SPDX-License-Identifier: MPL-2.0
-*
-* This file is part of Dynawo, an hybrid C++/Modelica open source suite
-* of simulation tools for power systems.
-*/
-
 model GenericIBG "Generic model of inverter-based generation (IBG)"
+  /*
+  * Copyright (c) 2023, RTE (http://www.rte-france.com)
+  * See AUTHORS.txt
+  * All rights reserved.
+  * This Source Code Form is subject to the terms of the Mozilla Public
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at http://mozilla.org/MPL/2.0/.
+  * SPDX-License-Identifier: MPL-2.0
+  *
+  * This file is part of Dynawo, an hybrid C++/Modelica open source suite
+  * of simulation tools for power systems.
+  */
   import Dynawo;
   import Modelica;
-
   // Rating
   parameter Types.ApparentPowerModule SNom "Nominal apparent power of the injector (in MVA)";
   parameter Types.CurrentModulePu IMaxPu "Maximum current of the injector in pu (base UNom, SNom)";
-
   // Filters
   parameter Types.Time tFilterU "Voltage measurement first order time constant in s";
   parameter Types.Time tFilterOmega "First order time constant for the frequency estimation in s";
   parameter Types.Time tRateLim = 1e-2 "Current slew limiter delay in s";
   parameter Types.Time tG "Current commands filter in s";
-
   // Frequency support
   parameter Types.AngularVelocityPu OmegaMaxPu "Maximum frequency before disconnection in pu (base omegaNom)";
   parameter Types.AngularVelocityPu OmegaMinPu "Minimum frequency before disconnection in pu (base omegaNom)";
   parameter Types.AngularVelocityPu OmegaDeadBandPu "Deadband of the overfrequency contribution in pu (base omegaNom)";
-
   // Voltage support
   parameter Types.VoltageModulePu UMaxPu "Maximum voltage over which the unit is disconnected in pu (base UNom)";
   parameter Types.VoltageModulePu US1 "Lower voltage limit of deadband in pu (base UNom)";
@@ -40,7 +35,6 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Real kRCA "Slope of reactive current decrease for high voltages";
   parameter Real m "Current injection just outside of lower deadband in pu (base IMaxPu)";
   parameter Real n "Current injection just outside of lower deadband in pu (base IMaxPu)";
-
   // Low voltage ride through
   parameter Types.VoltageModulePu ULVRTArmingPu "Voltage threshold under which the automaton is activated after tLVRTMax in pu (base UNom)";
   parameter Types.VoltageModulePu ULVRTIntPu "Voltage threshold under which the automaton is activated after tLVRTMin in pu (base UNom)";
@@ -48,7 +42,6 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Types.Time tLVRTMin "Time delay of trip for severe voltage dips";
   parameter Types.Time tLVRTInt "Time delay of trip for intermediate voltage dips in s";
   parameter Types.Time tLVRTMax "Time delay of trip for small voltage dips";
-
   parameter Types.VoltageModulePu UPLLFreezePu "PLL freeze voltage threshold (in pu)";
   parameter Real IqMinPu = 0 "Minimum reactive current command in pu (base UNom, SNom)";
   parameter Types.VoltageModulePu UQPrioPu "Voltage under which priority is given to reactive current injection in pu (base UNom)";
@@ -126,32 +119,28 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
 
   model LimitUpdating
     parameter Types.CurrentModulePu IMaxPu "Maximum current of the injector in pu (base UNom, SNom)";
-
     Modelica.Blocks.Interfaces.RealInput IpCmdPu "Active current command in pu (base UNom, SNom)" annotation(
       Placement(visible = true, transformation(origin = {-120, 80}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
     Modelica.Blocks.Interfaces.RealInput IqCmdPu "Reactive current command in pu (base UNom, SNom)" annotation(
       Placement(visible = true, transformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, -80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
     Modelica.Blocks.Interfaces.BooleanInput PPriority "Priority to active power (true) or reactive power (false)" annotation(
       Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
-
     Modelica.Blocks.Interfaces.RealOutput IpMaxPu annotation(
       Placement(visible = true, transformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
     Modelica.Blocks.Interfaces.RealOutput IqMaxPu annotation(
       Placement(visible = true, transformation(origin = {110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
     Modelica.Blocks.Interfaces.RealOutput IqMinPu annotation(
       Placement(visible = true, transformation(origin = {110, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {110, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-
   protected
     Types.PerUnit IpLimPu = max(min(abs(IpCmdPu), IMaxPu), 0);
-    Types.PerUnit IqLimPu = max(min(abs(IqCmdPu), IMaxPu), - IMaxPu);
-
+    Types.PerUnit IqLimPu = max(min(abs(IqCmdPu), IMaxPu), -IMaxPu);
   equation
     if PPriority then
       IpMaxPu = IMaxPu;
-      IqMaxPu = noEvent(if(abs(IMaxPu) > abs(IpLimPu)) then sqrt(IMaxPu ^ 2 - IpLimPu ^ 2) else 0);
+      IqMaxPu = noEvent(if (abs(IMaxPu) > abs(IpLimPu)) then sqrt(IMaxPu^2 - IpLimPu^2) else 0);
       IqMinPu = -IqMaxPu;
     else
-      IpMaxPu = noEvent(if(abs(IMaxPu) > abs(IqLimPu)) then sqrt(IMaxPu ^ 2 - IqLimPu ^ 2) else 0);
+      IpMaxPu = noEvent(if (abs(IMaxPu) > abs(IqLimPu)) then sqrt(IMaxPu^2 - IqLimPu^2) else 0);
       IqMaxPu = IMaxPu;
       IqMinPu = -IqMaxPu;
     end if;
@@ -248,7 +237,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     if omegaPu < OmegaDeadBandPu then
       deltaP = 0;
     elseif omegaPu < OmegaMaxPu then
-      deltaP = PextPu * (omegaPu - OmegaDeadBandPu) / (OmegaMaxPu - OmegaDeadBandPu);
+      deltaP = PextPu*(omegaPu - OmegaDeadBandPu)/(OmegaMaxPu - OmegaDeadBandPu);
     else
       deltaP = PextPu;
     end if;
@@ -269,13 +258,12 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {79, -259}, extent = {{-3, -3}, {3, 3}}, rotation = 90)));
   Modelica.Blocks.Continuous.FirstOrder iDLimitFilter(T = 0.01, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {77, -189}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
-  NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = Iq0Pu, tS = tRateLim)  annotation(
+  NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = -Iq0Pu, tS = tRateLim) annotation(
     Placement(visible = true, transformation(origin = {190, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   when lvrt.switchOffSignal.value or frequencyProtection.switchOffSignal.value or overVoltageProtection.switchOffSignal.value and not pre(injector.switchOffSignal3.value) then
     injector.switchOffSignal3.value = true;
   end when;
-
   connect(injector.terminal, terminal) annotation(
     Line(points = {{251.5, 1.9}, {305.5, 1.9}}, color = {0, 0, 255}));
   connect(injector.UPu, UFilter.u) annotation(
