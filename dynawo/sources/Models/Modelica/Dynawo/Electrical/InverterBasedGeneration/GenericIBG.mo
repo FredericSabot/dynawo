@@ -303,8 +303,6 @@ equation
     Line(points = {{-39, -280}, {48, -280}}, color = {0, 0, 127}));
   connect(iQLimiter.y, iQcmdFirstOrder.u) annotation(
     Line(points = {{71, -280}, {98, -280}}, color = {0, 0, 127}));
-  connect(PLLFreeze.omegaPLLPu, omegaFilter.u) annotation(
-    Line(points = {{61, -3}, {70, -3}, {70, 10}, {-160, 10}, {-160, -344}, {-102, -344}}, color = {0, 0, 127}));
   connect(PextPu, add2.u1) annotation(
     Line(points = {{-94, -140}, {-38, -140}}, color = {0, 0, 127}));
   connect(add2.y, division.u1) annotation(
@@ -359,6 +357,8 @@ equation
     Line(points = {{190, -160}, {208, -160}}, color = {0, 0, 127}));
   connect(derivative.y, feedback.u2) annotation(
     Line(points = {{232, -160}, {240, -160}, {240, -180}, {180, -180}, {180, -168}}, color = {0, 0, 127}));
+  connect(omegaRefPu, omegaFilter.u) annotation(
+    Line(points = {{8, 0}, {20, 0}, {20, 20}, {-160, 20}, {-160, -344}, {-102, -344}}, color = {0, 0, 127}));
   annotation(
     Documentation(preferredView = "diagram", info = "<html>
     <p> Generic model of inverter-based generation as defined in p28 of Gilles Chaspierre's PhD thesis 'Reduced-order modelling of active distribution networks for large-disturbance simulations'. Available: https://orbi.uliege.be/handle/2268/251602 </p></html>"),
