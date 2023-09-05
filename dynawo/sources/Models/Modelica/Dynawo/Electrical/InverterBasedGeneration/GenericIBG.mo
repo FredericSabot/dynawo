@@ -47,6 +47,9 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Types.VoltageModulePu UQPrioPu "Voltage under which priority is given to reactive current injection in pu (base UNom)";
   parameter Real IpSlewMaxPu "Active current slew limit (both up and down) in pu (base UNom, SNom)";
   parameter Real IqSlewMaxPu "Reactive current slew limit (both up and down) in pu (base UNom, SNom) (not in the original model, can use arbitrarily large value to bypass it)";
+  // Stabilisation
+  parameter Types.PerUnit Kf = 0;
+  parameter Types.Time tf = 1;
   // Initial values
   parameter Types.PerUnit P0Pu "Start value of active power at terminal in pu (receptor convention) (base SnRef)";
   parameter Types.PerUnit Q0Pu "Start value of reactive power at terminal in pu (receptor convention) (base SnRef)";
@@ -260,6 +263,10 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {77, -189}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
   NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = -Iq0Pu, tS = tRateLim) annotation(
     Placement(visible = true, transformation(origin = {190, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Feedback feedback annotation(
+    Placement(visible = true, transformation(origin = {180, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Continuous.Derivative derivative(T = tf, k = Kf, x_start = Id0Pu)  annotation(
+    Placement(visible = true, transformation(origin = {220, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   when lvrt.switchOffSignal.value or frequencyProtection.switchOffSignal.value or overVoltageProtection.switchOffSignal.value and not pre(injector.switchOffSignal3.value) then
     injector.switchOffSignal3.value = true;
@@ -334,8 +341,6 @@ equation
     Line(points = {{-38, -10}, {40, -10}}, color = {255, 0, 255}));
   connect(omegaRefPu, PLLFreeze.omegaRefPu) annotation(
     Line(points = {{8, 0}, {20, 0}, {20, -14}, {40, -14}}, color = {0, 0, 127}));
-  connect(iPSlewLimit.y, injector.idPu) annotation(
-    Line(points = {{162, -160}, {200, -160}, {200, -12}, {228, -12}}, color = {0, 0, 127}));
   connect(PLLFreeze.phi, injector.UPhase) annotation(
     Line(points = {{62, -6}, {140, -6}, {140, -40}, {240, -40}, {240, -18}}, color = {0, 0, 127}));
   connect(limitUpdating.IqMaxPu, iQLimiter.limit1) annotation(
@@ -346,6 +351,14 @@ equation
     Line(points = {{162, -280}, {178, -280}}, color = {0, 0, 127}));
   connect(iQSlewLimit.y, injector.iqPu) annotation(
     Line(points = {{202, -280}, {204, -280}, {204, -2}, {228, -2}}, color = {0, 0, 127}));
+  connect(iPSlewLimit.y, feedback.u1) annotation(
+    Line(points = {{162, -160}, {172, -160}}, color = {0, 0, 127}));
+  connect(feedback.y, injector.idPu) annotation(
+    Line(points = {{190, -160}, {200, -160}, {200, -12}, {228, -12}}, color = {0, 0, 127}));
+  connect(feedback.y, derivative.u) annotation(
+    Line(points = {{190, -160}, {208, -160}}, color = {0, 0, 127}));
+  connect(derivative.y, feedback.u2) annotation(
+    Line(points = {{232, -160}, {240, -160}, {240, -180}, {180, -180}, {180, -168}}, color = {0, 0, 127}));
   annotation(
     Documentation(preferredView = "diagram", info = "<html>
     <p> Generic model of inverter-based generation as defined in p28 of Gilles Chaspierre's PhD thesis 'Reduced-order modelling of active distribution networks for large-disturbance simulations'. Available: https://orbi.uliege.be/handle/2268/251602 </p></html>"),
