@@ -18,17 +18,17 @@ model der_a_AggregatedLVRT "der_a model with aggregate LVRT model"
 
   // Low voltage ride through
   parameter Types.VoltageModulePu ULVRTArmingPu "Voltage threshold under which the automaton is activated after tLVRTMax in pu (base UNom)";
-  parameter Types.VoltageModulePu ULVRTIntPu "Voltage threshold under which the automaton is activated after tLVRTMin in pu (base UNom)";
+  parameter Types.VoltageModulePu ULVRTIntPu = ULVRTMinPu "Voltage threshold under which the automaton is activated after tLVRTMin in pu (base UNom)";
   parameter Types.VoltageModulePu ULVRTMinPu "Voltage threshold under which the automaton is activated instantaneously in pu (base UNom)";
   parameter Types.Time tLVRTMin "Time delay of trip for severe voltage dips in s";
-  parameter Types.Time tLVRTInt "Time delay of trip for intermediate voltage dips in s";
+  parameter Types.Time tLVRTInt = tLVRTMin "Time delay of trip for intermediate voltage dips in s";
   parameter Types.Time tLVRTMax "Time delay of trip for small voltage dips in s";
 
   // Parameters of the partial tripping curves
   parameter Types.PerUnit LVRTc(min=0, max=1) "Share of units that disconnect at ULVRTMinPu";
   parameter Types.PerUnit LVRTd(min=0, max=1) "Fraction of ULVRTMinPu at which all units are disconnected";
-  parameter Types.PerUnit LVRTe(min=0, max=1) "Share of units that disconnect at ULVRTIntPu";
-  parameter Types.PerUnit LVRTf(min=0, max=1) "Fraction of ULVRTIntPu at which all units are disconnected";
+  parameter Types.PerUnit LVRTe(min=0, max=1) = 1 "Share of units that disconnect at ULVRTIntPu";
+  parameter Types.PerUnit LVRTf(min=0, max=1) = LVRTd "Fraction of ULVRTIntPu at which all units are disconnected";
   parameter Types.PerUnit LVRTg(min=0, max=1) "Share of units that disconnect at ULVRTArmingPu";
   parameter Types.PerUnit LVRTh(min=0, max=1) "Fraction of ULVRTArmingPu at which all units are disconnected";
 

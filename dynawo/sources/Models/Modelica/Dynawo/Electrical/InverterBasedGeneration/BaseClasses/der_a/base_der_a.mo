@@ -52,7 +52,7 @@ model base_der_a "Base model for der_a"
   parameter Types.CurrentModulePu IpRateLimMin "Minimum drop rate of the active current in pu (base SNom)";
 
   // Voltage support
-  parameter Boolean PF_flag "True for constant power factor, false for constant reactive power";
+  parameter Boolean PF_flag = true "True for constant power factor, false for constant reactive power";
   parameter Types.VoltageModulePu VRefPu = 1 "Voltage reference in pu (base UNom)";
   parameter Types.VoltageModulePu VDeadzoneMaxPu "Upper value of voltage dead zone in pu (base UNom)";
   parameter Types.VoltageModulePu VDeadzoneMinPu "Lower value of voltage dead zone in pu (base UNom)";
