@@ -280,6 +280,11 @@ endif()
 include(../cpplint/cpplint.cmake)
 include(3rdParty/jquery/jquery.cmake)
 
+if(ENABLE_HELICS)
+  find_package(HELICS REQUIRED PATHS ${HELICS_PATH})
+endif()
+
+
 add_subdirectory(sources)
 add_subdirectory(sources/Common)
 add_subdirectory(sources/API)
