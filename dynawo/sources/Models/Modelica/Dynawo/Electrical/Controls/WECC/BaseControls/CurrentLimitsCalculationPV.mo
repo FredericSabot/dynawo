@@ -40,10 +40,10 @@ equation
     ipMaxPu = IMaxPu;
     ipMinPu = 0;
     iqMaxPu = noEvent(if (abs(IMaxPu) > abs(ipLimPu)) then sqrt(IMaxPu ^ 2 - ipLimPu ^ 2) else 0);
-    iqMinPu = - iqMaxPu;
+    iqMinPu = -0.1;
   else
     ipMaxPu = noEvent(if(abs(IMaxPu) > abs(iqLimPu)) then sqrt(IMaxPu ^ 2 - iqLimPu ^ 2) else 0);
-    ipMinPu = 0;
+    ipMinPu = -0.1;
     iqMaxPu = IMaxPu;
     iqMinPu = - iqMaxPu;
   end if;
