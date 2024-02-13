@@ -97,6 +97,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousFourWindingsPmConstVRNordic.xml
   GeneratorSynchronousFourWindingsPmConstVRNordicTfo.xml
   GeneratorSynchronousFourWindingsProportionalRegulations.xml
+  GeneratorSynchronousFourWindingsRtsThermal.xml
   GeneratorSynchronousFourWindingsTGov1Dc1a.xml
   GeneratorSynchronousFourWindingsTGov1Sexs.xml
   GeneratorSynchronousFourWindingsTGov1SexsPss2a.xml
@@ -123,6 +124,8 @@ set(MODELICA_PREASSEMBLED_MODELS
   GeneratorSynchronousThreeWindingsPmConstVRNordic.xml
   GeneratorSynchronousThreeWindingsPmConstVRNordicTfo.xml
   GeneratorSynchronousThreeWindingsProportionalRegulations.xml
+  GeneratorSynchronousThreeWindingsRtsHydro.xml
+  GeneratorSynchronousThreeWindingsRtsSyncon.xml
   GenericAutomaton.xml
   GenericIBG.xml
   GridFormingConverterDroopControl.xml
