@@ -23,6 +23,8 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Types.Time tFilterU "Voltage measurement first order time constant in s";
   parameter Types.Time tG "Current commands filter in s";
   parameter Types.Time tRateLim = 1e-2 "Current slew limiter delay in s";
+  parameter Types.Time tf = 10 "Time constant of Ip derivative computation in s";
+  parameter Types.Percent Kf = 0 "Gain of Ip derivative filter in pu (base UNom, SNom)";
 
   // Frequency support
   parameter Types.AngularVelocityPu OmegaDeadBandPu "Deadband of the overfrequency contribution in pu (base omegaNom)";
@@ -116,6 +118,10 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {79, -259}, extent = {{-3, -3}, {3, 3}}, rotation = 90)));
   Modelica.Blocks.Continuous.FirstOrder iDLimitFilter(T = 0.01, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {77, -189}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
+  Modelica.Blocks.Math.Feedback feedback annotation(
+    Placement(visible = true, transformation(origin = {180, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Continuous.Derivative derivative(T = tf, k = Kf, x_start = Id0Pu)  annotation(
+    Placement(visible = true, transformation(origin = {230, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
   // Initial values
   parameter Types.ComplexPerUnit i0Pu "Start value of complex current at terminal in pu (base UNom, SnRef) (generator convention)";
@@ -128,12 +134,10 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
   parameter Types.PerUnit U0Pu "Start value of voltage magnitude at terminal in pu (base UNom)";
   parameter Types.ComplexPerUnit u0Pu "Start value of complex voltage at terminal in pu (base UNom)";
   parameter Types.Angle UPhase0 "Start value of voltage phase angle at terminal in rad";
-
 equation
   when lvrt.switchOffSignal.value or frequencyProtection.switchOffSignal.value or overVoltageProtection.switchOffSignal.value and not pre(injector.switchOffSignal3.value) then
     injector.switchOffSignal3.value = true;
   end when;
-
   connect(injector.terminal, terminal) annotation(
     Line(points = {{251.5, 1.9}, {305.5, 1.9}}, color = {0, 0, 255}));
   connect(injector.UPu, UFilter.u) annotation(
@@ -202,8 +206,6 @@ equation
     Line(points = {{-38, -10}, {40, -10}}, color = {255, 0, 255}));
   connect(omegaRefPu, PLLFreeze.omegaRefPu) annotation(
     Line(points = {{8, 0}, {20, 0}, {20, -14}, {40, -14}}, color = {0, 0, 127}));
-  connect(iPSlewLimit.y, injector.idPu) annotation(
-    Line(points = {{162, -160}, {200, -160}, {200, -12}, {228, -12}}, color = {0, 0, 127}));
   connect(PLLFreeze.phi, injector.UPhase) annotation(
     Line(points = {{62, -6}, {140, -6}, {140, -40}, {240, -40}, {240, -18}}, color = {0, 0, 127}));
   connect(limitUpdating.IqMaxPu, iQLimiter.limit1) annotation(
@@ -216,8 +218,16 @@ equation
     Line(points = {{162, -280}, {178, -280}}, color = {0, 0, 127}));
   connect(gain.y, injector.iqPu) annotation(
     Line(points = {{202, -280}, {204, -280}, {204, -2}, {228, -2}}, color = {0, 0, 127}));
-
-  annotation(preferredView = "diagram",
+  connect(iPSlewLimit.y, feedback.u1) annotation(
+    Line(points = {{162, -160}, {172, -160}}, color = {0, 0, 127}));
+  connect(feedback.y, injector.idPu) annotation(
+    Line(points = {{190, -160}, {200, -160}, {200, -12}, {228, -12}}, color = {0, 0, 127}));
+  connect(feedback.y, derivative.u) annotation(
+    Line(points = {{190, -160}, {218, -160}}, color = {0, 0, 127}));
+  connect(derivative.y, feedback.u2) annotation(
+    Line(points = {{242, -160}, {260, -160}, {260, -180}, {180, -180}, {180, -168}}, color = {0, 0, 127}));
+  annotation(
+    preferredView = "diagram",
     Documentation(info = "<html>
     <p> Generic model of inverter-based generation as defined in p28 of Gilles Chaspierre's PhD thesis 'Reduced-order modelling of active distribution networks for large-disturbance simulations'. Available: https://orbi.uliege.be/handle/2268/251602 </p></html>"),
     Diagram(coordinateSystem(extent = {{-180, 40}, {320, -400}})));
