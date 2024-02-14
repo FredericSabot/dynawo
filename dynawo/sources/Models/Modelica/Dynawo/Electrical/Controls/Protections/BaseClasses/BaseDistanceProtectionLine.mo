@@ -24,7 +24,7 @@ partial model BaseDistanceProtectionLine "Base model for line distance protectio
   parameter Types.PerUnit[NbZones] RPu "Resistive reach of zone i in pu (base UNom, SnRef) (for each protected zone)";
   parameter Types.PerUnit[NbZones] XPu "Reactive reach of zone i in pu (base UNom, SnRef) (for each protected zone)";
   parameter Boolean[NbZones] TrippingZone "True if zone i can send a tripping signal";
-  parameter Types.Time CircuitBreakerTime "Time required to open the circuit breaker in s";
+  parameter Types.Time CircuitBreakerTime[NbZones] "Time required to open the circuit breaker in s (for each protected zone)";
   parameter Boolean WithBlinder "True if a load blinder is used";
   parameter Types.Angle BlinderAnglePu "Load angle of the load blinder in rad";
   parameter Real BlinderReachPu "Reach in the Z plane of the load blinder in pu (base UNom, SnRef)";
@@ -82,7 +82,7 @@ equation
   Following variable is discrete, but does not appear on the LHS of a when-statement: ‘lineState.value‘.
   */
   for i in 1:NbZones loop
-    when time - tThresholdReached[i] >= tZone[i] + CircuitBreakerTime then
+    when time - tThresholdReached[i] >= tZone[i] + CircuitBreakerTime[i] then
       if TrippingZone[i] then
         tripped[i] = true;
       else
