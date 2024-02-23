@@ -170,6 +170,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   LVRT10Points.xml
   Measurements.xml
   NodeFault.xml
+  NodeFaultContinuous.xml
   PhaseShifterBlockingI.xml
   PhaseShifterI.xml
   PhaseShifterP.xml
