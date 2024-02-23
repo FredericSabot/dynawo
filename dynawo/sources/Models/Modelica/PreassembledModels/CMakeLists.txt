@@ -206,6 +206,7 @@ set(MODELICA_PREASSEMBLED_MODELS
   Measurements.xml
   NetworkTransformer.xml
   NodeFault.xml
+  NodeFaultContinuous.xml
   OverVoltageAutomaton.xml
   PhaseShifterBlockingI.xml
   PhaseShifterI.xml
