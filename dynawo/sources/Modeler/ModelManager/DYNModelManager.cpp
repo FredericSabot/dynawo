@@ -42,6 +42,10 @@
 #include "DYNTimer.h"
 #include "DYNTrace.h"
 
+#ifdef HELICS_ENABLED
+#include "helics/cpp98/helics.hpp"
+#endif
+
 using std::ifstream;
 using std::map;
 using std::ofstream;
@@ -62,11 +66,25 @@ modelInit_(NULL),
 modelDyn_(NULL),
 dataInit_(new DYNDATA),
 dataDyn_(new DYNDATA),
-modelInitUsed_(false) { }
+modelInitUsed_(false) {
+#ifdef HELICS_ENABLED
+  helicsTime_ = -1;
+  fed_ = nullptr;
+#endif
+}
 
 ModelManager::~ModelManager() {
   delete dataInit_;
   delete dataDyn_;
+#ifdef HELICS_ENABLED
+    // Cleaning Helics stuff
+  if (name() == "CosimulationAutomaton") {
+    fed_->requestTime(HELICS_BIG_NUMBER);  // Clear out any pending messages
+    fed_->finalize();
+    helicscpp::cleanupHelicsLibrary();
+    Trace::debug() << "Federate finalized" << Trace::endline;
+  }
+#endif
 }
 
 DYNDATA*

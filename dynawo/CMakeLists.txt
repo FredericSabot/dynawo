@@ -220,7 +220,7 @@ if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
     GTest::gmock_main
     GTest::gtest_main
     Boost::iostreams
-    Boost::filesystem)
+    Boost::filesystem)    
 endif()
 
 # For compatibility with old makefiles
@@ -264,25 +264,38 @@ set(DYNAWO_USE_LIBXML2 "Y")
 find_package(LibXml2 "2.9" REQUIRED)
 find_package(LibIIDM "1.4.0" REQUIRED PATHS ${LIBIIDM_HOME})
 
-if(MSVC)
-  set(runtime_PATH "PATH=${ADEPT_HOME}/bin;${Boost_INCLUDE_DIR}/../bin;${INSTALL_OPENMODELICA}/bin;${SUITESPARSE_HOME}/bin;${SUNDIALS_HOME}/bin;${XercesC_INCLUDE_DIRS}/../bin;${LibIIDM_BIN_DIR};${LIBIIDM_HOME}/bin;${LibXML_BIN_DIR};${LIBXML2_HOME}/bin;${libdir};$ENV{PATH}")
-  if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
-    set(runtime_tests_PATH "PATH=${GTEST_ROOT}/bin;${ADEPT_HOME}/bin;${Boost_INCLUDE_DIR}/../bin;${INSTALL_OPENMODELICA}/bin;${SUITESPARSE_HOME}/bin;${SUNDIALS_HOME}/bin;${XercesC_INCLUDE_DIRS}/../bin;${LibIIDM_BIN_DIR};${LIBIIDM_HOME}/bin;${LibXML_BIN_DIR};${libdir};$ENV{PATH}")
+if(ENABLE_HELICS)
+  find_package(HELICS REQUIRED PATHS ${HELICS_PATH})
+
+  if(MSVC)
+    set(runtime_PATH "PATH=${ADEPT_HOME}/bin;${Boost_INCLUDE_DIR}/../bin;${INSTALL_OPENMODELICA}/bin;${SUITESPARSE_HOME}/bin;${SUNDIALS_HOME}/bin;${XercesC_INCLUDE_DIRS}/../bin;${LibIIDM_BIN_DIR};${LIBIIDM_HOME}/bin;${LibXML_BIN_DIR};${LIBXML2_HOME}/bin;${HELICS_PATH}/bin;${libdir};$ENV{PATH}")
+    if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
+      set(runtime_tests_PATH "PATH=${GTEST_ROOT}/bin;${ADEPT_HOME}/bin;${Boost_INCLUDE_DIR}/../bin;${INSTALL_OPENMODELICA}/bin;${SUITESPARSE_HOME}/bin;${SUNDIALS_HOME}/bin;${XercesC_INCLUDE_DIRS}/../bin;${LibIIDM_BIN_DIR};${LIBIIDM_HOME}/bin;${LibXML_BIN_DIR};${HELICS_PATH}/bin;${libdir};$ENV{PATH}")
+    endif()
+  else() # Linux
+    set(runtime_LD_LIBRARY_PATH "LD_LIBRARY_PATH=\"${ADEPT_HOME}/lib:${SUITESPARSE_HOME}/lib:${SUNDIALS_HOME}/lib64:${SUNDIALS_HOME}/lib:${XercesC_INCLUDE_DIRS}/../lib:${LibIIDM_LIB_DIR}:${LIBIIDM_HOME}/lib:${LibXML_LIB_DIR}:${libdir}:${Boost_INCLUDE_DIR}/../lib:${LIBXML2_HOME}/lib:${HELICS_PATH}/lib:$ENV{LD_LIBRARY_PATH}\"")
+    set(runtime_PATH "PATH=\"${INSTALL_OPENMODELICA}/bin:$ENV{PATH}\"")
+    if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
+      set(runtime_tests_PATH "LD_LIBRARY_PATH=${GTEST_ROOT}/lib:${ADEPT_HOME}/lib:${SUITESPARSE_HOME}/lib:${SUNDIALS_HOME}/lib64:${SUNDIALS_HOME}/lib:${XercesC_INCLUDE_DIRS}/../lib:${LibIIDM_LIB_DIR}:${LIBIIDM_HOME}/lib:${LibXML_LIB_DIR}:${libdir}:${Boost_INCLUDE_DIR}/../lib:${LIBXML2_HOME}/lib:${HELICS_PATH}/lib:$ENV{LD_LIBRARY_PATH}")
+    endif()
   endif()
-else() # Linux
-  set(runtime_LD_LIBRARY_PATH "LD_LIBRARY_PATH=\"${ADEPT_HOME}/lib:${SUITESPARSE_HOME}/lib:${SUNDIALS_HOME}/lib64:${SUNDIALS_HOME}/lib:${XercesC_INCLUDE_DIRS}/../lib:${LibIIDM_LIB_DIR}:${LIBIIDM_HOME}/lib:${LibXML_LIB_DIR}:${libdir}:${Boost_INCLUDE_DIR}/../lib:${LIBXML2_HOME}/lib:$ENV{LD_LIBRARY_PATH}\"")
-  set(runtime_PATH "PATH=\"${INSTALL_OPENMODELICA}/bin:$ENV{PATH}\"")
-  if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
-    set(runtime_tests_PATH "LD_LIBRARY_PATH=${GTEST_ROOT}/lib:${ADEPT_HOME}/lib:${SUITESPARSE_HOME}/lib:${SUNDIALS_HOME}/lib64:${SUNDIALS_HOME}/lib:${XercesC_INCLUDE_DIRS}/../lib:${LibIIDM_LIB_DIR}:${LIBIIDM_HOME}/lib:${LibXML_LIB_DIR}:${libdir}:${Boost_INCLUDE_DIR}/../lib:${LIBXML2_HOME}/lib:$ENV{LD_LIBRARY_PATH}")
+else()
+  if(MSVC)
+    set(runtime_PATH "PATH=${ADEPT_HOME}/bin;${Boost_INCLUDE_DIR}/../bin;${INSTALL_OPENMODELICA}/bin;${SUITESPARSE_HOME}/bin;${SUNDIALS_HOME}/bin;${XercesC_INCLUDE_DIRS}/../bin;${LibIIDM_BIN_DIR};${LIBIIDM_HOME}/bin;${LibXML_BIN_DIR};${LIBXML2_HOME}/bin;${libdir};$ENV{PATH}")
+    if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
+      set(runtime_tests_PATH "PATH=${GTEST_ROOT}/bin;${ADEPT_HOME}/bin;${Boost_INCLUDE_DIR}/../bin;${INSTALL_OPENMODELICA}/bin;${SUITESPARSE_HOME}/bin;${SUNDIALS_HOME}/bin;${XercesC_INCLUDE_DIRS}/../bin;${LibIIDM_BIN_DIR};${LIBIIDM_HOME}/bin;${LibXML_BIN_DIR};${libdir};$ENV{PATH}")
+    endif()
+  else() # Linux
+    set(runtime_LD_LIBRARY_PATH "LD_LIBRARY_PATH=\"${ADEPT_HOME}/lib:${SUITESPARSE_HOME}/lib:${SUNDIALS_HOME}/lib64:${SUNDIALS_HOME}/lib:${XercesC_INCLUDE_DIRS}/../lib:${LibIIDM_LIB_DIR}:${LIBIIDM_HOME}/lib:${LibXML_LIB_DIR}:${libdir}:${Boost_INCLUDE_DIR}/../lib:${LIBXML2_HOME}/lib:$ENV{LD_LIBRARY_PATH}\"")
+    set(runtime_PATH "PATH=\"${INSTALL_OPENMODELICA}/bin:$ENV{PATH}\"")
+    if(BUILD_TESTS OR BUILD_TESTS_COVERAGE)
+      set(runtime_tests_PATH "LD_LIBRARY_PATH=${GTEST_ROOT}/lib:${ADEPT_HOME}/lib:${SUITESPARSE_HOME}/lib:${SUNDIALS_HOME}/lib64:${SUNDIALS_HOME}/lib:${XercesC_INCLUDE_DIRS}/../lib:${LibIIDM_LIB_DIR}:${LIBIIDM_HOME}/lib:${LibXML_LIB_DIR}:${libdir}:${Boost_INCLUDE_DIR}/../lib:${LIBXML2_HOME}/lib:$ENV{LD_LIBRARY_PATH}")
+    endif()
   endif()
 endif()
 
 include(../cpplint/cpplint.cmake)
 include(3rdParty/jquery/jquery.cmake)
-
-if(ENABLE_HELICS)
-  find_package(HELICS REQUIRED PATHS ${HELICS_PATH})
-endif()
 
 
 add_subdirectory(sources)

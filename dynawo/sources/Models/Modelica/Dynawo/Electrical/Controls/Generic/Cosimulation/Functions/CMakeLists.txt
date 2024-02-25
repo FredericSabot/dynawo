@@ -8,21 +8,13 @@
 #
 # This file is part of Dynawo, an hybrid C++/Modelica open source time domain simulation tool for power systems.
 
-add_subdirectory(Functions F)
-
-if(ENABLE_HELICS)
-  add_subdirectory(Cosimulation Co)
-endif()
-
 set(MODEL_FILES
   # Generic automaton
   package.mo
   package.order
-  GenericAutomaton.mo
-  GenericAutomatonConstants.mo
-  GenericAutomaton.extvar
+  CosimulationInterface.mo
   )
-  
+
 #
 # Modelica models install
 #

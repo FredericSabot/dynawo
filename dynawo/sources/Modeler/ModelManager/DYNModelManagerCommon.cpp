@@ -36,6 +36,13 @@
 #include "DYNExecUtils.h"
 #include "DYNFileSystemUtils.h"
 
+#ifdef HELICS_ENABLED
+#include "helics/cpp98/helics.hpp"
+#include "helics/cpp98/ValueFederate.hpp"
+#include "helics/cpp98/Publication.hpp"
+#include "helics/cpp98/Input.hpp"
+#endif
+
 namespace DYN {
 
 void printLogToStdOut_(ModelManager *model, const std::string & message) {
@@ -304,6 +311,97 @@ callExternalAutomatonModel(const std::string& modelName, const char* command, co
     intOutputs[i] = static_cast<int>(iter->second);
   }
 }
+
+#ifdef HELICS_ENABLED
+void initHelicsCosimulationInterface(ModelManager* manager, const std::string& workingDirectory) {
+  std::shared_ptr<helicscpp::ValueFederate> fed = std::make_shared<helicscpp::ValueFederate>(workingDirectory + "/Dynawo.json");
+
+  assert(fed != nullptr);
+
+  if (!fed->getIntegerProperty(HELICS_FLAG_UNINTERRUPTIBLE)) {
+    std::cout << "Dynawo should be flagged uninterruptible" << std::endl;
+    throw;
+  }
+  manager->fed_ = fed;
+
+  fed->enterExecutingMode();
+}
+
+std::string
+getLocalHelicsPubName(std::string pubName) {
+  std::string localName;
+  auto npos = pubName.find("/");
+
+  if (npos != std::string::npos)
+    return pubName.substr(npos + 1);
+  return pubName;
+}
+
+void
+callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& modelName, const double time,
+    const double* inputs, const char** inputsName, const int nbInputs, const int nbMaxInputs,
+    double* outputs, const char** outputsName, const int nbOutputs, const int nbMaxOutputs,
+    const std::string& workingDirectory) {
+  if (nbInputs >= nbMaxInputs)
+    throw DYNError(Error::GENERAL, AutomatonMaximumInputSizeReached, modelName,
+        boost::lexical_cast<std::string>(nbInputs), boost::lexical_cast<std::string>(nbMaxInputs));
+  if (nbOutputs >= nbMaxOutputs)
+    throw DYNError(Error::GENERAL, AutomatonMaximumOutputSizeReached, modelName,
+        boost::lexical_cast<std::string>(nbOutputs), boost::lexical_cast<std::string>(nbMaxOutputs));
+
+  if (manager->helicsTime_ < 0) {
+    manager->helicsTime_ = 0;
+    initHelicsCosimulationInterface(manager, workingDirectory);
+  }
+
+  // Only communicate with helics the first time the automaton is activated for at a given time (not after solver reinits)
+  if (time > manager->helicsTime_) {
+    manager->helicsTime_ = time;
+
+    int pubCount = manager->fed_->getPublicationCount();
+    int subCount = manager->fed_->getInputCount();
+
+    for (int i = 0; i < pubCount; i++) {
+      helicscpp::Publication pub = manager->fed_->getPublication(i);
+      std::string pubName = getLocalHelicsPubName(pub.getName());
+
+      // assign publication thanks to name
+      Trace::debug() << DYNLog(ModelDesc, " Search for pub: " + pubName )<< Trace::endline;
+      int found = 0;
+      while (found < nbInputs) {
+        Trace::debug() << DYNLog(ModelDesc, pubName + " =? " + inputsName[found])<< Trace::endline;
+        if (inputsName[found] == pubName)
+          break;
+        found++;
+      }
+      if (found == nbInputs) {
+        throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pubName);
+      }
+      pub.publish(inputs[found]);
+    }
+
+    for (int i = 0; i < subCount; i++) {
+      helicscpp::Input sub = manager->fed_->getInputByTarget(std::to_string(i));
+      std::string subName = getLocalHelicsPubName(sub.getName());
+
+      // assign subscription thanks to name
+      Trace::debug() << DYNLog(ModelDesc, " Search for sub: " + subName )<< Trace::endline;
+      int found = 0;
+      while (found < nbOutputs) {
+        Trace::debug() << DYNLog(ModelDesc, subName + " =? " + outputsName[found] )<< Trace::endline;
+        if (outputsName[found] == subName)
+          break;
+        found++;
+      }
+      if (found == nbOutputs)
+        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
+      outputs[found] = sub.getDouble();
+    }
+    manager->fed_->requestTime(time);
+  }
+}
+
+#endif
 
 modelica_real
 computeDelay(ModelManager* manager, int exprNumber, double exprValue, double time, double delayTime, double delayMax) {

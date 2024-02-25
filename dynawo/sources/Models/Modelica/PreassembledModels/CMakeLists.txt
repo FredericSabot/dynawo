@@ -200,6 +200,11 @@ set(MODELICA_PREASSEMBLED_MODELS
   WTG4BWeccCurrentSource.xml
   )
 
+if(ENABLE_HELICS)
+  list(APPEND MODELICA_PREASSEMBLED_MODELS CosimulationAutomaton.xml)
+endif()
+
+
 # PYTHON scripts preassembled models
 set(PYTHON_SCRIPTS_PREASSEMBLED_MODELS
   buildChecker.py

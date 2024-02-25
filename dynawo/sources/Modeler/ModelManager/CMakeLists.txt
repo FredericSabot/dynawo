@@ -33,27 +33,27 @@ set(MODEL_MANAGER_INCLUDE_HEADERS
 add_library(dynawo_ModelManager SHARED ${MODEL_MANAGER_SOURCES})
 
 target_include_directories(dynawo_ModelManager
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:${INCLUDEDIR_NAME}>
-  PRIVATE
-    ${OMC_INCLUDE_DIR}
-    $<TARGET_PROPERTY:Modelica_externalC,INTERFACE_INCLUDE_DIRECTORIES>
+INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:${INCLUDEDIR_NAME}>
+PRIVATE
+  ${OMC_INCLUDE_DIR}
+  $<TARGET_PROPERTY:Modelica_externalC,INTERFACE_INCLUDE_DIRECTORIES>
 )
 target_include_directories(dynawo_ModelManager SYSTEM
-  PRIVATE
-  $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
-  )
+PRIVATE
+$<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
+)
 
 target_link_libraries(dynawo_ModelManager
-  PRIVATE
-    dynawo_Common
-    dynawo_API_PAR
-    dynawo_ModelerCommon
-    dynawo_SolverKINSubModel
-    Boost::serialization
-    Boost::system
-  )
+PRIVATE
+  dynawo_Common
+  dynawo_API_PAR
+  dynawo_ModelerCommon
+  dynawo_SolverKINSubModel
+  Boost::serialization
+  Boost::system
+)
 
 set_target_properties(dynawo_ModelManager PROPERTIES VERSION ${MODEL_MANAGER_VERSION_STRING}
                                                    SOVERSION ${MODEL_MANAGER_VERSION_MAJOR})
@@ -61,6 +61,14 @@ set_target_properties(dynawo_ModelManager PROPERTIES VERSION ${MODEL_MANAGER_VER
 if(USE_ADEPT)
   target_link_libraries(dynawo_ModelManager PUBLIC Adept::Adept)
 endif(USE_ADEPT)
+
+if(ENABLE_HELICS)
+  target_include_directories(dynawo_ModelManager PUBLIC ${HELICS_INCLUDE_DIRS})
+
+  target_link_libraries(dynawo_ModelManager PUBLIC HELICS::helicsCpp98)
+
+  target_compile_definitions(dynawo_ModelManager PUBLIC -DHELICS_ENABLED)
+endif()
 
 install(TARGETS dynawo_ModelManager EXPORT dynawo-targets DESTINATION ${LIBDIR_NAME})
 install(FILES ${MODEL_MANAGER_INCLUDE_HEADERS} DESTINATION ${INCLUDEDIR_NAME})

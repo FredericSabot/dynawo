@@ -266,6 +266,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                                 -DCMAKE_BUILD_TYPE:STRING=Debug
                                 -DBUILD_SHARED_LIBS=ON
                                 -Dgtest_force_shared_crt:BOOL=ON
+                                -DCMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized"
     )
     ExternalProject_Get_Property(googletest install_dir)
     set(GTEST_ROOT ${install_dir} CACHE PATH "Path to GoogleTest installation" FORCE)
