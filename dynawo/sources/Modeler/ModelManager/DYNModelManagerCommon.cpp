@@ -366,15 +366,13 @@ callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& m
       std::string pubName = getLocalHelicsPubName(pub.getName());
 
       // assign publication thanks to name
-      Trace::debug() << DYNLog(ModelDesc, " Search for pub: " + pubName )<< Trace::endline;
       int found = 0;
       while (found < nbInputs) {
-        Trace::debug() << DYNLog(ModelDesc, pubName + " =? " + inputsName[found])<< Trace::endline;
         if (inputsName[found] == pubName)
           break;
         found++;
       }
-      if (found == nbInputs) {
+      if (found == nbInputs + 1) {
         throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pubName);
       }
       pub.publish(inputs[found]);
@@ -385,16 +383,15 @@ callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& m
       std::string subName = getLocalHelicsPubName(sub.getName());
 
       // assign subscription thanks to name
-      Trace::debug() << DYNLog(ModelDesc, " Search for sub: " + subName )<< Trace::endline;
       int found = 0;
       while (found < nbOutputs) {
-        Trace::debug() << DYNLog(ModelDesc, subName + " =? " + outputsName[found] )<< Trace::endline;
         if (outputsName[found] == subName)
           break;
         found++;
       }
-      if (found == nbOutputs)
+      if (found == nbOutputs + 1) {
         throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
+      }
       outputs[found] = sub.getDouble();
     }
     manager->fed_->requestTime(time);
