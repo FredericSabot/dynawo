@@ -787,7 +787,7 @@ void initHelicsCosimulationInterface(ModelManager* manager, const std::string& w
  * @param workingDirectory Working directory of the simulation.
  */
 
-std::string getLocalHelicsPubName(std::string pubName);
+std::string getLocalHelicsPubSubName(std::string pubName);
 
 /**
  * @brief call an external code of automaton

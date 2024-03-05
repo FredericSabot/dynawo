@@ -15,7 +15,7 @@ within Dynawo.Electrical.Controls.Generic.Cosimulation;
 model CosimulationAutomaton "Generic control automaton, call an external model"
   import Dynawo.Electrical.Controls.Generic.Cosimulation.Functions;
   import Dynawo.Electrical.Controls.Generic.GenericAutomatonConstants;
-    parameter Types.Time SamplingTime "Automaton sampling time";
+  parameter Types.Time SamplingTime "Automaton sampling time";
   parameter Integer NbInputs "Number of required inputs data for the automaton";
   parameter Integer NbOutputs "Number of required outputs data from the automaton";
   parameter String InputsName[GenericAutomatonConstants.inputsMaxSize] = {"EMPTY" for i in 1:GenericAutomatonConstants.inputsMaxSize} "Names of required inputs data for the automaton";
@@ -24,10 +24,16 @@ model CosimulationAutomaton "Generic control automaton, call an external model"
   Types.Time t0(start = 0) "First time when the automaton will act";
   Real inputs[GenericAutomatonConstants.inputsMaxSize] "Inputs provided to the automaton";
   Real outputs[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
+  Boolean outputs_boolean[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
 
 equation
   when time >= pre(t0) + SamplingTime then
     outputs = Functions.CosimulationInterface(t0, inputs, InputsName, NbInputs, GenericAutomatonConstants.inputsMaxSize, OutputsName, NbOutputs,GenericAutomatonConstants.outputsMaxSize);
+
+    for i in 1:GenericAutomatonConstants.outputsMaxSize loop
+      outputs_boolean[i] = (outputs[i] > 0);
+    end for;
+
     t0 = pre(t0) + SamplingTime;
   end when;
 

@@ -328,7 +328,7 @@ void initHelicsCosimulationInterface(ModelManager* manager, const std::string& w
 }
 
 std::string
-getLocalHelicsPubName(std::string pubName) {
+getLocalHelicsPubSubName(std::string pubName) {
   std::string localName;
   auto npos = pubName.find("/");
 
@@ -337,11 +337,10 @@ getLocalHelicsPubName(std::string pubName) {
   return pubName;
 }
 
-void
-callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& modelName, const double time,
-    const double* inputs, const char** inputsName, const int nbInputs, const int nbMaxInputs,
-    double* outputs, const char** outputsName, const int nbOutputs, const int nbMaxOutputs,
-    const std::string& workingDirectory) {
+void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& modelName,
+    const double time, const double* inputs, const char** inputs_name, const int nbInputs,
+    const int nbMaxInputs, double* outputs, const char** outputs_name, const int nbOutputs,
+    const int nbMaxOutputs, const std::string& workingDirectory) {
   if (nbInputs >= nbMaxInputs)
     throw DYNError(Error::GENERAL, AutomatonMaximumInputSizeReached, modelName,
         boost::lexical_cast<std::string>(nbInputs), boost::lexical_cast<std::string>(nbMaxInputs));
@@ -356,19 +355,20 @@ callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& m
 
   // Only communicate with helics the first time the automaton is activated for at a given time (not after solver reinits)
   if (time > manager->helicsTime_) {
-    manager->helicsTime_ = time;
+    while (manager->helicsTime_ < time)
+      manager->helicsTime_ = manager->fed_->requestTime(time);
 
     int pubCount = manager->fed_->getPublicationCount();
     int subCount = manager->fed_->getInputCount();
 
     for (int i = 0; i < pubCount; i++) {
       helicscpp::Publication pub = manager->fed_->getPublication(i);
-      std::string pubName = getLocalHelicsPubName(pub.getName());
+      std::string pubName = getLocalHelicsPubSubName(pub.getName());
 
       // assign publication thanks to name
-      int found = 0;
-      while (found < nbInputs) {
-        if (inputsName[found] == pubName)
+      int found = 1;
+      while (found < nbInputs + 1) {
+        if (inputs_name[found] == pubName)
           break;
         found++;
       }
@@ -379,22 +379,23 @@ callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::string& m
     }
 
     for (int i = 0; i < subCount; i++) {
-      helicscpp::Input sub = manager->fed_->getInputByTarget(std::to_string(i));
-      std::string subName = getLocalHelicsPubName(sub.getName());
+      helicscpp::Input sub = manager->fed_->getInput(i);
+      std::string subName = getLocalHelicsPubSubName(sub.getName());
 
       // assign subscription thanks to name
-      int found = 0;
-      while (found < nbOutputs) {
-        if (outputsName[found] == subName)
+      int found = 1;
+      while (found < nbOutputs + 1) {
+        if (outputs_name[found] == subName)
           break;
         found++;
       }
+
       if (found == nbOutputs + 1) {
         throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
       }
+
       outputs[found] = sub.getDouble();
     }
-    manager->fed_->requestTime(time);
   }
 }
 
