@@ -28,14 +28,15 @@ model CosimulationAutomaton "Generic control automaton, call an external model"
 
 equation
   when time >= pre(t0) + SamplingTime then
-    outputs = Functions.CosimulationInterface(t0, inputs, InputsName, NbInputs, GenericAutomatonConstants.inputsMaxSize, OutputsName, NbOutputs,GenericAutomatonConstants.outputsMaxSize);
-
-    for i in 1:GenericAutomatonConstants.outputsMaxSize loop
-      outputs_boolean[i] = (outputs[i] > 0);
-    end for;
+    (outputs) = Functions.CosimulationInterface(t0, inputs, InputsName, NbInputs, GenericAutomatonConstants.inputsMaxSize, OutputsName, NbOutputs,GenericAutomatonConstants.outputsMaxSize);
 
     t0 = pre(t0) + SamplingTime;
   end when;
+
+algorithm
+  for i in 1:GenericAutomatonConstants.outputsMaxSize loop
+    outputs_boolean[i] := (outputs[i] > 0);
+  end for;
 
   annotation(preferredView = "text",
     Documentation(info = "<html><head></head><body>This model enables to call an external C method representing the behavior of any control system. For example, it could be used to call every few seconds an OPF that will change the system state, according to some objective function.</body></html>"));

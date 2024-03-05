@@ -395,6 +395,8 @@ void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::stri
       }
 
       outputs[found] = sub.getDouble();
+
+      std::cout << subName << ": " << std::to_string(outputs[found]) << std::endl;
     }
   }
 }
