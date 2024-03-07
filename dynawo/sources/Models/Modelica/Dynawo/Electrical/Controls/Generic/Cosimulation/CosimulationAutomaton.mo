@@ -24,18 +24,18 @@ model CosimulationAutomaton "Generic control automaton, call an external model"
   Types.Time t0(start = 0) "First time when the automaton will act";
   Real inputs[GenericAutomatonConstants.inputsMaxSize] "Inputs provided to the automaton";
   Real outputs[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
-  Boolean outputs_boolean[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
+    Boolean outputs_boolean[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
 
 equation
-  when time >= pre(t0) + SamplingTime then
-    (outputs) = Functions.CosimulationInterface(t0, inputs, InputsName, NbInputs, GenericAutomatonConstants.inputsMaxSize, OutputsName, NbOutputs,GenericAutomatonConstants.outputsMaxSize);
+  when time >= t0 + SamplingTime then
+    t0 = time;
 
-    t0 = pre(t0) + SamplingTime;
+    outputs = Functions.CosimulationInterface(time, inputs, InputsName, NbInputs, OutputsName, NbOutputs);
   end when;
 
 algorithm
   for i in 1:GenericAutomatonConstants.outputsMaxSize loop
-    outputs_boolean[i] := (outputs[i] > 0);
+        outputs_boolean[i] := (outputs[i] > 0);
   end for;
 
   annotation(preferredView = "text",
