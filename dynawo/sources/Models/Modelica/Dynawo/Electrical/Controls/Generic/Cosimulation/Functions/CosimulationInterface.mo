@@ -21,13 +21,12 @@ function CosimulationInterface "Function to call external automaton"
   input Real inputs[GenericAutomatonConstants.inputsMaxSize] "Inputs data for the automaton";
   input String inputsName[GenericAutomatonConstants.inputsMaxSize] "Inputs data name for the automaton";
   input Integer nbInputs "Number of inputs to provide to the automaton";
-  input Integer nbMaxInputs "Maximum number of inputs";
   input String outputsName[GenericAutomatonConstants.outputsMaxSize] "Outputs data name for the automaton";
   input Integer nbOutputs "Number of outputs to provide to the automaton";
-  input Integer nbMaxOuputs "Maximum number of outputs";
   
-  output Real outputs[GenericAutomatonConstants.outputsMaxSize] "Outputs data provided by the automaton";
+  output Real outputs[GenericAutomatonConstants.outputsMaxSize] "Output data of the automaton";
 
-  external "C" callCosimulationInterface(timeActivation, inputs, inputsName, nbInputs, nbMaxInputs, outputs, outputsName, nbOutputs, nbMaxOuputs);
-annotation(preferredView = "text");
+  external "C" 
+    callCosimulationInterface(timeActivation, inputs, inputsName, nbInputs, GenericAutomatonConstants.inputsMaxSize, outputs, outputsName, nbOutputs, GenericAutomatonConstants.outputsMaxSize);
+      annotation(preferredView = "text");
 end CosimulationInterface;

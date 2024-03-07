@@ -22,12 +22,14 @@ model CosimulationAutomaton "Generic control automaton, call an external model"
   parameter String OutputsName[GenericAutomatonConstants.outputsMaxSize] = {"EMPTY" for i in 1:GenericAutomatonConstants.outputsMaxSize} "Names of required outputs data from the automaton";
   
   Types.Time t0(start = 0) "First time when the automaton will act";
+  
   Real inputs[GenericAutomatonConstants.inputsMaxSize] "Inputs provided to the automaton";
+
   Real outputs[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
-    Boolean outputs_boolean[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
+  Boolean outputs_boolean[GenericAutomatonConstants.outputsMaxSize] "Outputs got from the automaton";
 
 equation
-  when time >= t0 + SamplingTime then
+  when time >= pre(t0) + SamplingTime then
     t0 = time;
 
     outputs = Functions.CosimulationInterface(time, inputs, InputsName, NbInputs, OutputsName, NbOutputs);
