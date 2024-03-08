@@ -354,7 +354,7 @@ void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::stri
   }
 
   // Only communicate with helics the first time the automaton is activated for at a given time (not after solver reinits)
-  if (time > manager->helicsTime_) {
+  if (true) {  // time > manager->helicsTime_) {, Note: outputs are set to 0 if this is not called, a sample hold could be implemented
     while (manager->helicsTime_ < time)
       manager->helicsTime_ = manager->fed_->requestTime(time);
 
