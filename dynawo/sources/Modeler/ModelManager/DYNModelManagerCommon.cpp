@@ -366,25 +366,25 @@ void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::stri
       std::string pubName = getLocalHelicsPubSubName(pub.getName());
 
       // assign publication thanks to name
-      int found = 1;
-      while (found < nbInputs + 1) {
+      int found = 0;
+      while (found < nbInputs) {
         if (inputs_name[found] == pubName)
           break;
         found++;
       }
-      if (found == nbInputs + 1) {
+      if (found == nbInputs) {
         throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pubName);
       }
       pub.publish(inputs[found]);
     }
 
     for (int i = 0; i < subCount; i++) {
-      helicscpp::Input sub = manager->fed_->getInput(i);
+      helicscpp::Input sub = manager->fed_->getSubscription(i);
       std::string subName = getLocalHelicsPubSubName(sub.getName());
 
       // assign subscription thanks to name
-      int found = 1;
-      while (found < nbOutputs + 1) {
+      int found = 0;
+      while (found < nbOutputs) {
         if (outputs_name[found] == subName)
           break;
         found++;
