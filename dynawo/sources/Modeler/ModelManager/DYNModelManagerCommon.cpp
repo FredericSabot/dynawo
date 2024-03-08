@@ -353,52 +353,46 @@ void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::stri
     initHelicsCosimulationInterface(manager, workingDirectory);
   }
 
-  // Only communicate with helics the first time the automaton is activated for at a given time (not after solver reinits)
-  if (true) {  // time > manager->helicsTime_) {, Note: outputs are set to 0 if this is not called, a sample hold could be implemented
-    while (manager->helicsTime_ < time)
-      manager->helicsTime_ = manager->fed_->requestTime(time);
+  while (manager->helicsTime_ < time)
+    manager->helicsTime_ = manager->fed_->requestTime(time);
 
-    int pubCount = manager->fed_->getPublicationCount();
-    int subCount = manager->fed_->getInputCount();
+  int pubCount = manager->fed_->getPublicationCount();
+  int subCount = manager->fed_->getInputCount();
 
-    for (int i = 0; i < pubCount; i++) {
-      helicscpp::Publication pub = manager->fed_->getPublication(i);
-      std::string pubName = getLocalHelicsPubSubName(pub.getName());
+  for (int i = 0; i < pubCount; i++) {
+    helicscpp::Publication pub = manager->fed_->getPublication(i);
+    std::string pubName = getLocalHelicsPubSubName(pub.getName());
 
-      // assign publication thanks to name
-      int found = 0;
-      while (found < nbInputs) {
-        if (inputs_name[found] == pubName)
-          break;
-        found++;
-      }
-      if (found == nbInputs) {
-        throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pubName);
-      }
-      pub.publish(inputs[found]);
+    // assign publication thanks to name
+    int found = 1;
+    while (found < nbInputs + 1) {
+      if (inputs_name[found] == pubName)
+        break;
+      found++;
+    }
+    if (found == nbInputs + 1) {
+      throw DYNError(Error::GENERAL, UnknownAutomatonInput, modelName, pubName);
+    }
+    pub.publish(inputs[found]);
+  }
+
+  for (int i = 0; i < subCount; i++) {
+    helicscpp::Input sub = manager->fed_->getInput(i);
+    std::string subName = getLocalHelicsPubSubName(sub.getName());
+
+    // assign subscription thanks to name
+    int found = 1;
+    while (found < nbOutputs + 1) {
+      if (outputs_name[found] == subName)
+        break;
+      found++;
     }
 
-    for (int i = 0; i < subCount; i++) {
-      helicscpp::Input sub = manager->fed_->getSubscription(i);
-      std::string subName = getLocalHelicsPubSubName(sub.getName());
-
-      // assign subscription thanks to name
-      int found = 0;
-      while (found < nbOutputs) {
-        if (outputs_name[found] == subName)
-          break;
-        found++;
-      }
-
-      if (found == nbOutputs) {
-        // throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
-      }
-
-      outputs[found] = sub.getDouble();
-
-      // Hardcoded fix
-      outputs[0] = sub.getDouble();
+    if (found == nbOutputs + 1) {
+      throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
     }
+
+    outputs[found] = sub.getDouble();
   }
 }
 
