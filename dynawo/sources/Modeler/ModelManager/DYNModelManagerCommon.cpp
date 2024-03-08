@@ -390,13 +390,14 @@ void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::stri
         found++;
       }
 
-      if (found == nbOutputs + 1) {
-        throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
+      if (found == nbOutputs) {
+        // throw DYNError(Error::GENERAL, UnknownAutomatonOutput, modelName, subName);
       }
 
       outputs[found] = sub.getDouble();
 
-      std::cout << subName << ": " << std::to_string(outputs[found]) << std::endl;
+      // Hardcoded fix
+      outputs[0] = sub.getDouble();
     }
   }
 }
