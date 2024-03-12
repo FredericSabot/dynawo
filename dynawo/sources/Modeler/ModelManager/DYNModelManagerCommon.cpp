@@ -353,8 +353,7 @@ void callHelicsCosimulationInterfaceModel(ModelManager* manager, const std::stri
     initHelicsCosimulationInterface(manager, workingDirectory);
   }
 
-  while (manager->helicsTime_ < time)
-    manager->helicsTime_ = manager->fed_->requestTime(time);
+  manager->helicsTime_ = manager->fed_->requestTime(time);
 
   int pubCount = manager->fed_->getPublicationCount();
   int subCount = manager->fed_->getInputCount();
