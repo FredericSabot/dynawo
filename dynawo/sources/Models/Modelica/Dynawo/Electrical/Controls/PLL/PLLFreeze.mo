@@ -52,7 +52,8 @@ model PLLFreeze "Phase-Locked Loop whose angle can be frozen"
 
   //Initial parameter
   parameter Types.ComplexVoltagePu u0Pu "Start value of complex voltage at PCC in pu (base UNom)";
-
+  Modelica.Blocks.Nonlinear.Limiter limiter(limitsAtInit = true, uMax = 0.5/SystemBase.omegaNom)  annotation(
+    Placement(visible = true, transformation(origin = {116, 44}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   connect(add2.y, omegaPLLPu) annotation(
     Line(points = {{81, -84}, {170, -84}}, color = {0, 0, 127}));
@@ -76,9 +77,10 @@ equation
     Line(points = {{80.5, -8}, {87.5, -8}}, color = {0, 0, 127}));
   connect(freeze, switch1.u2) annotation(
     Line(points = {{-150, -49}, {60, -49}, {60, 0}, {88, 0}}, color = {255, 0, 255}));
-  connect(switch1.y, integrator.u) annotation(
-    Line(points = {{111, 0}, {128, 0}}, color = {0, 0, 127}));
-
+  connect(switch1.y, limiter.u) annotation(
+    Line(points = {{111, 0}, {104, 0}, {104, 44}}, color = {0, 0, 127}));
+  connect(limiter.y, integrator.u) annotation(
+    Line(points = {{127, 44}, {127, 22}, {128, 22}, {128, 0}}, color = {0, 0, 127}));
   annotation(
     preferredView = "diagram",
     Documentation(info = "<html><head></head><body><p> The PLL calculates the frequency of the grid voltage by synchronizing the internal phase angle with measured voltage phasor. q-component of internal voltage phasor is therefore controlled to be zero. </p>
