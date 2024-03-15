@@ -108,7 +108,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {-90, -386}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Dynawo.NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iPSlewLimit(DuMax = IpSlewMaxPu, Y0 = Id0Pu, tS = tRateLim) annotation(
     Placement(visible = true, transformation(origin = {150, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Dynawo.NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = Iq0Pu, tS = tRateLim)  annotation(
+  Dynawo.NonElectrical.Blocks.NonLinear.StandAloneRampRateLimiter iQSlewLimit(DuMax = IqSlewMaxPu, Y0 = Iq0Pu, tS = tRateLim) annotation(
     Placement(visible = true, transformation(origin = {150, -280}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder iPcmdFirstOrder(T = tG, y_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {110, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -120,7 +120,7 @@ model GenericIBG "Generic model of inverter-based generation (IBG)"
     Placement(visible = true, transformation(origin = {77, -189}, extent = {{-3, -3}, {3, 3}}, rotation = -90)));
   Modelica.Blocks.Math.Feedback feedback annotation(
     Placement(visible = true, transformation(origin = {180, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Continuous.Derivative derivative(T = tf, k = Kf, x_start = Id0Pu)  annotation(
+  Modelica.Blocks.Continuous.Derivative derivative(T = tf, k = Kf, x_start = Id0Pu) annotation(
     Placement(visible = true, transformation(origin = {230, -160}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
   // Initial values
