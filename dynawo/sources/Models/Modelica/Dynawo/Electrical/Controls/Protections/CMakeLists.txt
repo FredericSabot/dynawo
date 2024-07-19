@@ -20,6 +20,10 @@ set(MODEL_FILES
   DistanceProtectionLineTwoZones.extvar
   DistanceProtectionLineTwoZonesWithBlinder.mo
   DistanceProtectionLineTwoZonesWithBlinder.extvar
+  DistanceProtectionLineSide1Special.mo
+  DistanceProtectionLineSide1Special.extvar
+  DistanceProtectionLineSide2Special.mo
+  DistanceProtectionLineSide2Special.extvar
   UFLS3Steps.mo
   UFLS3Steps.extvar
   UFLS10Steps.mo
