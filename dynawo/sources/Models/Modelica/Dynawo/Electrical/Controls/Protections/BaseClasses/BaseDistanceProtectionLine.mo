@@ -40,13 +40,21 @@ partial model BaseDistanceProtectionLine "Base model for line distance protectio
   Types.Time[NbZones] tThresholdReached(each start = Constants.inf) "Time when the apparent impedance enters zone i in s (for each protected zone)";
 
 equation
-  Blinded = if UMonitoredPu^2 / sqrt(PMonitoredPu^2 + QMonitoredPu^2) > BlinderReachPu and abs(Modelica.Math.atan2(QMonitoredPu, PMonitoredPu)) < BlinderAnglePu then true else false;
+  if UMonitoredPu^2 > BlinderReachPu * sqrt(PMonitoredPu^2 + QMonitoredPu^2) then
+    if abs(QMonitoredPu / PMonitoredPu) < tan(BlinderAnglePu) then
+      Blinded = true;
+    else
+      Blinded = false;
+    end if;
+  else
+    Blinded = false;
+  end if;
 
   // Check if apparent impedance is in a protected zone
   for i in 1:NbZones loop
-    when (UMonitoredPu^2 / (PMonitoredPu^2 + QMonitoredPu^2) * PMonitoredPu <= RPu[i] and
-        UMonitoredPu^2 / (PMonitoredPu^2 + QMonitoredPu^2) * QMonitoredPu <= XPu[i] and
-        UMonitoredPu^2 / (PMonitoredPu^2 + QMonitoredPu^2) * PMonitoredPu > -UMonitoredPu^2 / (PMonitoredPu^2 + QMonitoredPu^2) * QMonitoredPu) and
+    when (UMonitoredPu^2 * PMonitoredPu <= RPu[i] * (PMonitoredPu^2 + QMonitoredPu^2) and
+        UMonitoredPu^2 * QMonitoredPu <= XPu[i] * (PMonitoredPu^2 + QMonitoredPu^2) and
+        PMonitoredPu > -QMonitoredPu) and
         not Blinded and pre(tThresholdReached[i]) == Constants.inf then
       tThresholdReached[i] = time;
       if i == 1 then
@@ -58,9 +66,9 @@ equation
       else
         Timeline.logEvent1(TimelineKeys.Zone4Arming);
       end if;
-    elsewhen not (UMonitoredPu^2/(PMonitoredPu^2 + QMonitoredPu^2)*PMonitoredPu <= RPu[i] and
-        UMonitoredPu^2/(PMonitoredPu^2 + QMonitoredPu^2)*QMonitoredPu <= XPu[i] and
-        UMonitoredPu^2/(PMonitoredPu^2 + QMonitoredPu^2)*PMonitoredPu > -UMonitoredPu^2/(PMonitoredPu^2 + QMonitoredPu^2)*QMonitoredPu and
+    elsewhen not (UMonitoredPu^2 * PMonitoredPu <= RPu[i] * (PMonitoredPu^2 + QMonitoredPu^2) and
+        UMonitoredPu^2 * QMonitoredPu <= XPu[i] * (PMonitoredPu^2 + QMonitoredPu^2) and
+        PMonitoredPu > -QMonitoredPu and
         not Blinded) and
         pre(tThresholdReached[i]) <> Constants.inf and time - pre(tThresholdReached[i]) < tZone[i] then
       tThresholdReached[i] = Constants.inf;
