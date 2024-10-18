@@ -16,6 +16,7 @@ model CurrentLoop "Current loop control for grid forming and grid following conv
 
   parameter Types.PerUnit Kpc "Proportional gain of the current loop";
   parameter Types.PerUnit Kic "Integral gain of the current loop";
+  parameter Types.Time Te "Output state time constant in s";
   parameter Types.PerUnit LFilter "Filter inductance in pu (base UNom, SNom)";
   parameter Types.PerUnit RFilter "Filter resistance in pu (base UNom, SNom)";
 
@@ -78,6 +79,10 @@ model CurrentLoop "Current loop control for grid forming and grid following conv
   parameter Types.PerUnit IqConv0Pu "Start value of q-axis current in the converter in pu (base UNom, SNom) (generator convention)";
   parameter Types.PerUnit UdConv0Pu "Start value of d-axis modulation voltage in pu (base UNom)";
   parameter Types.PerUnit UqConv0Pu "Start value of q-axis modulation voltage in pu (base UNom)";
+  Modelica.Blocks.Continuous.FirstOrder firstOrderOutd(T = Te)  annotation(
+    Placement(visible = true, transformation(origin = {120, 86}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Continuous.FirstOrder firstOrderOutq(T = Te)  annotation(
+    Placement(visible = true, transformation(origin = {120, -86}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 
 equation
   connect(feedbackd.u1, idConvRefPu) annotation(
@@ -102,12 +107,8 @@ equation
     Line(points = {{-32, -80}, {-49, -80}}, color = {0, 0, 127}));
   connect(feedbackLwd.u2, addq1.y) annotation(
     Line(points = {{38, -86}, {-9, -86}}, color = {0, 0, 127}));
-  connect(addd2.y, udConvRefPu) annotation(
-    Line(points = {{101, 86}, {150, 86}}, color = {0, 0, 127}));
   connect(addq2.u1, feedbackLwd.y) annotation(
     Line(points = {{78, -80}, {61, -80}}, color = {0, 0, 127}));
-  connect(addq2.y, uqConvRefPu) annotation(
-    Line(points = {{101, -86}, {150, -86}}, color = {0, 0, 127}));
   connect(idConvPu, product.u1) annotation(
     Line(points = {{-150, 50}, {-120, 50}, {-120, 31}, {-102, 31}}, color = {0, 0, 127}));
   connect(omegaPu, product.u2) annotation(
@@ -136,6 +137,14 @@ equation
     Line(points = {{1, 25}, {10, 25}, {10, -74}, {38, -74}}, color = {0, 0, 127}));
   connect(uqFilterPu, addq2.u2) annotation(
     Line(points = {{-150, -130}, {70, -130}, {70, -92}, {78, -92}}, color = {0, 0, 127}));
+  connect(addd2.y, firstOrderOutd.u) annotation(
+    Line(points = {{101, 86}, {108, 86}}, color = {0, 0, 127}));
+  connect(firstOrderOutd.y, udConvRefPu) annotation(
+    Line(points = {{131, 86}, {150, 86}}, color = {0, 0, 127}));
+  connect(addq2.y, firstOrderOutq.u) annotation(
+    Line(points = {{101, -86}, {108, -86}}, color = {0, 0, 127}));
+  connect(firstOrderOutq.y, uqConvRefPu) annotation(
+    Line(points = {{131, -86}, {150, -86}}, color = {0, 0, 127}));
 
   annotation(
     Icon(coordinateSystem(grid = {1, 1})),

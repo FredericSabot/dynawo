@@ -30,6 +30,7 @@ model GridFormingControlDroopControl "Grid forming control with droop control"
   parameter Types.PerUnit Kic "Integral gain of the current loop";
   parameter Types.PerUnit LFilter "Filter inductance in pu (base UNom, SNom)";
   parameter Types.PerUnit RFilter "Filter resistance in pu (base UNom, SNom)";
+  parameter Types.Time Te "Output state time constant in s";
 
   Modelica.Blocks.Interfaces.RealInput idPccPu(start = IdPcc0Pu) "d-axis current at the PCC in pu (base UNom, SNom) (generator convention)" annotation(
     Placement(visible = true, transformation(origin = {-130, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {60, 105}, extent = {{-5, -5}, {5, 5}}, rotation = -90)));
@@ -75,7 +76,7 @@ model GridFormingControlDroopControl "Grid forming control with droop control"
   Modelica.Blocks.Interfaces.RealOutput omegaPu(start = SystemBase.omegaRef0Pu) "Converter's frequency in pu (base omegaNom)" annotation(
     Placement(visible = true, transformation(origin = {130, 70}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {105, -90}, extent = {{-5, -5}, {5, 5}}, rotation = 0)));
 
-  Dynawo.Electrical.Controls.Converters.BaseControls.CurrentLoop currentLoop(IdConv0Pu = IdConv0Pu, IqConv0Pu = IqConv0Pu, Kic = Kic, Kpc = Kpc, LFilter = LFilter, RFilter = RFilter, UdConv0Pu = UdConv0Pu, UdFilter0Pu = UdFilter0Pu, UqConv0Pu = UqConv0Pu, UqFilter0Pu = UqFilter0Pu) annotation(
+  Dynawo.Electrical.Controls.Converters.BaseControls.CurrentLoop currentLoop(IdConv0Pu = IdConv0Pu, IqConv0Pu = IqConv0Pu, Kic = Kic, Kpc = Kpc, LFilter = LFilter, RFilter = RFilter, UdConv0Pu = UdConv0Pu, UdFilter0Pu = UdFilter0Pu, UqConv0Pu = UqConv0Pu, UqFilter0Pu = UqFilter0Pu, Te = Te) annotation(
     Placement(visible = true, transformation(origin = {80, 80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   Dynawo.Electrical.Controls.Converters.BaseControls.VoltageLoop voltageLoop(CFilter = CFilter, IdConv0Pu = IdConv0Pu, IdPcc0Pu = IdPcc0Pu, IqConv0Pu = IqConv0Pu, IqPcc0Pu = IqPcc0Pu, Kiv = Kiv, Kpv = Kpv, UdFilter0Pu = UdFilter0Pu, UqFilter0Pu = UqFilter0Pu) annotation(
     Placement(visible = true, transformation(origin = {20, 80}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
