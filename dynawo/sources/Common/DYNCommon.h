@@ -26,6 +26,7 @@
 #include <limits>
 #include <algorithm>
 
+#include <boost/function.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <boost/dll.hpp>
@@ -48,7 +49,7 @@ namespace DYN {
   * @return function
   */
   template <class FunctionT>
-  FunctionT import(const boost::dll::shared_library& library, const std::string& functionName) {
+  boost::function<FunctionT> import(const boost::dll::shared_library& library, const std::string& functionName) {
 #if (BOOST_VERSION >= 107600)
     return boost::dll::import_symbol<FunctionT>(library, functionName.c_str());
 #else
