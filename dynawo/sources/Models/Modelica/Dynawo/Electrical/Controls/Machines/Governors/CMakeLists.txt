@@ -16,6 +16,8 @@ add_subdirectory(Standard St)
 set(MODEL_FILES
   package.mo
   package.order
+  GovernorBPA_GG.extvar
+  GovernorBPA_GG.mo
   Governor_INIT.mo
   GovernorPmPGen_INIT.mo
   )
