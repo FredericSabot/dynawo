@@ -34,7 +34,7 @@ model GovernorBPA_GG "Governor BPA GG"
 
   Modelica.Blocks.Math.Feedback feedback annotation(
     Placement(visible = true, transformation(origin = {-130, 6}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Sources.Constant omegaRefPu(k = SystemBase.omegaRef0Pu) annotation(
+  Modelica.Blocks.Interfaces.RealInput omegaRefPu(start = SystemBase.omegaRef0Pu) annotation(
     Placement(visible = true, transformation(origin = {-178, 6}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Continuous.FirstOrder firstOrder(T = T3, y_start = Pm0Pu)  annotation(
     Placement(visible = true, transformation(origin = {76, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -59,7 +59,7 @@ protected
 equation
   connect(omegaPu, feedback.u2) annotation(
     Line(points = {{-130, -46}, {-130, -2}}, color = {0, 0, 127}));
-  connect(omegaRefPu.y, feedback.u1) annotation(
+  connect(omegaRefPu, feedback.u1) annotation(
     Line(points = {{-167, 6}, {-138, 6}}, color = {0, 0, 127}));
   connect(feedback.y, gain.u) annotation(
     Line(points = {{-121, 6}, {-106, 6}}, color = {0, 0, 127}));
